@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/dls_backup_bl.iml" filepath="$PROJECT_DIR$/.idea/dls_backup_bl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../dls_pmacanalyse/.idea/dls_pmacanalyse.iml" filepath="$PROJECT_DIR$/../dls_pmacanalyse/.idea/dls_pmacanalyse.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../dls_pmaccontrol/.idea/dls_pmaccontrol.iml" filepath="$PROJECT_DIR$/../dls_pmaccontrol/.idea/dls_pmaccontrol.iml" />
     </modules>
   </component>
 </project>

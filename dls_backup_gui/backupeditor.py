@@ -137,7 +137,7 @@ class Editor(QWidget):
         self.EditorSettings = QSettings("DLS", "Backup Editor")
 
         # Look for the previously opened JSON file path and open it
-        self.JSONFileName = "BL04I_Backup.json"  # self.EditorSettings.value(
+        self.JSONFileName = "test_brick.json"  # self.EditorSettings.value(
         # "JSONFilePath").toString()
         self.OpenJSONFile()
 

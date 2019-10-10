@@ -2,13 +2,30 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="40654a3a-2331-4169-9714-67d74274835f" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/hgv27681.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dls_backup_bl/brick.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dls_backup_bl/report.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dls_backup_bl/tserver.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dls_backup_bl/util.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dls_backup_bl/zebra.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dls_backup_gui/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dls_backup_bl.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dls_backup_bl.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/BL04I_Backup.json" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_brick.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pipfile" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pipfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dls_backup_bl/Backup.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/backup.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dls_backup_bl/BackupEditor.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/backupeditor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dls_backup_bl/Categories.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/categories.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dls_backup_bl/Entries.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/entries.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dls_backup_bl/BL04I_Backup.json.1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dls_backup_bl/backup.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dls_backup_bl/backupeditor.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_gui/backupeditor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dls_backup_bl/categories.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_gui/categories.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dls_backup_bl/dls_backup_bl.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/dls_backup_bl.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dls_backup_bl/entries.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_gui/entries.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dls_backup_bl/pexpect.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/setup.cfg" beforeDir="false" afterPath="$PROJECT_DIR$/setup.cfg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../dls_pmacanalyse/dls_pmacanalyse/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/../dls_pmacanalyse/dls_pmacanalyse/__init__.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -22,16 +39,36 @@
     <fileColor scope="Non-Project Files (Material Lighter)" color="eae8e8" />
     <fileColor scope="Non-Project Files (Material Palenight)" color="2f2e43" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="ProjectId" id="1Ry7AtVlXNqzfaWmpV6lZxeJt8J" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="PropertiesComponent">
+    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../dls_pmaccontrol" />
+    <property name="last_opened_file_path" value="$USER_HOME$/github/gphotos-sync" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/test" />
+      <recent name="$PROJECT_DIR$/dls_backup_gui" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/../dls_pmacanalyse" />
+      <recent name="$PROJECT_DIR$/../dls_pmacanalyse/dls_pmacanalyse" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -45,7 +82,29 @@
       </list>
     </option>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Python.Backup">
+    <configuration name="Backup" type="PythonConfigurationType" factoryName="Python">
+      <module name="dls_backup_bl" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="dls_backup_bl.dls_backup_bl" />
+      <option name="PARAMETERS" value="-j test/test_brick.json --beamline GK00 --dir /tmp/backup_bl" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="true" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="BackupEditor" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="dls_backup_bl" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -68,6 +127,10 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <list>
+      <item itemvalue="Python.Backup" />
+      <item itemvalue="Python.BackupEditor" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.BackupEditor" />
@@ -86,7 +149,8 @@
       <updated>1570627342310</updated>
       <workItem from="1570627348979" duration="1254000" />
       <workItem from="1570629727249" duration="4338000" />
-      <workItem from="1570686282270" duration="2567000" />
+      <workItem from="1570686282270" duration="8348000" />
+      <workItem from="1570696853438" duration="19991000" />
     </task>
     <servers />
   </component>
@@ -110,14 +174,20 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/dls_backup_bl/backupeditor.py</url>
+          <url>file://$PROJECT_DIR$/dls_backup_gui/backupeditor.py</url>
           <line>48</line>
           <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dls_backup_gui/backupeditor.py</url>
+          <line>136</line>
+          <option name="timeStamp" value="2" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/dls_backup_bl$BackupEditor.coverage" NAME="BackupEditor Coverage Results" MODIFIED="1570688731296" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dls_backup_bl" />
+    <SUITE FILE_PATH="coverage/dls_backup_bl$Backup.coverage" NAME="Backup Coverage Results" MODIFIED="1570718284935" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/dls_backup_bl$BackupEditor.coverage" NAME="BackupEditor Coverage Results" MODIFIED="1570689501998" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

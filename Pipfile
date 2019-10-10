@@ -9,3 +9,7 @@ pytest = "*"
 [packages]
 pyqt5 = "*"
 dls-backup-bl = {path = "."}
+pexpect = "*"
+dls-pmacanalyse = {editable = true,path = "./../dls_pmacanalyse"}
+numpy = "*"
+cothread = "*"

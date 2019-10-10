@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "5c7cbd5ae065d104329d185fe3d006170c94c38b8d3937220b15c175ff337048"
+            "sha256": "b3ca041edccdf37791cbf9430f7fb9983f22878ff0437bc04802f846696e9649"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -14,8 +14,49 @@
         ]
     },
     "default": {
+        "cothread": {
+            "hashes": [
+                "sha256:69d225477e0037af05625ee16a5273fcdcee81689a6a7a189d477f40e0c40646",
+                "sha256:ad10b25bb584c8f7e6223af60199516b55263145803250af9a03ce8244cfaf23"
+            ],
+            "index": "pypi",
+            "version": "==2.16+dls1"
+        },
         "dls-backup-bl": {
             "path": "."
+        },
+        "dls-pmacanalyse": {
+            "editable": true,
+            "path": "./../dls_pmacanalyse"
+        },
+        "dls-pmaclib": {
+            "hashes": [
+                "sha256:24be6aae6129f382f3070f485ffd13abda68b74cab15868a22fde8d8a2a0240f",
+                "sha256:815faa3aeee584fd42067fae7defc00aaec5ac4abb302b8d3f382591f1774f78"
+            ],
+            "version": "==2.0.1"
+        },
+        "numpy": {
+            "hashes": [
+                "sha256:cbddc56b2502d3f87fda4f98d948eb5b11f36ff3902e17cb6cc44727f2200525"
+            ],
+            "index": "pypi",
+            "version": "==1.16.4"
+        },
+        "pexpect": {
+            "hashes": [
+                "sha256:2094eefdfcf37a1fdbfb9aa090862c1a4878e5c7e0e7e7088bdb511c558e5cd1",
+                "sha256:9e2c1fd0e6ee3a49b28f95d4b33bc389c89b20af6a1255906e90ff1262ce62eb"
+            ],
+            "index": "pypi",
+            "version": "==4.7.0"
+        },
+        "ptyprocess": {
+            "hashes": [
+                "sha256:923f299cc5ad920c68f2bc0bc98b75b9f838b93b599941a6b63ddbc2476394c0",
+                "sha256:d7cc528d76e76342423ca640335bd3633420dc1366f258cb31d05e865ef5ca1f"
+            ],
+            "version": "==0.6.0"
         },
         "pyqt5": {
             "hashes": [
@@ -23,6 +64,12 @@
             ],
             "index": "pypi",
             "version": "==5.12.2+dls1"
+        },
+        "pyserial": {
+            "hashes": [
+                "sha256:e0770fadba80c31013896c7e6ef703f72e7834965954a78e71a3049488d4d7d8"
+            ],
+            "version": "==3.4"
         }
     },
     "develop": {
