@@ -1,6 +1,3 @@
-
-#!/bin/env dls-python
-
 from Queue import Queue
 from threading import Thread
 from time import sleep
@@ -280,7 +277,7 @@ if __name__ == '__main__':
             print ErrorMessage
             PropertyList.append("Failed")
 
-    # dls-python Backup.py -j BL04I_Backup.json -n BL04I -b "/dls_sw/work/motion/Backups/BL04I" -e "James.OHea@diamond.ac.uk" -r 1
+    # dls-python backup.py -j BL04I_Backup.json -n BL04I -b "/dls_sw/work/motion/Backups/BL04I" -e "James.OHea@diamond.ac.uk" -r 1
 
     # Setup an argument Parser
     Parser = argparse.ArgumentParser(

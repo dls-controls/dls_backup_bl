@@ -7,3 +7,5 @@ verify_ssl = true
 pytest = "*"
 
 [packages]
+pyqt5 = "*"
+dls-backup-bl = {path = "."}

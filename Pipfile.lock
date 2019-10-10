@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "475b9b18d51f3ad9cb2008c32e16fcbe08f88a44843e5bde6ea7bed8e37f4298"
+            "sha256": "5c7cbd5ae065d104329d185fe3d006170c94c38b8d3937220b15c175ff337048"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -13,7 +13,18 @@
             }
         ]
     },
-    "default": {},
+    "default": {
+        "dls-backup-bl": {
+            "path": "."
+        },
+        "pyqt5": {
+            "hashes": [
+                "sha256:2c309db3035093ea85f08029711d6fbcccf89eded7f8e4f788695d933cfd80a5"
+            ],
+            "index": "pypi",
+            "version": "==5.12.2+dls1"
+        }
+    },
     "develop": {
         "atomicwrites": {
             "hashes": [

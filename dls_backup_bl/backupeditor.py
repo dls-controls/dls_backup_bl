@@ -1,30 +1,33 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 import json
+import signal
 import sys
 from collections import OrderedDict
 from functools import partial
+from optparse import OptionParser
 
-import Categories
-import Entries
-import Verbs
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import *
-from PyQt4.QtGui import *
+from PyQt5.QtCore import Qt, QSize, QSettings, QTimer
+from PyQt5.QtGui import QIcon, QStandardItemModel, QFont, QStandardItem
+from PyQt5.QtWidgets import (
+    QApplication, QLabel, QWidget, QDesktopWidget,
+    QTabWidget, QTableView, QAbstractItemView, QPushButton,
+    QHBoxLayout, QFileDialog, QHeaderView, QToolBar, QStatusBar,
+    QAction, QVBoxLayout, QStyle, QMessageBox, QMainWindow
+)
+
+from .entries import EntryPopup
+from .categories import CategoryPopup
 
 
-class Editor(QtGui.QWidget):
-
+class Editor(QWidget):
     def __init__(self):
-        super(Editor, self).__init__()
+        QWidget.__init__(self)
         self.InitialiseUI()
 
     def CentreWindow(self):
         # Get the geometry of the widget relative to its parent including any
         # window frame
         FrameGeometry = self.frameGeometry()
-        ScreenCentre = QtGui.QDesktopWidget().availableGeometry().center()
+        ScreenCentre = QDesktopWidget().availableGeometry().center()
         FrameGeometry.moveCenter(ScreenCentre)
         self.move(FrameGeometry.topLeft())
 
@@ -32,14 +35,14 @@ class Editor(QtGui.QWidget):
 
         # Set up the window and centre it on the screen  
         self.setWindowTitle('Backup Editor')
-        self.MinimumSize = QtCore.QSize(750, 450)
+        self.MinimumSize = QSize(750, 450)
         self.resize(self.MinimumSize)
         self.setMinimumSize(self.MinimumSize)
         self.setWindowFlags(
-            QtCore.Qt.WindowCloseButtonHint |
-            QtCore.Qt.WindowMinimizeButtonHint)
+            Qt.WindowCloseButtonHint |
+            Qt.WindowMinimizeButtonHint)
 
-        # self.setWindowIcon(QtGui.QIcon('icon.png'))
+        # self.setWindowIcon(QIcon('icon.png'))
         self.CentreWindow()
 
         # Create tab widget
@@ -58,7 +61,7 @@ class Editor(QtGui.QWidget):
         self.Tabs.addTab(self.ZebraTab, "Zebras")
 
         # Create a table for entries
-        self.DeviceList = QtGui.QTableView(self)
+        self.DeviceList = QTableView(self)
         self.DeviceList.verticalHeader().setVisible(False)
         self.DeviceList.setColumnWidth(0, 600);
         self.DeviceList.setShowGrid(False)
@@ -66,28 +69,25 @@ class Editor(QtGui.QWidget):
         self.DeviceList.setSelectionBehavior(QAbstractItemView.SelectRows)
 
         # Create an Add Entry button
-        self.AddEntryButton = QtGui.QPushButton('', self)
-        self.AddEntryButton.setIcon(QtGui.QIcon('0267-plus.png'))
-        self.AddEntryButton.setIconSize(QtCore.QSize(24, 24))
+        self.AddEntryButton = QPushButton('New', self)
+        self.AddEntryButton.setIconSize(QSize(24, 24))
 
         # Create a Remove Entry button
-        self.RemoveEntryButton = QtGui.QPushButton('', self)
-        self.RemoveEntryButton.setIcon(QtGui.QIcon('0268-minus.png'))
-        self.RemoveEntryButton.setIconSize(QtCore.QSize(24, 24))
+        self.RemoveEntryButton = QPushButton('Delete', self)
+        self.RemoveEntryButton.setIconSize(QSize(24, 24))
 
         # Create an Edit Entry button
-        self.EditEntryButton = QtGui.QPushButton('', self)
-        self.EditEntryButton.setIcon(QtGui.QIcon('0006-pencil.png'))
-        self.EditEntryButton.setIconSize(QtCore.QSize(24, 24))
+        self.EditEntryButton = QPushButton('Edit', self)
+        self.EditEntryButton.setIconSize(QSize(24, 24))
 
         # Create layout for the entry buttons
-        self.EntryButtonsLayout = QtGui.QHBoxLayout()
+        self.EntryButtonsLayout = QHBoxLayout()
         self.EntryButtonsLayout.addWidget(self.AddEntryButton)
         self.EntryButtonsLayout.addWidget(self.RemoveEntryButton)
         self.EntryButtonsLayout.addWidget(self.EditEntryButton)
 
         # Add the table to the tab layout
-        self.DeviceLayout = QtGui.QHBoxLayout()
+        self.DeviceLayout = QHBoxLayout()
         self.DeviceLayout.addWidget(self.DeviceList)
         # Set an initial state      
         self.GeoBrickTab.setLayout(self.DeviceLayout)
@@ -101,21 +101,21 @@ class Editor(QtGui.QWidget):
         self.RemoveEntryButton.clicked.connect(self.RemoveEntry)
 
         # Create a tool bar
-        self.ToolBar = QtGui.QToolBar(self)
+        self.ToolBar = QToolBar(self)
 
         # Create a status bar
-        self.StatusBar = QtGui.QStatusBar(self)
+        self.StatusBar = QStatusBar(self)
 
         # Create a file path label and set font 
-        self.FilePathFont = QtGui.QFont()
+        self.FilePathFont = QFont()
         self.FilePathFont.setBold(True)
         self.FilePathFont.setPointSize(12)
-        self.OpenFileLabel = QtGui.QLabel()
+        self.OpenFileLabel = QLabel()
         self.OpenFileLabel.setFont(self.FilePathFont)
 
         # Create an Open File action
-        self.OpenAction = QtGui.QAction(QtGui.QIcon('Open.png'),
-                                        'Open a JSON File', self)
+        self.OpenAction = QAction(QIcon('Open.png'),
+                                  'Open a JSON File', self)
         self.OpenAction.setShortcut('Ctrl+O')
         self.OpenAction.triggered.connect(self.ShowOpenDialog)
 
@@ -145,12 +145,11 @@ class Editor(QtGui.QWidget):
         self.show()
 
     def ShowOpenDialog(self):
-
-        self.JSONFileName = QtGui.QFileDialog.getOpenFileName(self,
-                                                              'Open JSON File',
-                                                              '/home',
-                                                              "JSON Files ("
-                                                              "*.json)")
+        self.JSONFileName = QFileDialog.getOpenFileName(self,
+                                                        'Open JSON File',
+                                                        '/home',
+                                                        "JSON Files ("
+                                                        "*.json)")
         self.OpenJSONFile()
 
     def OpenJSONFile(self):
@@ -243,8 +242,7 @@ class Editor(QtGui.QWidget):
                 self.JSONFile.close()
         # Capture problems opening or saving the file
         except Exception as e:
-            print
-            "\nInvalid json file name or path or invalid JSON\n"
+            print("\nInvalid json file name or path or invalid JSON\n")
             sys.exit()
         # Re-read the JSON file after the write to refresh the GUI
         self.ReadJSONFile()
@@ -296,11 +294,11 @@ class Editor(QtGui.QWidget):
             # self.CategoryList.selectionModel().selectionChanged.connect(
             # self.ButtonRefresh)
 
-            self.CategoryList.model().setHeaderData(0, QtCore.Qt.Horizontal,
+            self.CategoryList.model().setHeaderData(0, Qt.Horizontal,
                                                     "Title")
             self.CategoryList.horizontalHeader().setResizeMode(
                 QHeaderView.ResizeToContents)
-            self.CategoryList.model().setHeaderData(1, QtCore.Qt.Horizontal,
+            self.CategoryList.model().setHeaderData(1, Qt.Horizontal,
                                                     "Entries")
             self.CategoryList.horizontalHeader().setResizeMode(
                 QHeaderView.ResizeToContents)
@@ -357,7 +355,7 @@ class Editor(QtGui.QWidget):
         # ).toString())
         self.LastSelectedCategory = self.CategoryList.currentIndex()
         self.ListModel = QStandardItemModel(self)
-        self.ListModel.setHeaderData(0, QtCore.Qt.Horizontal, 'james')
+        self.ListModel.setHeaderData(0, Qt.Horizontal, 'james')
 
         HeaderLabels = []
 
@@ -373,7 +371,7 @@ class Editor(QtGui.QWidget):
                 self.ListModel.appendRow(self.Row)
             self.CardList.setModel(self.ListModel)
 
-            # self.CardList.sortByColumn(0, QtCore.Qt.AscendingOrder)
+            # self.CardList.sortByColumn(0, Qt.AscendingOrder)
 
             self.CardList.resizeColumnsToContents()
             self.NumColumns = self.ListModel.columnCount()
@@ -391,7 +389,7 @@ class Editor(QtGui.QWidget):
             self.CardList.setModel(self.ListModel)
 
         for i, Label in enumerate(HeaderLabels):
-            self.CardList.model().setHeaderData(i, QtCore.Qt.Horizontal, Label)
+            self.CardList.model().setHeaderData(i, Qt.Horizontal, Label)
             self.CardList.horizontalHeader().setResizeMode(
                 QHeaderView.ResizeToContents)
 
@@ -402,7 +400,7 @@ class Editor(QtGui.QWidget):
                             self.CardList.verticalHeader().width() +
                             self.CardList.horizontalHeader().length() +
                             self.CardList.style().pixelMetric(
-                                QtGui.QStyle.PM_ScrollBarExtent)
+                                QStyle.PM_ScrollBarExtent)
                             * 2) + self.CategoryList.width(), self.height())
 
         self.ButtonRefresh()
@@ -425,14 +423,14 @@ class Editor(QtGui.QWidget):
         # Find the number of rows before a removal
         self.LastRow = (self.DeviceList.model().rowCount() - 1)
 
-        self.MsgBoxResponse = QtGui.QMessageBox.question(self, "Remove?",
-                                                         "Are you sure you "
-                                                         "want to remove:\n"
-                                                         +
-                                                         self.SelectedDeviceList,
-                                                         QtGui.QMessageBox.Yes,
-                                                         QtGui.QMessageBox.No)
-        if self.MsgBoxResponse == QtGui.QMessageBox.Yes:
+        self.MsgBoxResponse = QMessageBox.question(self, "Remove?",
+                                                   "Are you sure you "
+                                                   "want to remove:\n"
+                                                   +
+                                                   self.SelectedDeviceList,
+                                                   QMessageBox.Yes,
+                                                   QMessageBox.No)
+        if self.MsgBoxResponse == QMessageBox.Yes:
             self.SelectedDevice = str(
                 self.Tabs.tabText(self.Tabs.currentIndex()))
             self.SelectedIndexes.sort()
@@ -458,7 +456,7 @@ class Editor(QtGui.QWidget):
             self.DeviceList.setCurrentIndex(self.NewIndex)
 
     def OpenAddEntryDialog(self, EditMode):
-        self.AddEntryDialog = Entries.EntryPopup(EditMode, self)
+        self.AddEntryDialog = EntryPopup(EditMode, self)
         #      self.w.setGeometry(QRect(100, 100, 400, 200))
         self.AddEntryDialog.show()
 
@@ -472,17 +470,30 @@ class Editor(QtGui.QWidget):
         self.w.show()
 
     def doitCat(self, EditMode):
-        self.w = Categories.CategoryPopup(EditMode, self)
+        self.w = CategoryPopup(EditMode, self)
         self.w.setModal(True)
         self.w.show()
 
 
 # Start the application    
 def main():
-    Application = QtGui.QApplication(sys.argv)
-    MyEditor = Editor()
-    sys.exit(Application.exec_())
+    print('Launching ...')
+    usage = """usage: %prog [options]
+    %prog edits configuration files for the dls-backup-bl.py tool"""
+    parser = OptionParser(usage)
+    parser.add_option("-v", "--verbose",
+                      action="store_true", dest="verbose", default=False,
+                      help="Print more details (than necessary in most "
+                           "cases...)")
+
+    app = QApplication(sys.argv)
+    app.lastWindowClosed.connect(app.quit)
+    win = Editor()
+    win.show()
+    # catch CTRL-C
+    signal.signal(signal.SIGINT, signal.SIG_DFL)
+    app.exec_()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
