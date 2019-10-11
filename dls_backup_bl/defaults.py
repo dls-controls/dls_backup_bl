@@ -38,12 +38,12 @@ class Defaults:
                 "variable ${BEAMLINE} or use argument --beamline")
 
         if backup_folder:
-            self._backup_folder = backup_folder
+            self._backup_folder = Path(backup_folder)
         else:
             self._backup_folder = Defaults.root_folder / self._beamline
 
         if config_file:
-            self._config_file = config_file
+            self._config_file = Path(config_file)
         else:
             name = Path("{}-{}".format(
                 self._beamline, Defaults._config_file_suffix)

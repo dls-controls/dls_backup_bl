@@ -5,13 +5,13 @@ from logging import getLogger
 from multiprocessing.pool import ThreadPool
 from typing import List
 
-from git import Repo, InvalidGitRepositoryError, NoSuchPathError
+from git import Repo, InvalidGitRepositoryError
 
 from dls_backup_bl.util import EmailMessage
 from .brick import backup_motor_controller
+from .defaults import Defaults
 from .tserver import backup_terminal_server
 from .zebra import backup_zebra
-from .defaults import Defaults
 
 log = getLogger(__name__)
 
@@ -23,7 +23,7 @@ class BackupBeamline:
         self.json_data: object = object()
         self.thread_pool: ThreadPool = ThreadPool()
         self.email: str = str()
-        self.defaults = None
+        self.defaults: Defaults = None
 
         self.motor_controllers: List = []
         self.terminal_servers: List = []
@@ -118,7 +118,7 @@ class BackupBeamline:
         # Open JSON file of device details
         # noinspection PyBroadException
         try:
-            with open(self.defaults.config_file) as json_file:
+            with self.defaults.config_file.open() as json_file:
                 # Read out the JSON data, then close the file
                 self.json_data = json.load(json_file)
 
@@ -186,9 +186,10 @@ class BackupBeamline:
             # Gather up any changes
             untracked_files = git_repo.untracked_files
             modified_files = [
-                diff.a_blob.name for diff in git_repo.index.diff(None)
+                diff.a_blob.path for diff in git_repo.index.diff(None)
             ]
             change_list = untracked_files + modified_files
+            ignore = self.defaults.log_file.name
 
             # If there are changes, commit them
             if change_list:
@@ -200,19 +201,22 @@ class BackupBeamline:
                     log.info("The following files are modified or deleted:")
                     for File in modified_files:
                         log.info('\t' + File)
+
+                if ignore in change_list:
+                    change_list.remove(ignore)
                 git_repo.index.add(change_list)
                 # Note repo.git.add is used to handle deleted files
                 git_repo.git.add(all=True)
                 git_repo.index.commit("commit by dls-backup-bl")
-                log.info("Committed changes")
+                log.critical("Committed changes")
             else:
                 log.info("Repository up to date. No actions taken")
         except BaseException:
             log.exception("ERROR: _repo not updated")
         else:
-            log.critical("SUCCESS: _repo changes commited")
+            log.warning("SUCCESS: _repo changes committed")
 
-    def wrap_up(self):
+    def sort_log(self):
         # Order the results alphabetically to make them easier to read
         with self.defaults.critical_log_file.open("r") as f:
             sorted_text = sorted(f.readlines())
@@ -220,10 +224,12 @@ class BackupBeamline:
         with self.defaults.critical_log_file.open("w") as f:
             f.writelines(sorted_text)
 
+    def send_email(self):
         # if self.email:
         # todo - make the class self sufficient and try to integrate with
         #  logging
         #     self.email.send()
+        pass
 
     def main(self):
         self.parse_args()
@@ -250,7 +256,8 @@ class BackupBeamline:
         # Wait for completion of all backup threads
         self.thread_pool.close()
         self.thread_pool.join()
+        self.sort_log()
         self.commit_changes()
 
+        self.send_email()
         log.warning("END OF BACKUP for beamline %s", self.defaults.beamline)
-        self.wrap_up()

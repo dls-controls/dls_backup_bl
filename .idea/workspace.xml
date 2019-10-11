@@ -2,13 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="40654a3a-2331-4169-9714-67d74274835f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/Pipfile" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pipfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dls_backup_bl/brick.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/brick.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dls_backup_bl/defaults.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/defaults.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dls_backup_bl/dls_backup_bl.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/dls_backup_bl.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dls_backup_bl/tserver.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/tserver.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dls_backup_bl/util.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/util.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dls_backup_bl/zebra.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/zebra.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dls_pmacanalyse/Pipfile" beforeDir="false" afterPath="$PROJECT_DIR$/../dls_pmacanalyse/Pipfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dls_pmacanalyse/Pipfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../dls_pmacanalyse/Pipfile.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dls_pmacanalyse/dls_pmacanalyse/dls_pmacanalyse.py" beforeDir="false" afterPath="$PROJECT_DIR$/../dls_pmacanalyse/dls_pmacanalyse/dls_pmacanalyse.py" afterDir="false" />
@@ -18,6 +13,10 @@
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/dls_backup_bl$Backup.coverage" NAME="Backup Coverage Results" MODIFIED="1570832482140" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/dls_backup_bl$Backup_to_motion.coverage" NAME="Backup to motion Coverage Results" MODIFIED="1570832347437" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileColors">
     <fileColor scope="Non-Project Files (Material Default)" color="2E3C43" />
@@ -32,8 +31,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/dls_backup_bl/dls_backup_bl.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="268">
-                  <caret line="210" column="35" selection-start-line="210" selection-start-column="35" selection-end-line="210" selection-end-column="35" />
+                <state relative-caret-position="193">
+                  <caret line="184" lean-forward="true" selection-start-line="184" selection-end-line="184" />
                   <folding>
                     <element signature="e#0#15#0" expanded="true" />
                   </folding>
@@ -45,7 +44,7 @@
             <entry file="file://$PROJECT_DIR$/dls_backup_bl/zebra.py">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="408">
-                  <caret line="24" column="52" lean-forward="true" selection-start-line="24" selection-start-column="52" selection-end-line="24" selection-end-column="52" />
+                  <caret line="24" column="52" selection-start-line="24" selection-start-column="52" selection-end-line="24" selection-end-column="52" />
                   <folding>
                     <element signature="e#0#29#0" expanded="true" />
                   </folding>
@@ -57,7 +56,7 @@
             <entry file="file://$PROJECT_DIR$/dls_backup_bl/util.py">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="663">
-                  <caret line="39" column="42" lean-forward="true" selection-start-line="39" selection-start-column="42" selection-end-line="39" selection-end-column="42" />
+                  <caret line="39" column="42" selection-start-line="39" selection-start-column="42" selection-end-line="39" selection-end-column="42" />
                   <folding>
                     <element signature="e#0#14#0" expanded="true" />
                   </folding>
@@ -69,14 +68,23 @@
       </split-first>
       <split-second>
         <leaf>
-          <file pinned="false" current-in-tab="true">
+          <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/dls_backup_bl/brick.py">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="540">
-                  <caret line="46" lean-forward="true" selection-start-line="46" selection-end-line="46" />
+                  <caret line="46" selection-start-line="46" selection-end-line="46" />
                   <folding>
                     <element signature="e#0#29#0" expanded="true" />
                   </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/Pipfile">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="119">
+                  <caret line="7" selection-start-line="7" selection-end-line="7" />
                 </state>
               </provider>
             </entry>
@@ -88,6 +96,18 @@
                   <caret line="112" column="57" selection-start-line="112" selection-start-column="57" selection-end-line="112" selection-end-column="57" />
                   <folding>
                     <element signature="e#0#14#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/dls_backup_bl/defaults.py">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="17">
+                  <caret line="8" column="36" lean-forward="true" selection-start-line="8" selection-start-column="36" selection-end-line="8" selection-end-column="36" />
+                  <folding>
+                    <element signature="e#0#24#0" expanded="true" />
                   </folding>
                 </state>
               </provider>
@@ -107,6 +127,7 @@
   <component name="FindInProjectRecents">
     <findStrings>
       <find>system</find>
+      <find>motor_controllers</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -118,8 +139,10 @@
         <option value="$PROJECT_DIR$/dls_backup_bl/util.py" />
         <option value="$PROJECT_DIR$/dls_backup_bl/tserver.py" />
         <option value="$PROJECT_DIR$/dls_backup_bl/zebra.py" />
-        <option value="$PROJECT_DIR$/dls_backup_bl/dls_backup_bl.py" />
         <option value="$PROJECT_DIR$/dls_backup_bl/brick.py" />
+        <option value="$PROJECT_DIR$/Pipfile" />
+        <option value="$PROJECT_DIR$/dls_backup_bl/defaults.py" />
+        <option value="$PROJECT_DIR$/dls_backup_bl/dls_backup_bl.py" />
       </list>
     </option>
   </component>
@@ -187,6 +210,28 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.Backup">
+    <configuration name="Backup to motion" type="PythonConfigurationType" factoryName="Python">
+      <module name="dls_backup_bl" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="dls_backup" />
+      <option name="PARAMETERS" value="--beamline G00" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="Backup" type="PythonConfigurationType" factoryName="Python">
       <module name="dls_backup_bl" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -255,6 +300,7 @@
     </configuration>
     <list>
       <item itemvalue="Python.Backup" />
+      <item itemvalue="Python.Backup to motion" />
       <item itemvalue="Python.dls_pmacanalyse" />
       <item itemvalue="Python.BackupEditor" />
     </list>
@@ -280,12 +326,12 @@
       <workItem from="1570696853438" duration="30348000" />
       <workItem from="1570787611217" duration="839000" />
       <workItem from="1570788612158" duration="20843000" />
-      <workItem from="1570821097877" duration="6480000" />
+      <workItem from="1570821097877" duration="9207000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6480000" />
+    <option name="totallyTimeSpent" value="9207000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1920" height="1173" extended-state="6" />
@@ -294,13 +340,13 @@
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49892932" visible="true" weight="0.100853786" />
       <window_info id="Favorites" order="1" side_tool="true" />
       <window_info anchor="bottom" id="TODO" order="0" weight="0.3294025" />
-      <window_info active="true" anchor="bottom" id="Terminal" order="1" sideWeight="0.50160086" side_tool="true" visible="true" weight="0.2992278" />
+      <window_info anchor="bottom" id="Terminal" order="1" sideWeight="0.47225186" side_tool="true" visible="true" weight="0.3262548" />
       <window_info anchor="bottom" id="Event Log" order="2" sideWeight="0.49882075" side_tool="true" weight="0.3008982" />
       <window_info anchor="bottom" id="Version Control" order="3" sideWeight="0.49941072" weight="0.3291536" />
       <window_info anchor="bottom" id="Message" order="4" />
       <window_info anchor="bottom" id="Find" order="5" sideWeight="0.4997052" weight="0.3294025" />
-      <window_info anchor="bottom" id="Run" order="6" sideWeight="0.4973467" weight="0.3294025" />
-      <window_info anchor="bottom" id="Debug" order="7" sideWeight="0.4979363" weight="0.39937106" />
+      <window_info anchor="bottom" id="Run" order="6" sideWeight="0.31323373" weight="0.3291506" />
+      <window_info active="true" anchor="bottom" id="Debug" order="7" sideWeight="0.5277481" visible="true" weight="0.3262548" />
       <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Docker" order="10" show_stripe_button="false" />
@@ -352,16 +398,46 @@
       </map>
     </option>
   </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/dls_backup_bl/dls_backup_bl.py</url>
+          <line>191</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/dls_backup_bl$Backup.coverage" NAME="Backup Coverage Results" MODIFIED="1570805597016" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/dls_backup_bl$BackupEditor.coverage" NAME="BackupEditor Coverage Results" MODIFIED="1570689501998" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/dls_backup_bl$dls_pmacanalyse.coverage" NAME="dls_pmacanalyse Coverage Results" MODIFIED="1570786811155" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="" />
   </component>
+  <component name="debuggerHistoryManager">
+    <expressions id="evaluateExpression">
+      <expression>
+        <expression-string>list(git_repo.index.diff(None))</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>list(git_repo.index.diff)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>git_repo.index.diff</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>EXPRESSION</evaluation-mode>
+      </expression>
+    </expressions>
+  </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/dls_backup_bl/util.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="663">
-          <caret line="39" column="42" lean-forward="true" selection-start-line="39" selection-start-column="42" selection-end-line="39" selection-end-column="42" />
+          <caret line="39" column="42" selection-start-line="39" selection-start-column="42" selection-end-line="39" selection-end-column="42" />
           <folding>
             <element signature="e#0#14#0" expanded="true" />
           </folding>
@@ -381,19 +457,9 @@
     <entry file="file://$PROJECT_DIR$/dls_backup_bl/zebra.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="408">
-          <caret line="24" column="52" lean-forward="true" selection-start-line="24" selection-start-column="52" selection-end-line="24" selection-end-column="52" />
+          <caret line="24" column="52" selection-start-line="24" selection-start-column="52" selection-end-line="24" selection-end-column="52" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/dls_backup_bl/dls_backup_bl.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="268">
-          <caret line="210" column="35" selection-start-line="210" selection-start-column="35" selection-end-line="210" selection-end-column="35" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -401,9 +467,36 @@
     <entry file="file://$PROJECT_DIR$/dls_backup_bl/brick.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="540">
-          <caret line="46" lean-forward="true" selection-start-line="46" selection-end-line="46" />
+          <caret line="46" selection-start-line="46" selection-end-line="46" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Pipfile">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="119">
+          <caret line="7" selection-start-line="7" selection-end-line="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dls_backup_bl/defaults.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="8" column="36" lean-forward="true" selection-start-line="8" selection-start-column="36" selection-end-line="8" selection-end-column="36" />
+          <folding>
+            <element signature="e#0#24#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dls_backup_bl/dls_backup_bl.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="193">
+          <caret line="184" lean-forward="true" selection-start-line="184" selection-end-line="184" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
