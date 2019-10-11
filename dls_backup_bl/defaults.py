@@ -56,37 +56,37 @@ class Defaults:
         self.ts_folder.mkdir(parents=True, exist_ok=True)
 
     @property
-    def beamline(self):
+    def beamline(self) -> str:
         return self._beamline
 
     @property
-    def backup_folder(self):
+    def backup_folder(self) -> Path:
         return self._backup_folder
 
     @property
-    def config_file(self):
+    def config_file(self) -> Path:
         return self._config_file
 
     @property
-    def motion_folder(self):
+    def motion_folder(self) -> Path:
         return self._backup_folder / Defaults._motion_folder
 
     @property
-    def zebra_folder(self):
+    def zebra_folder(self) -> Path:
         return self._backup_folder / Defaults._zebra_folder
 
     @property
-    def ts_folder(self):
+    def ts_folder(self) -> Path:
         return self._backup_folder / Defaults._ts_folder
 
     @property
-    def retries(self):
+    def retries(self) -> int:
         return self._retries
 
     @property
-    def log_file(self):
+    def log_file(self) -> Path:
         return self._backup_folder / Defaults._log_file
 
     @property
-    def critical_log_file(self):
+    def critical_log_file(self) -> Path:
         return self._backup_folder / Defaults._critical_log_file

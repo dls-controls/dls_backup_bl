@@ -139,9 +139,10 @@ class BackupBeamline:
         # Wait for completion of all backup threads
         self.thread_pool.close()
         self.thread_pool.join()
-        self.wrap_up()
+        self.commit_changes()
 
         log.warning("END OF BACKUP for beamline %s", self.defaults.beamline)
+        self.wrap_up()
 
     def load_config(self):
         # Open JSON file of device details
@@ -203,18 +204,7 @@ class BackupBeamline:
             args = (name, self.backup_dir)
             self.thread_pool.apply_async(backup_zebra, args)
 
-    def wrap_up(self):
-        # Order the results alphabetically to make them easier to read
-        # todo this dont work because top level of motor_controllers is type
-        # self.motor_controllers.sort()
-        # self.terminal_servers.sort()
-        # self.zebras.sort()
-
-        # if self.email:
-        # todo - make the class self sufficient and try to integrate with
-        #  logging
-        #     self.email.send()
-
+    def commit_changes(self):
         # Link to beamline backup git repository in the motion area
         try:
             git_repo = Repo(self.defaults.backup_folder)
@@ -245,3 +235,16 @@ class BackupBeamline:
                 log.warning("Committed changes")
             else:
                 log.info("Repository up to date. No actions taken")
+
+    def wrap_up(self):
+        # Order the results alphabetically to make them easier to read
+        with self.defaults.critical_log_file.open("r") as f:
+            sorted_text = sorted(f.readlines())
+
+        with self.defaults.critical_log_file.open("w") as f:
+            f.writelines(sorted_text)
+
+        # if self.email:
+        # todo - make the class self sufficient and try to integrate with
+        #  logging
+        #     self.email.send()

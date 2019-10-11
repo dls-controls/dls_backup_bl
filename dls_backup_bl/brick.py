@@ -11,7 +11,7 @@ def backup_motor_controller(
 ):
     desc = "{} at {}:{}".format(controller, server, port)
 
-    response = system("ping -c 3 {} > /dev/null 2>&1".format(server))
+    response = system("ping -c 5 {} > /dev/null 2>&1".format(server))
     if response != 0:
         msg = "ERROR: {} is offline".format(desc)
         log.critical(msg)
