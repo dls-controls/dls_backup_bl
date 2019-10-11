@@ -1,13 +1,13 @@
 import argparse
 import json
 import logging
+import smtplib
 from logging import getLogger
 from multiprocessing.pool import ThreadPool
 from typing import List
 
 from git import Repo, InvalidGitRepositoryError
 
-from dls_backup_bl.util import EmailMessage
 from .brick import backup_motor_controller
 from .defaults import Defaults
 from .tserver import backup_terminal_server
@@ -20,14 +20,14 @@ class BackupBeamline:
     def __init__(self):
         self.args = None
 
-        self.json_data: object = object()
-        self.thread_pool: ThreadPool = ThreadPool()
-        self.email: str = str()
+        self.json_data: object = None
+        self.thread_pool: ThreadPool = None
         self.defaults: Defaults = None
+        self.email_address: str = None
 
-        self.motor_controllers: List = []
-        self.terminal_servers: List = []
-        self.zebras: List = []
+        self.motor_controllers: List = None
+        self.terminal_servers: List = None
+        self.zebras: List = None
 
     def setup_logging(self, level: str):
         """
@@ -122,9 +122,11 @@ class BackupBeamline:
                 # Read out the JSON data, then close the file
                 self.json_data = json.load(json_file)
 
+            # use [] instead of get() to verify JSON
             self.motor_controllers = self.json_data["MotorControllers"]
             self.terminal_servers = self.json_data["TerminalServers"]
             self.zebras = self.json_data["Zebras"]
+            self.email_address = self.json_data["Email"]
 
         # Capture problems opening or reading the file
         except BaseException:
@@ -225,11 +227,28 @@ class BackupBeamline:
             f.writelines(sorted_text)
 
     def send_email(self):
-        # if self.email:
-        # todo - make the class self sufficient and try to integrate with
-        #  logging
-        #     self.email.send()
-        pass
+        with self.defaults.critical_log_file.open("r") as f:
+            text = f.readlines()
+        # strip the preamble
+        e_text = ''.join([line[10:] for line in text])
+
+        # noinspection PyBroadException
+        try:
+            assert self.email_address
+            e_from = "From: {}\r\n".format(self.defaults.diamond_sender)
+            e_to = "To: {}\r\n".format(self.email_address)
+            e_subject = "Subject: {} Backup Report\r\n\r\n".format(
+                self.defaults.beamline
+            )
+            msg = e_from + e_to + e_subject + e_text
+            mail_server = smtplib.SMTP(self.defaults.diamond_smtp)
+            mail_server.sendmail(
+                self.defaults.diamond_sender, self.email_address, msg
+            )
+            mail_server.quit()
+            log.info("Email report sent")
+        except BaseException:
+            log.exception("ERROR: sending email failed")
 
     def main(self):
         self.parse_args()
@@ -242,11 +261,11 @@ class BackupBeamline:
 
         log.info("START OF BACKUP for beamline %s to %s",
                  self.defaults.beamline, self.defaults.backup_folder)
+
         # get info on what to backup
         self.load_config()
         # Initiate a thread pool with the desired number of threads
         self.thread_pool = ThreadPool(self.args.threads)
-        self.email = EmailMessage()
 
         # launch threads for each type of backup
         self.do_geobricks()
@@ -256,8 +275,11 @@ class BackupBeamline:
         # Wait for completion of all backup threads
         self.thread_pool.close()
         self.thread_pool.join()
+
+        # finish up
         self.sort_log()
         self.commit_changes()
-
         self.send_email()
-        log.warning("END OF BACKUP for beamline %s", self.defaults.beamline)
+
+        log.warning("END OF BACKUP for beamline %s to %s",
+                    self.defaults.beamline, self.defaults.backup_folder)

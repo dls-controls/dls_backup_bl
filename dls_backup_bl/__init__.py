@@ -1,5 +1,5 @@
 import os
-from dls_backup_bl.dls_backup_bl import BackupBeamline
+from dls_backup_bl.backup import BackupBeamline
 
 
 def load_version():

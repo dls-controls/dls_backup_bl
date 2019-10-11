@@ -3,23 +3,32 @@ from os import environ
 
 
 class Defaults:
+    """
+    manage default values for paths and other settings
+    """
+    # public fixed defaults
+    diamond_smtp: str = 'outbox.rl.ac.uk'
+    diamond_sender: str = 'backup_bl@diamond.ac.uk'
     root_folder = Path("/dls_sw/work/motion/Backups/")
+    threads: int = 10
+
+    # internal defaults
     _motion_folder = Path("MotionControllers/")
     _zebra_folder = Path("Zebras/")
     _ts_folder = Path("TerminalServers/")
     _config_file_suffix = Path("backup.json")
     _log_file = Path("backup_detail.log")
     _critical_log_file = Path("backup.log")
-    _retries = 3
-    threads = 10
+    _retries: int = 3
 
     def __init__(
             self, beamline: str, backup_folder: Path,
             config_file: Path, retires: int
     ):
         """
-        create an object to hold important file paths.
-        pass in command line parameters which override defaults
+        Create an object to hold important file paths.
+        Pass in command line parameters which override defaults:
+
         :param beamline: the name of the beamline in the form 'i16'
         :param backup_folder: override the default location for backups
         """
