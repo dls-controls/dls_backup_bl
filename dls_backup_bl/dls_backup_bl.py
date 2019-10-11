@@ -3,7 +3,6 @@ import json
 import logging
 from logging import getLogger
 from multiprocessing.pool import ThreadPool
-from pathlib import Path
 from typing import List
 
 from git import Repo, InvalidGitRepositoryError, NoSuchPathError
@@ -24,29 +23,48 @@ class BackupBeamline:
         self.json_data: object = object()
         self.thread_pool: ThreadPool = ThreadPool()
         self.email: str = str()
-        self.backup_dir: Path = Path()
-        self.retries: int = int()
-        self.beamline: str = str()
+        self.defaults = None
 
         self.motor_controllers: List = []
         self.terminal_servers: List = []
         self.zebras: List = []
 
-    @staticmethod
-    def setup_logging(level: str, log_file: Path):
-        logging.basicConfig(level=logging.DEBUG,
-                            format='%(asctime)s %(levelname)-8s '
-                                   '%(message)s        (%(name)s)',
-                            datefmt='%m-%d %H:%M:%S',
-                            filename=str(log_file),
-                            filemode='w')
+    def setup_logging(self, level: str):
+        """
+        set up 3 logging handlers:
+            A file logger to record debug information
+            A file logger to record Critical messages
+            A console logger
+        The critical logger will be stored in the repo for a record of
+        success/failure of each backup
+        The debug logger will be in .gitignore so can be used to diagnose
+        the most recent backup only
+        The console logger level is configurable at the command line
+        """
 
+        # basic config sets up the debugging log file
+        msg_f = '%(asctime)s %(levelname)-8s %(message)s        (%(name)s)'
+        date_f = '%y-%m-%d %H:%M:%S'
+        logging.basicConfig(
+            level=logging.DEBUG, format=msg_f, datefmt=date_f,
+            filename=str(self.defaults.log_file), filemode='w'
+        )
+
+        # critical log file for emails and record of activity
+        critical = logging.FileHandler(
+            filename=str(self.defaults.critical_log_file), mode='w'
+        )
+        critical.setLevel(logging.ERROR)
+        formatter = logging.Formatter('%(levelname)-10s %(message)s')
+        critical.setFormatter(formatter)
+
+        # console log file for immediate feedback
         numeric_level = getattr(logging, level.upper(), None)
 
         # suppress verbose logging in dependent libraries
         if numeric_level > logging.DEBUG:
-            logging.getLogger("dls_pmacanalyse").setLevel(logging.ERROR)
-            logging.getLogger("dls_pmaclib").setLevel(logging.ERROR)
+            logging.getLogger("dls_pmacanalyse").setLevel(logging.WARNING)
+            logging.getLogger("dls_pmaclib").setLevel(logging.WARNING)
 
         # control logging for all modules in this package to the console
         console = logging.StreamHandler()
@@ -55,14 +73,14 @@ class BackupBeamline:
             '%(asctime)s %(levelname)-10s %(message)s      (%(name)s)',
             datefmt='%y-%m-%d %H:%M:%S'
         )
-
         # tell the handler to use this format
         console.setFormatter(formatter)
         console.setLevel(numeric_level)
 
-        # add the handler to the root logger
+        # add the extra handlers to the root logger
         root_logger = logging.getLogger()
         root_logger.addHandler(console)
+        root_logger.addHandler(critical)
 
     def parse_args(self):
         # Setup an argument Parser
@@ -98,23 +116,23 @@ class BackupBeamline:
 
     def main(self):
         self.parse_args()
-        defaults = Defaults(
+        self.defaults = Defaults(
             self.args.beamline, self.args.dir, self.args.json_file,
             self.args.retries
         )
-        defaults.check_folders()
-        self.setup_logging(self.args.log_level, defaults.log_file)
+        self.defaults.check_folders()
+        self.setup_logging(self.args.log_level)
 
         log.info("START OF BACKUP for beamline %s to %s",
-                 self.beamline, defaults.root_folder)
+                 self.defaults.beamline, self.defaults.backup_folder)
         # get info on what to backup
-        self.load_config(defaults.config_file)
+        self.load_config()
         # Initiate a thread pool with the desired number of threads
         self.thread_pool = ThreadPool(self.args.threads)
         self.email = EmailMessage()
 
         # launch threads for each type of backup
-        self.do_geobricks(defaults)
+        self.do_geobricks()
         # self.do_t_servers()
         # self.do_zebras()
 
@@ -123,13 +141,13 @@ class BackupBeamline:
         self.thread_pool.join()
         self.wrap_up()
 
-        log.warning("END OF BACKUP for beamline %s", defaults.beamline)
+        log.warning("END OF BACKUP for beamline %s", self.defaults.beamline)
 
-    def load_config(self, filename):
+    def load_config(self):
         # Open JSON file of device details
         # noinspection PyBroadException
         try:
-            with open(filename) as json_file:
+            with open(self.defaults.config_file) as json_file:
                 # Read out the JSON data, then close the file
                 self.json_data = json.load(json_file)
 
@@ -142,7 +160,7 @@ class BackupBeamline:
             log.exception("Invalid json configuration file")
             raise
 
-    def do_geobricks(self, defaults: Defaults):
+    def do_geobricks(self):
         # Go through every motor controller listed in JSON file
         for controller_type in self.motor_controllers:
             for motor_controller in self.motor_controllers[controller_type]:
@@ -158,7 +176,8 @@ class BackupBeamline:
 
                 # Add a backup job to the pool
                 args = (
-                    controller, server, port, is_geobrick, uses_ts, defaults
+                    controller, server, port, is_geobrick,
+                    uses_ts, self.defaults
                 )
                 self.thread_pool.apply_async(backup_motor_controller, args)
 
@@ -198,7 +217,7 @@ class BackupBeamline:
 
         # Link to beamline backup git repository in the motion area
         try:
-            git_repo = Repo("/dls_sw/work/motion/Backups/" + self.beamline)
+            git_repo = Repo(self.defaults.backup_folder)
         except (InvalidGitRepositoryError, NoSuchPathError):
             log.error("There is no git repo - cannot commit changes")
         else:

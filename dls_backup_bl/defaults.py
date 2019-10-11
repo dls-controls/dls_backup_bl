@@ -8,7 +8,8 @@ class Defaults:
     _zebra_folder = Path("Zebras/")
     _ts_folder = Path("TerminalServers/")
     _config_file_suffix = Path("backup.json")
-    _log_file = Path("backup.log")
+    _log_file = Path("backup_detail.log")
+    _critical_log_file = Path("backup.log")
     _retries = 3
     threads = 10
 
@@ -59,6 +60,10 @@ class Defaults:
         return self._beamline
 
     @property
+    def backup_folder(self):
+        return self._backup_folder
+
+    @property
     def config_file(self):
         return self._config_file
 
@@ -81,3 +86,7 @@ class Defaults:
     @property
     def log_file(self):
         return self._backup_folder / Defaults._log_file
+
+    @property
+    def critical_log_file(self):
+        return self._backup_folder / Defaults._critical_log_file

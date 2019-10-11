@@ -2,14 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="40654a3a-2331-4169-9714-67d74274835f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/dls_backup_bl/defaults.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dictionaries/hgv27681.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dictionaries/hgv27681.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pipfile" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pipfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dls_backup_bl/brick.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/brick.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dls_backup_bl/defaults.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/defaults.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dls_backup_bl/dls_backup_bl.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/dls_backup_bl.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/test_brick.json" beforeDir="false" afterPath="$PROJECT_DIR$/test/test_brick.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dls_pmacanalyse/Pipfile" beforeDir="false" afterPath="$PROJECT_DIR$/../dls_pmacanalyse/Pipfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dls_pmacanalyse/Pipfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../dls_pmacanalyse/Pipfile.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../dls_pmacanalyse/dls_pmacanalyse/dls_pmacanalyse.py" beforeDir="false" afterPath="$PROJECT_DIR$/../dls_pmacanalyse/dls_pmacanalyse/dls_pmacanalyse.py" afterDir="false" />
@@ -162,7 +157,7 @@
       <workItem from="1570686282270" duration="8348000" />
       <workItem from="1570696853438" duration="30348000" />
       <workItem from="1570787611217" duration="839000" />
-      <workItem from="1570788612158" duration="17408000" />
+      <workItem from="1570788612158" duration="19840000" />
     </task>
     <servers />
   </component>
