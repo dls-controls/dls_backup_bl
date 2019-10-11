@@ -63,8 +63,8 @@ class BackupBeamline:
 
         # suppress verbose logging in dependent libraries
         if numeric_level > logging.DEBUG:
-            logging.getLogger("dls_pmacanalyse").setLevel(logging.WARNING)
-            logging.getLogger("dls_pmaclib").setLevel(logging.WARNING)
+            logging.getLogger("dls_pmacanalyse").setLevel(logging.ERROR)
+            logging.getLogger("dls_pmaclib").setLevel(logging.ERROR)
 
         # control logging for all modules in this package to the console
         console = logging.StreamHandler()
@@ -84,65 +84,35 @@ class BackupBeamline:
 
     def parse_args(self):
         # Setup an argument Parser
-        Parser = argparse.ArgumentParser(
+        parser = argparse.ArgumentParser(
             description='Backup PMAC & GeoBrick motor controllers, terminal '
                         'servers, '
                         'and Zebra boxes',
             usage="%(prog)s [options]")
-        Parser.add_argument('-n', '--beamline', action="store",
+        parser.add_argument('-n', '--beamline', action="store",
                             help="Name of beamline backup is for. "
                                  "Defaults to the current beamline")
-        Parser.add_argument('-b', '--dir', action="store",
+        parser.add_argument('-b', '--dir', action="store",
                             help="Directory to save backups to. Defaults to"
                                  "/dls_sw/motion/Backups/$(BEAMLINE)")
-        Parser.add_argument('-j', action="store", dest="json_file",
+        parser.add_argument('-j', action="store", dest="json_file",
                             help="JSON file of devices to be backed up. "
                                  "Defaults to DIR/$(BEAMLINE).backup.json")
-        Parser.add_argument('-r', '--retries', action="store", type=int,
+        parser.add_argument('-r', '--retries', action="store", type=int,
                             default=0,
                             help="Number of times to attempt backup")
-        Parser.add_argument('-t', '--threads', action="store", type=int,
+        parser.add_argument('-t', '--threads', action="store", type=int,
                             default=Defaults.threads,
                             help="Number of processor threads to use (Number "
                                  "of simultaneous backups)")
-        Parser.add_argument('-e', '--email', action="store",
+        parser.add_argument('-e', '--email', action="store",
                             help="Email address to send backup reports to")
-        Parser.add_argument('-l', '--log-level', action="store",
+        parser.add_argument('-l', '--log-level', action="store",
                             default='info',
                             help="Set logging to error, warning, info, debug")
 
         # Parse the command line arguments
-        self.args = Parser.parse_args()
-
-    def main(self):
-        self.parse_args()
-        self.defaults = Defaults(
-            self.args.beamline, self.args.dir, self.args.json_file,
-            self.args.retries
-        )
-        self.defaults.check_folders()
-        self.setup_logging(self.args.log_level)
-
-        log.info("START OF BACKUP for beamline %s to %s",
-                 self.defaults.beamline, self.defaults.backup_folder)
-        # get info on what to backup
-        self.load_config()
-        # Initiate a thread pool with the desired number of threads
-        self.thread_pool = ThreadPool(self.args.threads)
-        self.email = EmailMessage()
-
-        # launch threads for each type of backup
-        self.do_geobricks()
-        # self.do_t_servers()
-        # self.do_zebras()
-
-        # Wait for completion of all backup threads
-        self.thread_pool.close()
-        self.thread_pool.join()
-        self.commit_changes()
-
-        log.warning("END OF BACKUP for beamline %s", self.defaults.beamline)
-        self.wrap_up()
+        self.args = parser.parse_args()
 
     def load_config(self):
         # Open JSON file of device details
@@ -190,27 +160,29 @@ class BackupBeamline:
             ts_type = terminal_server["Type"]
             # Add a backup job to the pool
             args = (
-                server, ts_type, self.backup_dir, self.retries
+                server, ts_type, self.defaults
             )
             self.thread_pool.apply_async(backup_terminal_server, args)
 
     def do_zebras(self):
         # Go through every zebra listed in JSON file
         for zebra in self.zebras:
-            PropertyList = []
             # Pull out the PV name detail
             name = zebra["Name"]
             # Add a backup job to the pool
-            args = (name, self.backup_dir)
+            args = (name, self.defaults)
             self.thread_pool.apply_async(backup_zebra, args)
 
+    # noinspection PyBroadException
     def commit_changes(self):
         # Link to beamline backup git repository in the motion area
         try:
-            git_repo = Repo(self.defaults.backup_folder)
-        except (InvalidGitRepositoryError, NoSuchPathError):
-            log.error("There is no git repo - cannot commit changes")
-        else:
+            try:
+                git_repo = Repo(self.defaults.backup_folder)
+            except InvalidGitRepositoryError:
+                log.error("There is no git repo - creating a repo")
+                git_repo = Repo.init(self.defaults.backup_folder)
+
             # Gather up any changes
             untracked_files = git_repo.untracked_files
             modified_files = [
@@ -232,9 +204,13 @@ class BackupBeamline:
                 # Note repo.git.add is used to handle deleted files
                 git_repo.git.add(all=True)
                 git_repo.index.commit("commit by dls-backup-bl")
-                log.warning("Committed changes")
+                log.info("Committed changes")
             else:
                 log.info("Repository up to date. No actions taken")
+        except BaseException:
+            log.exception("ERROR: _repo not updated")
+        else:
+            log.critical("SUCCESS: _repo changes commited")
 
     def wrap_up(self):
         # Order the results alphabetically to make them easier to read
@@ -248,3 +224,33 @@ class BackupBeamline:
         # todo - make the class self sufficient and try to integrate with
         #  logging
         #     self.email.send()
+
+    def main(self):
+        self.parse_args()
+        self.defaults = Defaults(
+            self.args.beamline, self.args.dir, self.args.json_file,
+            self.args.retries
+        )
+        self.defaults.check_folders()
+        self.setup_logging(self.args.log_level)
+
+        log.info("START OF BACKUP for beamline %s to %s",
+                 self.defaults.beamline, self.defaults.backup_folder)
+        # get info on what to backup
+        self.load_config()
+        # Initiate a thread pool with the desired number of threads
+        self.thread_pool = ThreadPool(self.args.threads)
+        self.email = EmailMessage()
+
+        # launch threads for each type of backup
+        self.do_geobricks()
+        # self.do_t_servers()
+        # self.do_zebras()
+
+        # Wait for completion of all backup threads
+        self.thread_pool.close()
+        self.thread_pool.join()
+        self.commit_changes()
+
+        log.warning("END OF BACKUP for beamline %s", self.defaults.beamline)
+        self.wrap_up()

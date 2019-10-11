@@ -5,10 +5,10 @@ verify_ssl = true
 
 [dev-packages]
 pytest = "*"
+ipython = "*"
 
 [packages]
 pyqt5 = "*"
-dls-backup-bl = {path = "."}
 pexpect = "*"
 dls-pmacanalyse = {editable = true,path = "./../dls_pmacanalyse"}
 dls-pmaclib = {editable = true,path = "./../dls_pmaclib"}

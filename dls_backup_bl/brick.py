@@ -9,7 +9,7 @@ log = getLogger(__name__)
 def backup_motor_controller(
         controller, server, port, geo_brick, t_serv, defaults
 ):
-    desc = "{} at {}:{}".format(controller, server, port)
+    desc = "pmac {} at {}:{}".format(controller, server, port)
 
     response = system("ping -c 5 {} > /dev/null 2>&1".format(server))
     if response != 0:
@@ -31,9 +31,9 @@ def backup_motor_controller(
             pmac_object.setGeobrick(geo_brick)
             pmac_object.readHardware(
                 defaults.motion_folder, False, False, False, False)
-            log.critical("SUCCESS: {} backed up".format(controller))
+            log.critical("SUCCESS: {} backed up".format(desc))
 
-        except Exception as e:
+        except Exception:
             msg = "ERROR: {} backup failed on attempt {} of {}".format(
                 desc, attempt_num + 1, defaults.retries)
             log.exception(msg)
@@ -41,6 +41,6 @@ def backup_motor_controller(
         break
     else:
         msg = "ERROR: {} all {} attempts failed".format(
-            defaults.retries, desc
+            desc, defaults.retries
         )
         log.critical(msg)
