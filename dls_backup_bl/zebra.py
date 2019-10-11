@@ -53,7 +53,7 @@ def backup_zebra(
             continue
         break
     else:
-        error_message = "\nAll " + str(
+        error_message = "All " + str(
             num_retries) + " attempts to backup " + name + " failed"
         my_email.add_to_message(error_message)
         print(error_message)

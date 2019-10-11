@@ -6,6 +6,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="dls_pmacanalyse" />
     <orderEntry type="module" module-name="dls_pmaccontrol" />
+    <orderEntry type="module" module-name="dls_pmaclib" />
   </component>
   <component name="TestRunnerService">
     <option name="projectConfiguration" value="pytest" />

@@ -1,16 +1,19 @@
-import sys
 import argparse
 import json
+import logging
+from logging import getLogger
 from multiprocessing.pool import ThreadPool
+from pathlib import Path
 from typing import List
 
-from cothread.catools import *
-from pathlib import Path
+from git import Repo, InvalidGitRepositoryError, NoSuchPathError
 
 from dls_backup_bl.util import EmailMessage
 from .brick import backup_motor_controller
-from .zebra import backup_zebra
 from .tserver import backup_terminal_server
+from .zebra import backup_zebra
+
+log = getLogger(__name__)
 
 
 class BackupBeamline:
@@ -27,6 +30,35 @@ class BackupBeamline:
         self.motor_controllers: List = []
         self.terminal_servers: List = []
         self.zebras: List = []
+
+        # todo this should be off of root (or other know location?)
+        log_file = '/tmp/backup_log.txt'
+
+        logging.basicConfig(level=logging.DEBUG,
+                            format='%(asctime)s %(levelname)-8s '
+                                   '%(message)s (%(name)s)',
+                            datefmt='%m-%d %H:%M:%S',
+                            filename=log_file,
+                            filemode='w')
+
+        # suppress verbose logging in libraries
+        logging.getLogger("dls_pmacanalyse").setLevel(logging.ERROR)
+        logging.getLogger("dls_pmaclib").setLevel(logging.ERROR)
+
+        # control logging for all modules in this package to the console
+        console = logging.StreamHandler()
+        # set a format which is simpler for console use
+        formatter = logging.Formatter(
+            '%(asctime)s %(levelname)-8s %(module)s %(message)s ',
+            datefmt='%y-%m-%d %H:%M:%S'
+        )
+        # tell the handler to use this format
+        console.setFormatter(formatter)
+        # todo command line control this
+        console.setLevel(logging.INFO)
+        # add the handler to the root logger
+        root_logger = logging.getLogger()
+        root_logger.addHandler(console)
 
     def parse_args(self):
         # Setup an argument Parser
@@ -59,10 +91,12 @@ class BackupBeamline:
         self.parse_args()
         self.backup_dir = self.args.dir
         self.retries = self.args.retries
+        self.beamline = self.args.beamline
 
         assert self.backup_dir is not None, "backup directory required"
-        assert self.beamline is not None, "beamline name required"
+        assert self.beamline is not '', "beamline name required"
 
+        log.info("START OF BACKUP for beamline %s", self.beamline)
         # get info on what to backup
         self.load_config(self.args.json_file)
         # Initiate a thread pool with the desired number of threads
@@ -77,7 +111,7 @@ class BackupBeamline:
         # Wait for completion of all backup threads
         self.thread_pool.close()
         self.thread_pool.join()
-        print("\nBackup run complete!\n")
+        log.warning("END OF BACKUP for beamline %s", self.beamline)
 
         self.wrap_up()
 
@@ -101,7 +135,7 @@ class BackupBeamline:
 
         # Capture problems opening or reading the file
         except BaseException:
-            print("\nInvalid json file name or path or invalid JSON\n")
+            log.exception("Invalid json configuration file")
             raise
 
     def do_geobricks(self):
@@ -170,49 +204,46 @@ class BackupBeamline:
             # Add properties to master list
             zebra_property_list.append(PropertyList)
 
-    def report(self):
-        pass
-
     def wrap_up(self):
         # Order the results alphabetically to make them easier to read
+        # todo this dont work because top level of motor_controllers is type
         # self.motor_controllers.sort()
         # self.terminal_servers.sort()
         # self.zebras.sort()
-        #
+
         # if self.email:
-        #     print(self.email.print_message())
+        # todo - make the class self sufficient and try to integrate with
+        #  logging
         #     self.email.send()
-        #
-        # # Link to beamline backup git repository in the motion area
-        # GitRepo = git.Repo("/dls_sw/work/motion/Backups/" + self.beamline)
-        #
-        # # Gather up any changes
-        # UntrackedFiles = GitRepo.untracked_files
-        # ModifiedFiles = [diff.a_blob.name for diff in GitRepo.index.diff(None)]
-        # ChangeList = UntrackedFiles + ModifiedFiles
-        #
-        # # If there are changes, commit them
-        # if ChangeList:
-        #     if UntrackedFiles:
-        #         print("The following files are untracked:")
-        #         for File in UntrackedFiles:
-        #             print(File)
-        #     if ModifiedFiles:
-        #         print("The following files are modified or deleted:")
-        #         for File in ModifiedFiles:
-        #             print(File)
-        #     print("Adding them to the staging area")
-        #     # repo.index.add(ChangeList)
-        #     # Note repo.git.add is used to handle deleted files
-        #     GitRepo.git.add(all=True)
-        #     GitRepo.index.commit("Modified files commited")
-        #     print("Committed changes")
-        # else:
-        #     print("Repository up to date. No actions taken")
 
-        print("Done")
+        # Link to beamline backup git repository in the motion area
+        try:
+            git_repo = Repo("/dls_sw/work/motion/Backups/" + self.beamline)
+        except (InvalidGitRepositoryError, NoSuchPathError):
+            log.error("There is no git repo - cannot commit changes")
+        else:
+            # Gather up any changes
+            untracked_files = git_repo.untracked_files
+            modified_files = [
+                diff.a_blob.name for diff in git_repo.index.diff(None)
+            ]
+            change_list = untracked_files + modified_files
 
+            # If there are changes, commit them
+            if change_list:
+                if untracked_files:
+                    log.info("The following files are untracked:")
+                    for File in untracked_files:
+                        log.info('\t' + File)
+                if modified_files:
+                    log.info("The following files are modified or deleted:")
+                    for File in modified_files:
+                        log.info('\t' + File)
+                git_repo.index.add(change_list)
+                # Note repo.git.add is used to handle deleted files
+                git_repo.git.add(all=True)
+                git_repo.index.commit("commit by dls-backup-bl")
+                log.warning("Committed changes")
+            else:
+                log.info("Repository up to date. No actions taken")
 
-if __name__ == '__main__':
-    bb = BackupBeamline()
-    bb.main()

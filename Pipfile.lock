@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "b3ca041edccdf37791cbf9430f7fb9983f22878ff0437bc04802f846696e9649"
+            "sha256": "5d4550cacd5ec285d945683d89422ac9536291a9feeb071f78c7fd51d9a40683"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -26,15 +26,24 @@
             "path": "."
         },
         "dls-pmacanalyse": {
-            "editable": true,
             "path": "./../dls_pmacanalyse"
         },
         "dls-pmaclib": {
+            "editable": true,
+            "path": "./../dls_pmaclib"
+        },
+        "gitdb2": {
             "hashes": [
-                "sha256:24be6aae6129f382f3070f485ffd13abda68b74cab15868a22fde8d8a2a0240f",
-                "sha256:815faa3aeee584fd42067fae7defc00aaec5ac4abb302b8d3f382591f1774f78"
+                "sha256:e3a0141c5f2a3f635c7209d56c496ebe1ad35da82fe4d3ec4aaa36278d70648a"
             ],
-            "version": "==2.0.1"
+            "version": "==2.0.5"
+        },
+        "gitpython": {
+            "hashes": [
+                "sha256:947cc75913e7b6da108458136607e2ee0e40c20be1e12d4284e7c6c12956c276"
+            ],
+            "index": "pypi",
+            "version": "==3.0.2"
         },
         "numpy": {
             "hashes": [
@@ -70,6 +79,12 @@
                 "sha256:e0770fadba80c31013896c7e6ef703f72e7834965954a78e71a3049488d4d7d8"
             ],
             "version": "==3.4"
+        },
+        "smmap2": {
+            "hashes": [
+                "sha256:0555a7bf4df71d1ef4218e4807bbf9b201f910174e6e08af2e138d4e517b4dde"
+            ],
+            "version": "==2.0.5"
         }
     },
     "develop": {

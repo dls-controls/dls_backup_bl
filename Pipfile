@@ -10,6 +10,8 @@ pytest = "*"
 pyqt5 = "*"
 dls-backup-bl = {path = "."}
 pexpect = "*"
-dls-pmacanalyse = {editable = true,path = "./../dls_pmacanalyse"}
+dls-pmacanalyse = {path = "./../dls_pmacanalyse"}
+dls-pmaclib = {editable = true,path = "./../dls_pmaclib"}
 numpy = "*"
 cothread = "*"
+gitpython = "*"

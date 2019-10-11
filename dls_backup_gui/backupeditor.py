@@ -222,8 +222,7 @@ class Editor(QWidget):
             self.JSONFile.close()
         # Capture problems opening or reading the file
         except Exception as e:
-            print
-            "\nInvalid JSON file name or path or invalid JSON\n"
+            print("Invalid JSON file name or path or invalid JSON")
             sys.exit()
         # Populate the category list with the data
         self.DisplayEntries()
@@ -242,7 +241,7 @@ class Editor(QWidget):
                 self.JSONFile.close()
         # Capture problems opening or saving the file
         except Exception as e:
-            print("\nInvalid json file name or path or invalid JSON\n")
+            print("Invalid json file name or path or invalid JSON")
             sys.exit()
         # Re-read the JSON file after the write to refresh the GUI
         self.ReadJSONFile()

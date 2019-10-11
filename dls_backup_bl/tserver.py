@@ -103,10 +103,10 @@ def backup_terminal_server(
                 ". Attempt " + str(
                     AttemptNum + 1) + " of " + str(num_retries))
             TsConfig(server, backup_directory, None, None, ts_type)
-            print("\rFinished backing up " + server)
+            print("Finished backing up " + server)
             property_list.append("Successful")
         except Exception as e:
-            error_message = "ERROR: Problem backing up {}\n".format(server)
+            error_message = "ERROR: Problem backing up {}".format(server)
             error_message += str(e)
             my_email.add_to_message(error_message)
             print(error_message)

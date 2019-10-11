@@ -15,7 +15,7 @@ def backup_motor_controller(
     for attempt_num in range(retries):
         # noinspection PyBroadException
         try:
-            msg = "\rBacking up {} on server {}:{}. Attempt {} of {}".format(
+            msg = "Backing up {} on server {}:{}. Attempt {} of {}".format(
                 controller, server, port, attempt_num + 1, retries
             )
             log.info(msg)
@@ -29,7 +29,7 @@ def backup_motor_controller(
             pmac_object.setProtocol(server, port, t_serv)
             pmac_object.setGeobrick(geo_brick)
             config_object.analyse()
-            log.info("\rFinished backing up {}".format(controller))
+            log.info("Finished backing up {}".format(controller))
             property_list.append("Successful")
 
         except Exception as e:
@@ -41,7 +41,7 @@ def backup_motor_controller(
             continue
         break
     else:
-        error_message = "\nAll {} attempts to backup {} failed".format(
+        error_message = "All {} attempts to backup {} failed".format(
             retries, controller
         )
         my_email.add_to_message(error_message)
