@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "5d4550cacd5ec285d945683d89422ac9536291a9feeb071f78c7fd51d9a40683"
+            "sha256": "c8ed6bbd82e05497fb61e29c8379e0bf25b50e4b870c6cf0e34f0cd1bdf62dea"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -26,6 +26,7 @@
             "path": "."
         },
         "dls-pmacanalyse": {
+            "editable": true,
             "path": "./../dls_pmacanalyse"
         },
         "dls-pmaclib": {

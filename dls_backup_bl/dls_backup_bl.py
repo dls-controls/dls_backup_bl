@@ -12,6 +12,7 @@ from dls_backup_bl.util import EmailMessage
 from .brick import backup_motor_controller
 from .tserver import backup_terminal_server
 from .zebra import backup_zebra
+from .defaults import Defaults
 
 log = getLogger(__name__)
 
@@ -31,31 +32,34 @@ class BackupBeamline:
         self.terminal_servers: List = []
         self.zebras: List = []
 
-        # todo this should be off of root (or other know location?)
-        log_file = '/tmp/backup_log.txt'
-
+    @staticmethod
+    def setup_logging(level: str, log_file: Path):
         logging.basicConfig(level=logging.DEBUG,
                             format='%(asctime)s %(levelname)-8s '
-                                   '%(message)s (%(name)s)',
+                                   '%(message)s        (%(name)s)',
                             datefmt='%m-%d %H:%M:%S',
-                            filename=log_file,
+                            filename=str(log_file),
                             filemode='w')
 
-        # suppress verbose logging in libraries
-        logging.getLogger("dls_pmacanalyse").setLevel(logging.ERROR)
-        logging.getLogger("dls_pmaclib").setLevel(logging.ERROR)
+        numeric_level = getattr(logging, level.upper(), None)
+
+        # suppress verbose logging in dependent libraries
+        if numeric_level > logging.DEBUG:
+            logging.getLogger("dls_pmacanalyse").setLevel(logging.ERROR)
+            logging.getLogger("dls_pmaclib").setLevel(logging.ERROR)
 
         # control logging for all modules in this package to the console
         console = logging.StreamHandler()
         # set a format which is simpler for console use
         formatter = logging.Formatter(
-            '%(asctime)s %(levelname)-8s %(module)s %(message)s ',
+            '%(asctime)s %(levelname)-10s %(message)s      (%(name)s)',
             datefmt='%y-%m-%d %H:%M:%S'
         )
+
         # tell the handler to use this format
         console.setFormatter(formatter)
-        # todo command line control this
-        console.setLevel(logging.INFO)
+        console.setLevel(numeric_level)
+
         # add the handler to the root logger
         root_logger = logging.getLogger()
         root_logger.addHandler(console)
@@ -66,62 +70,62 @@ class BackupBeamline:
             description='Backup PMAC & GeoBrick motor controllers, terminal '
                         'servers, '
                         'and Zebra boxes',
-            usage="%(prog)s -j <JSON File> [options]")
-        Parser.add_argument('-j', action="store", dest="json_file",
-                            help="JSON file of devices to be backed up")
-        Parser.add_argument('-b', '--dir', action="store",
-                            help="Directory to save backups to")
-        Parser.add_argument('-r', '--retries', action="store", type=int,
-                            default=3,
-                            help="Number of times to attempt backup (Default "
-                                 "of 3)")
-        Parser.add_argument('-t', '--threads', action="store", type=int,
-                            default=10,
-                            help="Number of processor threads to use (Number "
-                                 "of simultaneous backups) (Default of 10)")
+            usage="%(prog)s [options]")
         Parser.add_argument('-n', '--beamline', action="store",
-                            help="Name of beamline backup is for")
+                            help="Name of beamline backup is for. "
+                                 "Defaults to the current beamline")
+        Parser.add_argument('-b', '--dir', action="store",
+                            help="Directory to save backups to. Defaults to"
+                                 "/dls_sw/motion/Backups/$(BEAMLINE)")
+        Parser.add_argument('-j', action="store", dest="json_file",
+                            help="JSON file of devices to be backed up. "
+                                 "Defaults to DIR/$(BEAMLINE).backup.json")
+        Parser.add_argument('-r', '--retries', action="store", type=int,
+                            default=0,
+                            help="Number of times to attempt backup")
+        Parser.add_argument('-t', '--threads', action="store", type=int,
+                            default=Defaults.threads,
+                            help="Number of processor threads to use (Number "
+                                 "of simultaneous backups)")
         Parser.add_argument('-e', '--email', action="store",
                             help="Email address to send backup reports to")
+        Parser.add_argument('-l', '--log-level', action="store",
+                            default='info',
+                            help="Set logging to error, warning, info, debug")
 
         # Parse the command line arguments
         self.args = Parser.parse_args()
 
     def main(self):
         self.parse_args()
-        self.backup_dir = self.args.dir
-        self.retries = self.args.retries
-        self.beamline = self.args.beamline
+        defaults = Defaults(
+            self.args.beamline, self.args.dir, self.args.json_file,
+            self.args.retries
+        )
+        defaults.check_folders()
+        self.setup_logging(self.args.log_level, defaults.log_file)
 
-        assert self.backup_dir is not None, "backup directory required"
-        assert self.beamline is not '', "beamline name required"
-
-        log.info("START OF BACKUP for beamline %s", self.beamline)
+        log.info("START OF BACKUP for beamline %s to %s",
+                 self.beamline, defaults.root_folder)
         # get info on what to backup
-        self.load_config(self.args.json_file)
+        self.load_config(defaults.config_file)
         # Initiate a thread pool with the desired number of threads
         self.thread_pool = ThreadPool(self.args.threads)
         self.email = EmailMessage()
 
         # launch threads for each type of backup
-        self.do_geobricks()
+        self.do_geobricks(defaults)
         # self.do_t_servers()
         # self.do_zebras()
 
         # Wait for completion of all backup threads
         self.thread_pool.close()
         self.thread_pool.join()
-        log.warning("END OF BACKUP for beamline %s", self.beamline)
-
         self.wrap_up()
 
-    def load_config(self, filename):
-        if not filename:
-            raise ValueError("a json configuration file is required")
-        # Add the .json file extension if not specified
-        if not filename.lower().endswith('.json'):
-            filename += '.json'
+        log.warning("END OF BACKUP for beamline %s", defaults.beamline)
 
+    def load_config(self, filename):
         # Open JSON file of device details
         # noinspection PyBroadException
         try:
@@ -138,12 +142,10 @@ class BackupBeamline:
             log.exception("Invalid json configuration file")
             raise
 
-    def do_geobricks(self):
+    def do_geobricks(self, defaults: Defaults):
         # Go through every motor controller listed in JSON file
-        motor_controller_property_list = []
         for controller_type in self.motor_controllers:
             for motor_controller in self.motor_controllers[controller_type]:
-                properties = []
                 # Pull out the controller details
                 controller = motor_controller["Controller"]
                 server = motor_controller["Server"]
@@ -154,55 +156,33 @@ class BackupBeamline:
                 # Check whether a terminal server is used or not
                 uses_ts = port != "1025"
 
-                # Keep a record of properties for the results table
-                properties.append(str(controller))
-                properties.append(str(controller_type))
-                properties.append(str(server))
-                properties.append(str(port))
-
                 # Add a backup job to the pool
-                args = (controller, server,
-                        port, is_geobrick, uses_ts,
-                        self.backup_dir, self.retries,
-                        self.email, properties)
+                args = (
+                    controller, server, port, is_geobrick, uses_ts, defaults
+                )
                 self.thread_pool.apply_async(backup_motor_controller, args)
-                # Add properties to master list
-                motor_controller_property_list.append(properties)
 
     def do_t_servers(self):
         # Go through every terminal server listed in JSON file
-        terminal_server_property_list = []
         for terminal_server in self.terminal_servers:
-            property_list = []
             # Pull out the server details
             server = terminal_server["Server"]
             ts_type = terminal_server["Type"]
-            # Keep a record of properties for the results table
-            property_list.append(str(server))
-            property_list.append(str(ts_type))
             # Add a backup job to the pool
             args = (
-                server, ts_type, self.backup_dir, self.retries, self.email,
-                property_list
+                server, ts_type, self.backup_dir, self.retries
             )
             self.thread_pool.apply_async(backup_terminal_server, args)
-            # Add properties to master list
-            terminal_server_property_list.append(property_list)
 
     def do_zebras(self):
         # Go through every zebra listed in JSON file
-        zebra_property_list = []
         for zebra in self.zebras:
             PropertyList = []
             # Pull out the PV name detail
             name = zebra["Name"]
-            # Keep a record of properties for the results table
-            PropertyList.append(str(name))
             # Add a backup job to the pool
-            args = (name, self.backup_dir, PropertyList)
+            args = (name, self.backup_dir)
             self.thread_pool.apply_async(backup_zebra, args)
-            # Add properties to master list
-            zebra_property_list.append(PropertyList)
 
     def wrap_up(self):
         # Order the results alphabetically to make them easier to read
@@ -246,4 +226,3 @@ class BackupBeamline:
                 log.warning("Committed changes")
             else:
                 log.info("Repository up to date. No actions taken")
-
