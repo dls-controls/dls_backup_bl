@@ -45,7 +45,8 @@ def backup_motor_controller(
         except Exception:
             msg = "ERROR: {} backup failed on attempt {} of {}".format(
                 desc, attempt_num + 1, defaults.retries)
-            log.exception(msg)
+            log.debug(msg, exc_info=True)
+            log.error(msg)
             continue
         break
     else:

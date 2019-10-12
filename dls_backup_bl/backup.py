@@ -197,7 +197,9 @@ class BackupBeamline:
             else:
                 log.info("Repository up to date. No actions taken")
         except BaseException:
-            log.exception("ERROR: _repo not updated")
+            msg = "ERROR: _repo not updated"
+            log.debug(msg, exc_info=True)
+            log.error(msg)
         else:
             log.warning("SUCCESS: _repo changes committed")
 
@@ -231,7 +233,7 @@ class BackupBeamline:
         except BaseException:
             msg = "Sending Email FAILED"
             log.critical(msg)
-            log.exception(msg)
+            log.debug(msg, exc_info=True)
 
     def main(self):
         self.parse_args()

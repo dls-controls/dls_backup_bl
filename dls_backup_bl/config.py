@@ -34,7 +34,9 @@ class BackupConfig:
 
         # Capture problems opening or reading the file
         except BaseException:
-            log.exception("Invalid json configuration file")
+            msg = "Invalid json configuration file"
+            log.debug(msg, exc_info=True)
+            log.error(msg)
             raise
 
         if check_empty:
@@ -63,7 +65,9 @@ class BackupConfig:
                 self.json_data = json.load(f, object_pairs_hook=OrderedDict)
         # Capture problems opening or reading the file
         except Exception:
-            log.exception("Invalid JSON file name or path or invalid JSON")
+            msg = "Invalid JSON file name or path or invalid JSON"
+            log.debug(msg, exc_info=True)
+            log.error(msg)
             sys.exit()
 
     def write_json_file(self):
@@ -80,7 +84,9 @@ class BackupConfig:
                 f.write(data)
         # Capture problems opening or saving the file
         except Exception:
-            log.exception("Invalid json file name or path or invalid JSON")
+            msg = "Invalid JSON file name or path or invalid JSON"
+            log.debug(msg, exc_info=True)
+            log.error(msg)
 
     empty_message = """
 BACKUP ABORTED

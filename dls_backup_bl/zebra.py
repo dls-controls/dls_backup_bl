@@ -45,7 +45,8 @@ def backup_zebra(name: str, defaults: Defaults):
             continue
         except BaseException:
             msg = "ERROR: Problem backing up ".format(name)
-            log.exception(msg)
+            log.debug(msg, exc_info=True)
+            log.error(msg)
             continue
         break
     else:
