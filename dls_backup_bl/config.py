@@ -47,6 +47,13 @@ class BackupConfig:
                 print(self.empty_message)
             return result
 
+    def add_pmac(self, name: str, server: str, port: str, geobrick: bool):
+        new_item = {"Controller": name, "Server": server, "Port": port}
+        if geobrick:
+            self.geobricks.append(new_item)
+        else:
+            self.pmacs.append(new_item)
+
     def read_json_file(self):
         # Attempt to open the JSON file
         # noinspection PyBroadException
@@ -56,7 +63,7 @@ class BackupConfig:
                 self.json_data = json.load(f, object_pairs_hook=OrderedDict)
         # Capture problems opening or reading the file
         except Exception:
-            log.critical("Invalid JSON file name or path or invalid JSON")
+            log.exception("Invalid JSON file name or path or invalid JSON")
             sys.exit()
 
     def write_json_file(self):
@@ -73,7 +80,7 @@ class BackupConfig:
                 f.write(data)
         # Capture problems opening or saving the file
         except Exception:
-            log.critical("Invalid json file name or path or invalid JSON")
+            log.exception("Invalid json file name or path or invalid JSON")
 
     empty_message = """
 BACKUP ABORTED

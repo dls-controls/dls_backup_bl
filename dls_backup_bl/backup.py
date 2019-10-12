@@ -250,7 +250,7 @@ class BackupBeamline:
         self.config = BackupConfig(self.defaults.config_file)
         if self.args.import_cfg:
             import_file = Path(self.args.import_cfg)
-            import_json(import_file, self.defaults)
+            import_json(import_file, self.defaults.config_file)
 
         elif self.config.load_config(check_empty=True):
             log.info("START OF BACKUP for beamline %s to %s",
