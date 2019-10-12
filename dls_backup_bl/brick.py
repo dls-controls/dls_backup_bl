@@ -1,3 +1,4 @@
+import shutil
 from logging import getLogger
 from os import system
 
@@ -27,21 +28,24 @@ def backup_motor_controller(
 
     # Call dls-pmacanalyse backup
     # If backup fails retry specified number of times before giving up
+    msg = "Backing up {}.".format(desc)
+    log.info(msg)
     for attempt_num in range(defaults.retries):
         # noinspection PyBroadException
         try:
-            msg = "Backing up {}.".format(desc)
-            log.info(msg)
-
             config_object = GlobalConfig()
             pmac_object = config_object.createOrGetPmac(controller)
             pmac_object.setProtocol(server, port, t_serv)
             # None means that readHardware will decide for itself
             pmac_object.setGeobrick(None)
             pmac_object.readHardware(
-                defaults.motion_folder, False, False, False, False)
+                defaults.temp_dir, False, False, False, False)
             log.critical("SUCCESS: {} backed up".format(desc))
 
+            new_file = defaults.temp_dir / "{}.pmc".format(controller)
+            old_file = defaults.motion_folder / "{}.pmc".format(controller)
+            shutil.move(str(new_file), str(old_file))
+            
         except Exception:
             msg = "ERROR: {} backup failed on attempt {} of {}".format(
                 desc, attempt_num + 1, defaults.retries)

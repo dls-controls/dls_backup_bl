@@ -27,7 +27,6 @@ class BackupBeamline:
         self.thread_pool: ThreadPool = None
         self.defaults: Defaults = None
         self.config: BackupConfig = None
-        self.email_address: str = None
 
         self.motor_controllers: List = None
         self.terminal_servers: List = None
@@ -177,6 +176,8 @@ class BackupBeamline:
             ignore = self.defaults.log_file.name
 
             # If there are changes, commit them
+            if ignore in change_list:
+                change_list.remove(ignore)
             if change_list:
                 if untracked_files:
                     log.info("The following files are untracked:")
@@ -187,15 +188,14 @@ class BackupBeamline:
                     for File in modified_files:
                         log.info('\t' + File)
 
-                if ignore in change_list:
-                    change_list.remove(ignore)
                 git_repo.index.add(change_list)
                 # Note repo.git.add is used to handle deleted files
-                git_repo.git.add(all=True)
+                # todo not doing this since it overrides ignore (OK?)
+                # git_repo.git.add(all=True)
                 git_repo.index.commit("commit by dls-backup-bl")
                 log.critical("Committed changes")
             else:
-                log.info("Repository up to date. No actions taken")
+                log.critical("No changes since last backup")
         except BaseException:
             msg = "ERROR: _repo not updated"
             log.debug(msg, exc_info=True)
@@ -213,20 +213,20 @@ class BackupBeamline:
 
     def send_email(self):
         with self.defaults.critical_log_file.open("r") as f:
-            text = f.readlines()
+            e_text = f.read()
 
         # noinspection PyBroadException
         try:
-            assert self.email_address
+            assert self.config.email_address is not None
             e_from = "From: {}\r\n".format(self.defaults.diamond_sender)
-            e_to = "To: {}\r\n".format(self.email_address)
+            e_to = "To: {}\r\n".format(self.config.email_address)
             e_subject = "Subject: {} Backup Report\r\n\r\n".format(
                 self.defaults.beamline
             )
             msg = e_from + e_to + e_subject + e_text
             mail_server = smtplib.SMTP(self.defaults.diamond_smtp)
             mail_server.sendmail(
-                self.defaults.diamond_sender, self.email_address, msg
+                self.defaults.diamond_sender, self.config.email_address, msg
             )
             mail_server.quit()
             log.critical("Sent Email report")

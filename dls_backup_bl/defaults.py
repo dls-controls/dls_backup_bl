@@ -1,3 +1,5 @@
+import shutil
+import tempfile
 from pathlib import Path
 from os import environ
 
@@ -58,6 +60,11 @@ class Defaults:
                 self._beamline, Defaults._config_file_suffix)
             )
             self._config_file = self._backup_folder / name
+
+        self.temp_dir: Path = Path(tempfile.mkdtemp())
+
+    def __del__(self):
+        shutil.rmtree(str(self.temp_dir), ignore_errors=True)
 
     def check_folders(self):
         self.motion_folder.mkdir(parents=True, exist_ok=True)
