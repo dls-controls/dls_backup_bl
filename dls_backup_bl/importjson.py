@@ -2,7 +2,6 @@ from logging import getLogger
 from pathlib import Path
 
 from dls_backup_bl.config import BackupConfig
-from dls_backup_bl.defaults import Defaults
 from dls_pmacanalyse import GlobalConfig
 
 log = getLogger(__name__)

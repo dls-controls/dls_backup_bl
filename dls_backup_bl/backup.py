@@ -58,9 +58,7 @@ class BackupBeamline:
         critical = logging.FileHandler(
             filename=str(self.defaults.critical_log_file), mode='w'
         )
-        critical.setLevel(logging.ERROR)
-        formatter = logging.Formatter('%(levelname)-10s %(message)s')
-        critical.setFormatter(formatter)
+        critical.setLevel(logging.CRITICAL)
 
         # console log file for immediate feedback
         numeric_level = getattr(logging, level.upper(), None)
@@ -123,22 +121,19 @@ class BackupBeamline:
 
     def do_geobricks(self):
         # Go through every motor controller listed in JSON file
-        for controllers in self.config.pmacs, self.config.geobricks:
+        for controllers in (self.config.pmacs, self.config.geobricks):
             for motor_controller in controllers:
                 # Pull out the controller details
                 controller = motor_controller["Controller"]
                 server = motor_controller["Server"]
                 port = motor_controller["Port"]
 
-                # Check whether the controller is a GeoBrick or PMAC
-                is_geobrick = controllers == self.config.geobricks
                 # Check whether a terminal server is used or not
-                uses_ts = port != "1025"
+                uses_ts = int(port) != 1025
 
                 # Add a backup job to the pool
                 args = (
-                    controller, server, port, is_geobrick,
-                    uses_ts, self.defaults
+                    controller, server, port, uses_ts, self.defaults
                 )
                 self.thread_pool.apply_async(backup_motor_controller, args)
 
@@ -217,8 +212,6 @@ class BackupBeamline:
     def send_email(self):
         with self.defaults.critical_log_file.open("r") as f:
             text = f.readlines()
-        # strip the preamble
-        e_text = ''.join([line[10:] for line in text])
 
         # noinspection PyBroadException
         try:
@@ -234,9 +227,11 @@ class BackupBeamline:
                 self.defaults.diamond_sender, self.email_address, msg
             )
             mail_server.quit()
-            log.info("Email report sent")
+            log.critical("Sent Email report")
         except BaseException:
-            log.exception("ERROR: sending email failed")
+            msg = "Sending Email FAILED"
+            log.critical(msg)
+            log.exception(msg)
 
     def main(self):
         self.parse_args()
@@ -245,6 +240,7 @@ class BackupBeamline:
             self.args.retries
         )
         self.defaults.check_folders()
+        # logging is only set up now since defaults chooses logfile location
         self.setup_logging(self.args.log_level)
 
         self.config = BackupConfig(self.defaults.config_file)
@@ -275,3 +271,7 @@ class BackupBeamline:
 
             log.warning("END OF BACKUP for beamline %s to %s",
                         self.defaults.beamline, self.defaults.backup_folder)
+
+            print("\n\n\n----- Summary of Critical events -----")
+            with self.defaults.critical_log_file.open() as f:
+                print(f.read())

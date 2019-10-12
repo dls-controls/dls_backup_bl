@@ -19,7 +19,7 @@ class Defaults:
     _config_file_suffix = Path("backup.json")
     _log_file = Path("backup_detail.log")
     _critical_log_file = Path("backup.log")
-    _retries: int = 3
+    _retries: int = 4
 
     def __init__(
             self, beamline: str, backup_folder: Path,
