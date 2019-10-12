@@ -63,6 +63,11 @@ class Defaults:
         self.motion_folder.mkdir(parents=True, exist_ok=True)
         self.zebra_folder.mkdir(parents=True, exist_ok=True)
         self.ts_folder.mkdir(parents=True, exist_ok=True)
+        if not self.config_file.exists():
+            if str(self.config_file).startswith(str(self.root_folder)):
+                # create an empty json config file
+                with self.config_file.open("w") as f:
+                    f.write(Defaults.json)
 
     @property
     def beamline(self) -> str:
@@ -99,3 +104,18 @@ class Defaults:
     @property
     def critical_log_file(self) -> Path:
         return self._backup_folder / Defaults._critical_log_file
+
+    json = """{
+    "MotorControllers": {
+        "GeoBricks": [
+        ],
+        "PMACs": [
+        ]
+    },
+    "TerminalServers": [
+
+    ],
+    "Zebras": [
+    ],
+    "Email": ""
+}"""

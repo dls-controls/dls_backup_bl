@@ -111,7 +111,7 @@ class CategoryPopup(QDialog):
             self.JSONData["Nouns"][self.CategoryName]
             del self.JSONData["Nouns"][self.CategoryName]
 
-        self.parent.WriteJSONFile()
+        self.parent.write_json_file()
         if NextEntry:
             self.Name.setText("")
         else:

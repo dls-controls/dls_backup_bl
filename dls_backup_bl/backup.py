@@ -4,10 +4,13 @@ import logging
 import smtplib
 from logging import getLogger
 from multiprocessing.pool import ThreadPool
+from pathlib import Path
 from typing import List
 
 from git import Repo, InvalidGitRepositoryError
 
+from dls_backup_bl.config import BackupConfig
+from dls_backup_bl.importjson import import_json
 from .brick import backup_motor_controller
 from .defaults import Defaults
 from .tserver import backup_terminal_server
@@ -23,6 +26,7 @@ class BackupBeamline:
         self.json_data: object = None
         self.thread_pool: ThreadPool = None
         self.defaults: Defaults = None
+        self.config: BackupConfig = None
         self.email_address: str = None
 
         self.motor_controllers: List = None
@@ -89,6 +93,9 @@ class BackupBeamline:
                         'servers, '
                         'and Zebra boxes',
             usage="%(prog)s [options]")
+        parser.add_argument('-i', '--import-cfg', action="store",
+                            help="import brick configuration from a "
+                                 "dls-pmac-analyse configuration file.")
         parser.add_argument('-n', '--beamline', action="store",
                             help="Name of beamline backup is for. "
                                  "Defaults to the current beamline")
@@ -114,36 +121,17 @@ class BackupBeamline:
         # Parse the command line arguments
         self.args = parser.parse_args()
 
-    def load_config(self):
-        # Open JSON file of device details
-        # noinspection PyBroadException
-        try:
-            with self.defaults.config_file.open() as json_file:
-                # Read out the JSON data, then close the file
-                self.json_data = json.load(json_file)
-
-            # use [] instead of get() to verify JSON
-            self.motor_controllers = self.json_data["MotorControllers"]
-            self.terminal_servers = self.json_data["TerminalServers"]
-            self.zebras = self.json_data["Zebras"]
-            self.email_address = self.json_data["Email"]
-
-        # Capture problems opening or reading the file
-        except BaseException:
-            log.exception("Invalid json configuration file")
-            raise
-
     def do_geobricks(self):
         # Go through every motor controller listed in JSON file
-        for controller_type in self.motor_controllers:
-            for motor_controller in self.motor_controllers[controller_type]:
+        for controllers in self.config.pmacs, self.config.geobricks:
+            for motor_controller in controllers:
                 # Pull out the controller details
                 controller = motor_controller["Controller"]
                 server = motor_controller["Server"]
                 port = motor_controller["Port"]
 
                 # Check whether the controller is a GeoBrick or PMAC
-                is_geobrick = controller_type == "GeoBricks"
+                is_geobrick = controllers == self.config.geobricks
                 # Check whether a terminal server is used or not
                 uses_ts = port != "1025"
 
@@ -259,27 +247,31 @@ class BackupBeamline:
         self.defaults.check_folders()
         self.setup_logging(self.args.log_level)
 
-        log.info("START OF BACKUP for beamline %s to %s",
-                 self.defaults.beamline, self.defaults.backup_folder)
+        self.config = BackupConfig(self.defaults.config_file)
+        if self.args.import_cfg:
+            import_file = Path(self.args.import_cfg)
+            import_json(import_file, self.defaults)
 
-        # get info on what to backup
-        self.load_config()
-        # Initiate a thread pool with the desired number of threads
-        self.thread_pool = ThreadPool(self.args.threads)
+        elif self.config.load_config(check_empty=True):
+            log.info("START OF BACKUP for beamline %s to %s",
+                     self.defaults.beamline, self.defaults.backup_folder)
 
-        # launch threads for each type of backup
-        self.do_geobricks()
-        # self.do_t_servers()
-        # self.do_zebras()
+            # Initiate a thread pool with the desired number of threads
+            self.thread_pool = ThreadPool(self.args.threads)
 
-        # Wait for completion of all backup threads
-        self.thread_pool.close()
-        self.thread_pool.join()
+            # queue threads for each type of backup
+            self.do_geobricks()
+            # self.do_t_servers()
+            # self.do_zebras()
 
-        # finish up
-        self.sort_log()
-        self.commit_changes()
-        self.send_email()
+            # Wait for completion of all backup threads
+            self.thread_pool.close()
+            self.thread_pool.join()
 
-        log.warning("END OF BACKUP for beamline %s to %s",
-                    self.defaults.beamline, self.defaults.backup_folder)
+            # finish up
+            self.sort_log()
+            self.commit_changes()
+            self.send_email()
+
+            log.warning("END OF BACKUP for beamline %s to %s",
+                        self.defaults.beamline, self.defaults.backup_folder)

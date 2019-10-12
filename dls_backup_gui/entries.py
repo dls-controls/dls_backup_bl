@@ -154,7 +154,7 @@ class EntryPopup(QDialog):
             self.parent.JSONData[self.SelectedDevice],
             key=lambda dicts: dicts[self.FieldsList[0]])
 
-        self.parent.WriteJSONFile()
+        self.parent.write_json_file()
         if NextEntry:
             for EditBox in self.LineEditList:
                 EditBox.setText("")
