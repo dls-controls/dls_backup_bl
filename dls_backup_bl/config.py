@@ -12,11 +12,9 @@ class BackupConfig:
     def __init__(self, json_file: Path):
         self.json_file = json_file
         self.json_data = None
-        self.pmacs: List = None
-        self.geobricks: List = None
+        self.motion_controllers: List = None
         self.terminal_servers: List = None
         self.zebras: List = None
-        self.email_address: object = None
 
     def load_config(self, check_empty: bool = False):
         # Open JSON file of device details
@@ -26,11 +24,9 @@ class BackupConfig:
             self.read_json_file()
 
             # use [] instead of get() to verify JSON
-            self.pmacs = self.json_data["MotorControllers"]["PMACs"]
-            self.geobricks = self.json_data["MotorControllers"]["GeoBricks"]
+            self.motion_controllers = self.json_data["MotorControllers"]
             self.terminal_servers = self.json_data["TerminalServers"]
             self.zebras = self.json_data["Zebras"]
-            self.email_address = self.json_data.get("Email")
 
         # Capture problems opening or reading the file
         except BaseException:
@@ -40,7 +36,7 @@ class BackupConfig:
             raise
 
         if check_empty:
-            total_items = len(self.pmacs) + len(self.geobricks) + \
+            total_items = len(self.motion_controllers) + \
                           len(self.terminal_servers) + len(self.zebras)
             if total_items == 0:
                 result = False
@@ -49,12 +45,9 @@ class BackupConfig:
                 print(self.empty_message)
             return result
 
-    def add_pmac(self, name: str, server: str, port: str, geobrick: bool):
+    def add_pmac(self, name: str, server: str, port: str):
         new_item = {"Controller": name, "Server": server, "Port": port}
-        if geobrick:
-            self.geobricks.append(new_item)
-        else:
-            self.pmacs.append(new_item)
+        self.motion_controllers.append(new_item)
 
     def read_json_file(self):
         # Attempt to open the JSON file
@@ -65,7 +58,7 @@ class BackupConfig:
                 self.json_data = json.load(f, object_pairs_hook=OrderedDict)
         # Capture problems opening or reading the file
         except Exception:
-            msg = "Invalid JSON file name or path or invalid JSON"
+            msg = "JSON file missing or invalid"
             log.debug(msg, exc_info=True)
             log.error(msg)
             sys.exit()
@@ -84,7 +77,7 @@ class BackupConfig:
                 f.write(data)
         # Capture problems opening or saving the file
         except Exception:
-            msg = "Invalid JSON file name or path or invalid JSON"
+            msg = "Invalid JSON file name"
             log.debug(msg, exc_info=True)
             log.error(msg)
 

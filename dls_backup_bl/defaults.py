@@ -113,16 +113,7 @@ class Defaults:
         return self._backup_folder / Defaults._critical_log_file
 
     json = """{
-    "MotorControllers": {
-        "GeoBricks": [
-        ],
-        "PMACs": [
-        ]
-    },
-    "TerminalServers": [
-
-    ],
-    "Zebras": [
-    ],
-    "Email": ""
-}"""
+    "MotorControllers": [ ],
+    "TerminalServers": [ ],
+    "Zebras": [ ]
+    }"""

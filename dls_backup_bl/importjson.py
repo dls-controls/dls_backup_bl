@@ -16,8 +16,7 @@ def import_json(cfg_file: Path, json_file):
     json_config.load_config()
 
     for pmac, details in config_object.pmacs.items():
-        is_geobrick = not details.termServ
-        json_config.add_pmac(pmac, details.host, details.port, is_geobrick)
+        json_config.add_pmac(pmac, details.host, details.port)
         log.info("imported pmac {} at {}:{}".format(
             pmac, details.host, details.port
         ))
