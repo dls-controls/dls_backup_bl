@@ -4,6 +4,7 @@ from enum import IntEnum
 from logging import getLogger
 from pathlib import Path
 from typing import List, NamedTuple
+from pickle import dumps
 
 log = getLogger(__name__)
 
@@ -82,6 +83,7 @@ b2 = Backups.load(f)
 print(b2)
 print(b2.motion_controllers[0].Controller)
 
+print(dumps(b))
 exit(0)
 
 # does not work since dumps can only serialize dict, list etc.

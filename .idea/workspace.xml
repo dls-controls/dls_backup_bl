@@ -2,13 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="40654a3a-2331-4169-9714-67d74274835f" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/dls_backup_bl/config_schema.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pipfile" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Pipfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dls_backup_bl/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/config.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dls_backup_gui/backupeditor.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_gui/backupeditor.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dls_backup_gui/entries.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_gui/entries.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -18,7 +14,7 @@
   </component>
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/dls_backup_bl$Backup.coverage" NAME="Backup Coverage Results" MODIFIED="1570974907020" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/dls_backup_bl$config.coverage" NAME="config Coverage Results" MODIFIED="1570975126686" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dls_backup_bl" />
+    <SUITE FILE_PATH="coverage/dls_backup_bl$config.coverage" NAME="config Coverage Results" MODIFIED="1570988037389" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dls_backup_bl" />
     <SUITE FILE_PATH="coverage/dls_backup_bl$I15_Backup.coverage" NAME="I15 Backup Coverage Results" MODIFIED="1570880802191" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/dls_backup_bl$scratch_3.coverage" NAME="scratch_3 Coverage Results" MODIFIED="1570963510925" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
     <SUITE FILE_PATH="coverage/dls_backup_bl$testconfig.coverage" NAME="testconfig Coverage Results" MODIFIED="1570971370861" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dls_backup_bl" />
@@ -39,7 +35,7 @@
             <entry file="file://$PROJECT_DIR$/dls_backup_editor">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="136">
-                  <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+                  <caret line="8" selection-start-line="8" selection-end-line="8" />
                 </state>
               </provider>
             </entry>
@@ -57,15 +53,6 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file pinned="false" current-in-tab="false">
-            <entry file="file://$PROJECT_DIR$/dls_backup_bl/config_schema.json">
-              <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="34">
-                  <caret line="2" column="21" lean-forward="true" selection-start-line="2" selection-start-column="10" selection-end-line="2" selection-end-column="29" />
-                </state>
-              </provider>
-            </entry>
-          </file>
           <file pinned="false" current-in-tab="false">
             <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
               <provider selected="true" editor-type-id="text-editor">
@@ -88,7 +75,7 @@
             <entry file="file:///scratch/hgv27681/cache/pipenv/dls_backup_bl-2cElhR9L/lib/python3.7/site-packages/python_jsonschema_objects/__init__.py">
               <provider selected="true" editor-type-id="text-editor">
                 <state relative-caret-position="492">
-                  <caret line="45" lean-forward="true" selection-start-line="45" selection-end-line="45" />
+                  <caret line="45" selection-start-line="45" selection-end-line="45" />
                 </state>
               </provider>
             </entry>
@@ -96,8 +83,8 @@
           <file pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/Pipfile">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="306">
-                  <caret line="18" selection-start-line="18" selection-end-line="18" />
+                <state relative-caret-position="272">
+                  <caret line="16" selection-start-line="16" selection-end-line="16" />
                 </state>
               </provider>
             </entry>
@@ -129,8 +116,8 @@
           <file pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/dls_backup_bl/config.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="322">
-                  <caret line="64" column="31" lean-forward="true" selection-start-line="64" selection-start-column="31" selection-end-line="64" selection-end-column="31" />
+                <state relative-caret-position="238">
+                  <caret line="26" column="15" lean-forward="true" selection-start-line="26" selection-start-column="15" selection-end-line="26" selection-end-column="15" />
                   <folding>
                     <element signature="e#0#11#0" expanded="true" />
                   </folding>
@@ -517,15 +504,15 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Python.Backup to motion" />
+      <item itemvalue="Python.BackupEditor" />
       <item itemvalue="Python.Backup" />
       <item itemvalue="Python.I15 Backup import" />
       <item itemvalue="Python.I15 Backup" />
-      <item itemvalue="Python.Backup to motion" />
+      <item itemvalue="Python.config" />
       <item itemvalue="Python.dls_pmacanalyse" />
-      <item itemvalue="Python.BackupEditor" />
       <item itemvalue="Python.scratch_3" />
       <item itemvalue="Python.testconfig" />
-      <item itemvalue="Python.config" />
     </list>
     <recent_temporary>
       <list>
@@ -555,12 +542,12 @@
       <workItem from="1570821097877" duration="13280000" />
       <workItem from="1570858931922" duration="143000" />
       <workItem from="1570859133408" duration="43206000" />
-      <workItem from="1570964107254" duration="8699000" />
+      <workItem from="1570964107254" duration="10085000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="65328000" />
+    <option name="totallyTimeSpent" value="66723000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1920" height="1173" extended-state="6" />
@@ -569,12 +556,12 @@
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49892932" visible="true" weight="0.15224358" />
       <window_info id="Favorites" order="1" side_tool="true" />
       <window_info anchor="bottom" id="TODO" order="0" weight="0.3294025" />
-      <window_info anchor="bottom" id="Terminal" order="1" sideWeight="0.5619658" side_tool="true" visible="true" weight="0.375969" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="1" sideWeight="0.5619658" side_tool="true" visible="true" weight="0.375969" />
       <window_info anchor="bottom" id="Event Log" order="2" sideWeight="0.49882075" side_tool="true" weight="0.3008982" />
       <window_info anchor="bottom" id="Version Control" order="3" sideWeight="0.32425213" weight="0.20930232" />
       <window_info anchor="bottom" id="Message" order="4" />
       <window_info anchor="bottom" id="Find" order="5" sideWeight="0.49198717" weight="0.32848838" />
-      <window_info active="true" anchor="bottom" id="Run" order="6" sideWeight="0.43803418" visible="true" weight="0.375969" />
+      <window_info anchor="bottom" id="Run" order="6" sideWeight="0.43803418" visible="true" weight="0.375969" />
       <window_info anchor="bottom" id="Debug" order="7" sideWeight="0.48076922" weight="0.35658914" />
       <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
@@ -672,12 +659,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/dls_backup_bl/config.py</url>
-          <line>123</line>
+          <line>125</line>
           <option name="timeStamp" value="21" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/dls_backup_bl/config.py</url>
-          <line>52</line>
+          <line>53</line>
           <option name="timeStamp" value="22" />
         </line-breakpoint>
       </breakpoints>
@@ -922,8 +909,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Pipfile">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="18" selection-start-line="18" selection-end-line="18" />
+        <state relative-caret-position="272">
+          <caret line="16" selection-start-line="16" selection-end-line="16" />
         </state>
       </provider>
     </entry>
@@ -937,31 +924,22 @@
     <entry file="file://$PROJECT_DIR$/dls_backup_bl/config_schema.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="34">
-          <caret line="2" column="21" lean-forward="true" selection-start-line="2" selection-start-column="10" selection-end-line="2" selection-end-column="29" />
+          <caret line="2" column="21" selection-start-line="2" selection-start-column="10" selection-end-line="2" selection-end-column="29" />
         </state>
       </provider>
     </entry>
     <entry file="file:///scratch/hgv27681/cache/pipenv/dls_backup_bl-2cElhR9L/lib/python3.7/site-packages/python_jsonschema_objects/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="492">
-          <caret line="45" lean-forward="true" selection-start-line="45" selection-end-line="45" />
+          <caret line="45" selection-start-line="45" selection-end-line="45" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/dls_backup_bl/testconfig.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="373">
-          <caret line="34" lean-forward="true" selection-end-line="43" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/dls_backup_bl/testconfig.py" />
     <entry file="file://$PROJECT_DIR$/dls_backup_editor">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
-          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+          <caret line="8" selection-start-line="8" selection-end-line="8" />
         </state>
       </provider>
     </entry>
@@ -981,8 +959,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/dls_backup_bl/config.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="322">
-          <caret line="64" column="31" lean-forward="true" selection-start-line="64" selection-start-column="31" selection-end-line="64" selection-end-column="31" />
+        <state relative-caret-position="238">
+          <caret line="26" column="15" lean-forward="true" selection-start-line="26" selection-start-column="15" selection-end-line="26" selection-end-column="15" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
