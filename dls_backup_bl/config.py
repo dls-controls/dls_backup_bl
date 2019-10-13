@@ -10,11 +10,11 @@ log = getLogger(__name__)
 
 class BackupConfig:
     def __init__(self, json_file: Path):
-        self.json_file = json_file
-        self.json_data = None
-        self.motion_controllers: List = None
-        self.terminal_servers: List = None
-        self.zebras: List = None
+        self.json_file: Path = json_file
+        self.json_data: OrderedDict[str, List] = None
+        self.motion_controllers: List[OrderedDict] = None
+        self.terminal_servers: List[OrderedDict] = None
+        self.zebras: List[OrderedDict] = None
 
     def load_config(self, check_empty: bool = False):
         # Open JSON file of device details

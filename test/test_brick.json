@@ -1,33 +1,43 @@
 {
-  "MotorControllers": [
-    {
-      "Controller": "GK_TEST_BRICK_01",
-      "Port": "1025",
-      "Server": "172.23.240.97"
-    },
-    {
-      "Controller": "GK_TEST_BRICK_02",
-      "Port": "1025",
-      "Server": "172.23.240.97"
-    },
-    {
-      "Controller": "GK_TEST_BRICK_03",
-      "Port": "1025",
-      "Server": "172.23.240.97"
-    },
-    {
-      "Controller": "GK_TEST_BRICK_04",
-      "Port": "1025",
-      "Server": "172.23.240.97"
-    },
-    {
-      "Controller": "GK_TEST_BRICK_05",
-      "Port": "1025",
-      "Server": "172.23.240.999"
-    }
-  ],
-  "TerminalServers": [
-  ],
-  "Zebras": [
-  ]
+    "MotorControllers": [
+        {
+            "Controller": "GK_TEST_BRICK_01",
+            "Port": "1025",
+            "Server": "172.23.240.97"
+        },
+        {
+            "Controller": "GK_TEST_BRICK_02",
+            "Port": "1025",
+            "Server": "172.23.240.97"
+        },
+        {
+            "Controller": "GK_TEST_BRICK_03",
+            "Port": "1025",
+            "Server": "172.23.240.97"
+        },
+        {
+            "Controller": "GK_TEST_BRICK_04",
+            "Port": "1025",
+            "Server": "172.23.240.97"
+        },
+        {
+            "Controller": "GK_TEST_BRICK_05",
+            "Port": "1025",
+            "Server": "172.23.240.999"
+        }
+    ],
+    "TerminalServers": [
+        {
+            "Server": "gg",
+            "Type": "gg"
+        }
+    ],
+    "Zebras": [
+        {
+            "Name": "ff"
+        },
+        {
+            "Name": "myzeb"
+        }
+    ]
 }

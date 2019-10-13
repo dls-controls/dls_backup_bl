@@ -1,26 +1,28 @@
-import json
 import signal
 import sys
-from collections import OrderedDict
 from functools import partial
 from optparse import OptionParser
+from pathlib import Path
 
-from PyQt5.QtCore import Qt, QSize, QSettings, QTimer
+from PyQt5.QtCore import Qt, QSize, QSettings
 from PyQt5.QtGui import QIcon, QStandardItemModel, QFont, QStandardItem
 from PyQt5.QtWidgets import (
     QApplication, QLabel, QWidget, QDesktopWidget,
     QTabWidget, QTableView, QAbstractItemView, QPushButton,
     QHBoxLayout, QFileDialog, QHeaderView, QToolBar, QStatusBar,
-    QAction, QVBoxLayout, QStyle, QMessageBox, QMainWindow
+    QAction, QVBoxLayout, QStyle, QMessageBox
 )
 
-from .entries import EntryPopup
+from dls_backup_bl.config import BackupConfig
 from .categories import CategoryPopup
+from .entries import EntryPopup
 
 
 class Editor(QWidget):
     def __init__(self):
         QWidget.__init__(self)
+
+        self.config = BackupConfig(Path('test/test_brick.json'))
         self.InitialiseUI()
 
     def CentreWindow(self):
@@ -49,21 +51,19 @@ class Editor(QWidget):
         self.Tabs = QTabWidget()
 
         # Create individual tabs
-        self.GeoBrickTab = QWidget()
         self.PMACTab = QWidget()
         self.TerminalServerTab = QWidget()
         self.ZebraTab = QWidget()
 
         # Add individual tabs to tab widget
-        self.Tabs.addTab(self.GeoBrickTab, "GeoBricks")
-        self.Tabs.addTab(self.PMACTab, "PMACs")
+        self.Tabs.addTab(self.PMACTab, "MotorControllers")
         self.Tabs.addTab(self.TerminalServerTab, "TerminalServers")
         self.Tabs.addTab(self.ZebraTab, "Zebras")
 
         # Create a table for entries
         self.DeviceList = QTableView(self)
         self.DeviceList.verticalHeader().setVisible(False)
-        self.DeviceList.setColumnWidth(0, 600);
+        self.DeviceList.setColumnWidth(0, 600)
         self.DeviceList.setShowGrid(False)
         self.DeviceList.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.DeviceList.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -90,7 +90,7 @@ class Editor(QWidget):
         self.DeviceLayout = QHBoxLayout()
         self.DeviceLayout.addWidget(self.DeviceList)
         # Set an initial state      
-        self.GeoBrickTab.setLayout(self.DeviceLayout)
+        self.PMACTab.setLayout(self.DeviceLayout)
 
         # Link the buttons to their actions
         self.Tabs.currentChanged.connect(self.TabSelected)
@@ -141,6 +141,7 @@ class Editor(QWidget):
         # "JSONFilePath").toString()
         self.OpenJSONFile()
 
+        self.DisplayEntries()
         # Display the GUI
         self.show()
 
@@ -157,31 +158,25 @@ class Editor(QWidget):
         # If a file is specified, open it, display the path, and store the
         # location
         if self.JSONFileName:
-            self.ReadJSONFile()
+            self.config.read_json_file()
             self.OpenFileLabel.setText(self.JSONFileName)
             # Save JSON file path to /home/jimbo/.config/JimboMonkey Productions
             self.EditorSettings.setValue("JSONFilePath", self.JSONFileName)
 
     def TabSelected(self, arg=None):
-        # self.DeviceList.clear()
         self.DisplayEntries()
         if arg == 0:
-            self.GeoBrickTab.setLayout(self.DeviceLayout)
-        if arg == 1:
             self.PMACTab.setLayout(self.DeviceLayout)
-        if arg == 2:
+        if arg == 1:
             self.TerminalServerTab.setLayout(self.DeviceLayout)
-        if arg == 3:
+        if arg == 2:
             self.ZebraTab.setLayout(self.DeviceLayout)
 
     def DisplayEntries(self):
-
         self.SelectedDevice = str(self.Tabs.tabText(self.Tabs.currentIndex()))
         self.ListModel = QStandardItemModel()
 
-        # self.EntryList = self.TableList[self.Tabs.currentIndex()]
-
-        for Card in self.JSONData[self.SelectedDevice]:
+        for Card in self.config.json_data[self.SelectedDevice]:
             self.Row = []
             for Field in Card:
                 self.Row.append(QStandardItem(Card[str(Field)]))
@@ -194,12 +189,9 @@ class Editor(QWidget):
             self.CurrentColumnWidth = self.DeviceList.columnWidth(ColumnNum)
             self.DeviceList.setColumnWidth(ColumnNum, self.CurrentColumnWidth
                                            + 20)
-        # self.CardList.selectionModel().selectionChanged.connect(
-        # self.EntryClick)
         self.DeviceList.selectRow(0)
 
     def ButtonRefresh(self):
-
         # Record the number of selected category and card entries
         NumCards = len(self.CardList.selectedIndexes())
         NumCategories = len(self.CategoryList.selectedIndexes())
@@ -211,73 +203,24 @@ class Editor(QWidget):
         self.RemoveCardButton.setEnabled(NumCards)
         self.EditCardButton.setEnabled(NumCards)
 
-    def ReadJSONFile(self):
-
-        # Attempt to open the JSON file
-        try:
-            with open(self.JSONFileName) as self.JSONFile:
-                # Maintain order using a dictionary
-                self.JSONData = json.load(self.JSONFile,
-                                          object_pairs_hook=OrderedDict)
-            self.JSONFile.close()
-        # Capture problems opening or reading the file
-        except Exception as e:
-            print("Invalid JSON file name or path or invalid JSON")
-            sys.exit()
-        # Populate the category list with the data
-        self.DisplayEntries()
-
-    def WriteJSONFile(self):
-
-        # Overwrite the JSON file including the changes
-        try:
-            with open(self.JSONFileName, "w") as self.JSONFile:
-                # Write the data keeping a readable style
-                # Note that sort_keys is not used as this undoes the chosen
-                # ordering
-                self.JSONDataToWrite = json.dumps(self.JSONData, indent=4,
-                                                  separators=(',', ': '))
-                self.JSONFile.write(self.JSONDataToWrite)
-                self.JSONFile.close()
-        # Capture problems opening or saving the file
-        except Exception as e:
-            print("Invalid json file name or path or invalid JSON")
-            sys.exit()
-        # Re-read the JSON file after the write to refresh the GUI
-        self.ReadJSONFile()
-
     def RefreshCategoryList(self):
-
         # Create a model for the data
         self.ListModel = QStandardItemModel(self)
 
-        # Keep a tally of the number of cards
-        # TotalNouns = 0
-        # TotalVerbs = 0
-        # Less 1 from category count to ignore verbs
-        TotalCategories = len(self.JSONData) - 1
-
         # For every category...
-        for Category in self.JSONData:
+        for Category in self.config.json_data:
             # ...create a list entry including the number of entries
             CategoryTitle = QStandardItem(Category)
-            NumEntries = QStandardItem(str(len(self.JSONData[Category])))
+            NumEntries = QStandardItem(
+                str(len(self.config.json_data[Category])))
             NumEntries.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
-
-            # Update the tally
-            # if Category != "Verbs":
-            #   TotalNouns += len(self.JSONData[Category])
-            # else:
-            #   TotalVerbs += len(self.JSONData[Category])
 
             # Add the list entry to the list model
             CategoryListItem = [CategoryTitle, NumEntries]
             self.ListModel.appendRow(CategoryListItem)
 
         # Update the status bar
-        self.StatusBar.showMessage("hello!")  # (str(TotalNouns) + " nouns
-        # and " + str(TotalVerbs) + " verbs across " + str(TotalCategories) +
-        # " categories")
+        self.StatusBar.showMessage("hello!")
 
         if self.ListModel.rowCount() < 1:
             self.ListModel.clear()
@@ -290,8 +233,6 @@ class Editor(QWidget):
                 self.DisplayCategoryCards)
             self.CategoryList.model().dataChanged.connect(
                 self.DisplayCategoryCards)
-            # self.CategoryList.selectionModel().selectionChanged.connect(
-            # self.ButtonRefresh)
 
             self.CategoryList.model().setHeaderData(0, Qt.Horizontal,
                                                     "Title")
@@ -313,27 +254,13 @@ class Editor(QWidget):
                 self.CategoryList.resizeColumnsToContents()
                 self.NumColumns = self.ListModel.columnCount()
 
-                '''for ColumnNum in range(0, self.NumColumns):
-                    self.CurrentColumnWidth = self.CategoryList.columnWidth(
-                    ColumnNum)
-                    self.CategoryList.setColumnWidth(ColumnNum, 
-                    self.CurrentColumnWidth + 1000)'''
-                # self.CardList.selectionModel().selectionChanged.connect(
-                # self.ButtonRefresh)
-
                 # Ensure the category list fits the titles but is never
                 # narrower than the buttons below
                 self.CategoryButtonsWidth = \
                     self.CategoryButtonsLayout.sizeHint().width()
-                # self.CategoryListWidth =
-                # self.CategoryList.sizeHintForColumn(0)+20 +
-                # self.CategoryList.sizeHintForColumn(1) + 20
-                # print self.CategoryList.sizeHintForColumn(0)
-                # print self.CategoryList.sizeHintForColumn(1)
-                self.CategoryListWidth = self.CategoryList.horizontalHeader(
 
-                ).length() + 20
-                # print self.CategoryListWidth
+                self.CategoryListWidth = \
+                    self.CategoryList.horizontalHeader().length() + 20
 
                 if self.CategoryButtonsWidth < self.CategoryListWidth:
                     self.CategoryList.setFixedWidth(self.CategoryListWidth)
@@ -350,27 +277,22 @@ class Editor(QWidget):
                 self.CategoryList.selectedIndexes()[0].data().toString())
         else:
             self.SelectedCategory = ''
-        # self.SelectedCategory = str(self.CategoryList.currentIndex().data(
-        # ).toString())
+
         self.LastSelectedCategory = self.CategoryList.currentIndex()
         self.ListModel = QStandardItemModel(self)
         self.ListModel.setHeaderData(0, Qt.Horizontal, 'james')
 
         HeaderLabels = []
 
-        # print "display!", self.SelectedCategory, self.CategoryList.model(
-        # ).rowCount()
         if self.CategoryList.model().rowCount() > 0:
 
-            for Card in self.JSONData[self.SelectedCategory]:
+            for Card in self.config.json_data[self.SelectedCategory]:
                 self.Row = []
                 for Field in Card:
                     HeaderLabels.append(str(Field))
                     self.Row.append(QStandardItem(Card[str(Field)]))
                 self.ListModel.appendRow(self.Row)
             self.CardList.setModel(self.ListModel)
-
-            # self.CardList.sortByColumn(0, Qt.AscendingOrder)
 
             self.CardList.resizeColumnsToContents()
             self.NumColumns = self.ListModel.columnCount()
@@ -408,7 +330,7 @@ class Editor(QWidget):
 
         self.SelectedDeviceList = ""
         self.NumColumns = self.DeviceList.model().columnCount()
-        self.NumRows = (
+        self.NumRows = int(
                 len(self.DeviceList.selectedIndexes()) / self.NumColumns)
         self.SelectedIndexes = self.DeviceList.selectedIndexes()
         for Row in range(0, self.NumRows):
@@ -439,8 +361,9 @@ class Editor(QWidget):
                 self.SelectedRow = self.SelectedIndexes[
                     Row * self.NumColumns].row()
                 # print self.SelectedRow
-                del self.JSONData[self.SelectedDevice][self.SelectedRow]
-            self.WriteJSONFile()
+                del self.config.json_data[self.SelectedDevice][self.SelectedRow]
+            self.config.write_json_file()
+            self.DisplayEntries()
 
             # If the selected index was the last row in the list
             if self.LastSelectedRow == self.LastRow:

@@ -16,8 +16,6 @@ class EntryPopup(QDialog):
         QDialog.__init__(self, parent)
         self.parent = parent
         self.EditMode = EditMode
-        # self.List = myList
-        # self.JSONData = JSONData
 
         # Create the required layouts        
         self.GridLayout = QGridLayout()
@@ -27,7 +25,7 @@ class EntryPopup(QDialog):
         self.SelectedDevice = str(
             self.parent.Tabs.tabText(self.parent.Tabs.currentIndex()))
 
-        if self.SelectedDevice == "PMACs" or self.SelectedDevice == "GeoBricks":
+        if self.SelectedDevice == "MotorControllers":
             self.FieldsList = ["Controller", "Port", "Server"]
         elif self.SelectedDevice == "TerminalServers":
             self.FieldsList = ["Server", "Type"]
@@ -92,23 +90,6 @@ class EntryPopup(QDialog):
         Present = False
         EmptyLineEdit = False
 
-        '''for Entry in self.parent.JSONData["Nouns"][self.CategoryName]:
-            if Entry.values()[0] == unicode(self.EngSingText.text().toUtf8(), 
-            encoding="UTF-8"):
-                self.EngSingText.setStyleSheet("border: 2px solid red")
-                break
-            else:
-                self.EngSingText.setStyleSheet("")
-
-        for Entry in self.parent.JSONData["Nouns"][self.CategoryName]:
-            if Entry.values()[1] == unicode(self.TraSingText.text().toUtf8(), 
-            encoding="UTF-8"):
-                self.TraSingText.setStyleSheet("border: 2px solid red")
-                Present = True
-                break
-            else:
-                self.TraSingText.setStyleSheet("")'''
-
         if self.EditMode:
             Present = False
 
@@ -145,16 +126,17 @@ class EntryPopup(QDialog):
             self.NewEntry[self.FieldsList[i]] = self.LineEditList[i].text()
 
         if EditMode:
-            self.parent.JSONData[self.SelectedDevice][
+            self.parent.config.json_data[self.SelectedDevice][
                 self.RowNumber] = self.NewEntry
         else:
-            self.parent.JSONData[self.SelectedDevice].append(self.NewEntry)
+            self.parent.config.json_data[self.SelectedDevice].append(self.NewEntry)
 
-        self.parent.JSONData[self.SelectedDevice] = sorted(
-            self.parent.JSONData[self.SelectedDevice],
+        self.parent.config.json_data[self.SelectedDevice] = sorted(
+            self.parent.config.json_data[self.SelectedDevice],
             key=lambda dicts: dicts[self.FieldsList[0]])
 
-        self.parent.write_json_file()
+        self.parent.config.write_json_file()
+        self.parent.DisplayEntries()
         if NextEntry:
             for EditBox in self.LineEditList:
                 EditBox.setText("")

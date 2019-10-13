@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "6be953fb6e315ce8baf660fe09de4a27924f795cda90c778f60bf61fa62392ab"
+            "sha256": "d6c5f793335f66354e9b0ac3b04e9eb3b40b510329a0a324ae8b64449ad78bac"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -23,12 +23,19 @@
             "version": "==2.16+dls1"
         },
         "dls-pmacanalyse": {
-            "editable": true,
-            "path": "./../dls_pmacanalyse"
+            "hashes": [
+                "sha256:0a924c5e6de224abc9419bfc7a52f5fd126ea0180e1c7b81031d78086ea6798d",
+                "sha256:455163cdfd63186ba24e036348568b2d3be9080a2036acaf777fe3caff87714c"
+            ],
+            "index": "pypi",
+            "version": "==2.0.0"
         },
         "dls-pmaclib": {
-            "editable": true,
-            "path": "./../dls_pmaclib"
+            "hashes": [
+                "sha256:1a9e82930a4ab5fb8013155bf9d29a7d5e879b81a84d08f3bc9d7cdbed08c802",
+                "sha256:5bc6d19e849be7e062a9735e572b89934dcac2877133e4a4aa459dbbbf544bcc"
+            ],
+            "version": "==2.1.0"
         },
         "gitdb2": {
             "hashes": [
