@@ -136,7 +136,7 @@ class EntryPopup(QDialog):
             key=lambda dicts: dicts[self.FieldsList[0]])
 
         self.parent.config.write_json_file()
-        self.parent.DisplayEntries()
+        self.parent.display_entries()
         if NextEntry:
             for EditBox in self.LineEditList:
                 EditBox.setText("")

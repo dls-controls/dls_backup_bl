@@ -18,14 +18,15 @@ from .categories import CategoryPopup
 from .entries import EntryPopup
 
 
+# noinspection PyArgumentList,PyUnresolvedReferences,PyAttributeOutsideInit
 class Editor(QWidget):
     def __init__(self):
         QWidget.__init__(self)
 
         self.config = BackupConfig(Path('test/test_brick.json'))
-        self.InitialiseUI()
+        self.initialise_ui()
 
-    def CentreWindow(self):
+    def centre_window(self):
         # Get the geometry of the widget relative to its parent including any
         # window frame
         FrameGeometry = self.frameGeometry()
@@ -33,8 +34,8 @@ class Editor(QWidget):
         FrameGeometry.moveCenter(ScreenCentre)
         self.move(FrameGeometry.topLeft())
 
-    def InitialiseUI(self):
-
+    # noinspection PyAttributeOutsideInit
+    def initialise_ui(self):
         # Set up the window and centre it on the screen  
         self.setWindowTitle('Backup Editor')
         self.MinimumSize = QSize(750, 450)
@@ -45,7 +46,7 @@ class Editor(QWidget):
             Qt.WindowMinimizeButtonHint)
 
         # self.setWindowIcon(QIcon('icon.png'))
-        self.CentreWindow()
+        self.centre_window()
 
         # Create tab widget
         self.Tabs = QTabWidget()
@@ -93,12 +94,12 @@ class Editor(QWidget):
         self.PMACTab.setLayout(self.DeviceLayout)
 
         # Link the buttons to their actions
-        self.Tabs.currentChanged.connect(self.TabSelected)
+        self.Tabs.currentChanged.connect(self.tab_selected)
         self.AddEntryButton.clicked.connect(
-            partial(self.OpenAddEntryDialog, EditMode=False))
+            partial(self.open_add_entry_dialog, edit_mode=False))
         self.EditEntryButton.clicked.connect(
-            partial(self.OpenAddEntryDialog, EditMode=True))
-        self.RemoveEntryButton.clicked.connect(self.RemoveEntry)
+            partial(self.open_add_entry_dialog, edit_mode=True))
+        self.RemoveEntryButton.clicked.connect(self.remove_entry)
 
         # Create a tool bar
         self.ToolBar = QToolBar(self)
@@ -117,7 +118,7 @@ class Editor(QWidget):
         self.OpenAction = QAction(QIcon('Open.png'),
                                   'Open a JSON File', self)
         self.OpenAction.setShortcut('Ctrl+O')
-        self.OpenAction.triggered.connect(self.ShowOpenDialog)
+        self.OpenAction.triggered.connect(self.show_open_dialog)
 
         # Add the Open Action and File Path label to the tool bar
         self.ToolBar.addAction(self.OpenAction)
@@ -139,32 +140,28 @@ class Editor(QWidget):
         # Look for the previously opened JSON file path and open it
         self.JSONFileName = "test_brick.json"  # self.EditorSettings.value(
         # "JSONFilePath").toString()
-        self.OpenJSONFile()
+        self.open_json_file()
 
-        self.DisplayEntries()
+        self.display_entries()
         # Display the GUI
         self.show()
 
-    def ShowOpenDialog(self):
-        self.JSONFileName = QFileDialog.getOpenFileName(self,
-                                                        'Open JSON File',
-                                                        '/home',
-                                                        "JSON Files ("
-                                                        "*.json)")
-        self.OpenJSONFile()
+    def show_open_dialog(self):
+        self.JSONFileName = QFileDialog.getOpenFileName(
+            self, 'Open JSON File', '/home', "JSON Files (*.json)")
+        self.open_json_file()
 
-    def OpenJSONFile(self):
+    def open_json_file(self):
 
         # If a file is specified, open it, display the path, and store the
         # location
         if self.JSONFileName:
             self.config.read_json_file()
             self.OpenFileLabel.setText(self.JSONFileName)
-            # Save JSON file path to /home/jimbo/.config/JimboMonkey Productions
             self.EditorSettings.setValue("JSONFilePath", self.JSONFileName)
 
-    def TabSelected(self, arg=None):
-        self.DisplayEntries()
+    def tab_selected(self, arg=None):
+        self.display_entries()
         if arg == 0:
             self.PMACTab.setLayout(self.DeviceLayout)
         if arg == 1:
@@ -172,7 +169,7 @@ class Editor(QWidget):
         if arg == 2:
             self.ZebraTab.setLayout(self.DeviceLayout)
 
-    def DisplayEntries(self):
+    def display_entries(self):
         self.SelectedDevice = str(self.Tabs.tabText(self.Tabs.currentIndex()))
         self.ListModel = QStandardItemModel()
 
@@ -191,7 +188,7 @@ class Editor(QWidget):
                                            + 20)
         self.DeviceList.selectRow(0)
 
-    def ButtonRefresh(self):
+    def button_refresh(self):
         # Record the number of selected category and card entries
         NumCards = len(self.CardList.selectedIndexes())
         NumCategories = len(self.CategoryList.selectedIndexes())
@@ -203,7 +200,7 @@ class Editor(QWidget):
         self.RemoveCardButton.setEnabled(NumCards)
         self.EditCardButton.setEnabled(NumCards)
 
-    def RefreshCategoryList(self):
+    def refresh_category_list(self):
         # Create a model for the data
         self.ListModel = QStandardItemModel(self)
 
@@ -225,14 +222,14 @@ class Editor(QWidget):
         if self.ListModel.rowCount() < 1:
             self.ListModel.clear()
             self.CategoryList.setModel(self.ListModel)
-            self.DisplayCategoryCards()
+            self.display_category_cards()
 
         else:
             self.CategoryList.setModel(self.ListModel)
             self.CategoryList.selectionModel().selectionChanged.connect(
-                self.DisplayCategoryCards)
+                self.display_category_cards)
             self.CategoryList.model().dataChanged.connect(
-                self.DisplayCategoryCards)
+                self.display_category_cards)
 
             self.CategoryList.model().setHeaderData(0, Qt.Horizontal,
                                                     "Title")
@@ -243,7 +240,7 @@ class Editor(QWidget):
             self.CategoryList.horizontalHeader().setResizeMode(
                 QHeaderView.ResizeToContents)
 
-            if self.LastSelectedCategory != None:
+            if self.LastSelectedCategory is not None:
                 self.LastSelectedIndex = self.CategoryList.model().index(
                     self.LastSelectedCategory.row(), 0)
                 self.CategoryList.setCurrentIndex(self.LastSelectedIndex)
@@ -271,7 +268,7 @@ class Editor(QWidget):
                 self.CategoryList.selectRow(1)
                 self.CategoryList.selectRow(0)
 
-    def DisplayCategoryCards(self):
+    def display_category_cards(self):
         if len(self.CategoryList.selectedIndexes()) > 0:
             self.SelectedCategory = str(
                 self.CategoryList.selectedIndexes()[0].data().toString())
@@ -302,7 +299,7 @@ class Editor(QWidget):
                 self.CardList.setColumnWidth(ColumnNum,
                                              self.CurrentColumnWidth + 20)
             self.CardList.selectionModel().selectionChanged.connect(
-                self.ButtonRefresh)
+                self.button_refresh)
             self.CardList.selectRow(0)
 
         else:
@@ -324,14 +321,13 @@ class Editor(QWidget):
                                 QStyle.PM_ScrollBarExtent)
                             * 2) + self.CategoryList.width(), self.height())
 
-        self.ButtonRefresh()
+        self.button_refresh()
 
-    def RemoveEntry(self):
-
+    def remove_entry(self):
         self.SelectedDeviceList = ""
         self.NumColumns = self.DeviceList.model().columnCount()
         self.NumRows = int(
-                len(self.DeviceList.selectedIndexes()) / self.NumColumns)
+            len(self.DeviceList.selectedIndexes()) / self.NumColumns)
         self.SelectedIndexes = self.DeviceList.selectedIndexes()
         for Row in range(0, self.NumRows):
             self.RowString = ""
@@ -344,13 +340,10 @@ class Editor(QWidget):
         # Find the number of rows before a removal
         self.LastRow = (self.DeviceList.model().rowCount() - 1)
 
-        self.MsgBoxResponse = QMessageBox.question(self, "Remove?",
-                                                   "Are you sure you "
-                                                   "want to remove:\n"
-                                                   +
-                                                   self.SelectedDeviceList,
-                                                   QMessageBox.Yes,
-                                                   QMessageBox.No)
+        self.MsgBoxResponse = QMessageBox.question(
+            self, "Remove?",
+            "Are you sure you want to remove:\n" + self.SelectedDeviceList,
+            QMessageBox.Yes, QMessageBox.No)
         if self.MsgBoxResponse == QMessageBox.Yes:
             self.SelectedDevice = str(
                 self.Tabs.tabText(self.Tabs.currentIndex()))
@@ -363,7 +356,7 @@ class Editor(QWidget):
                 # print self.SelectedRow
                 del self.config.json_data[self.SelectedDevice][self.SelectedRow]
             self.config.write_json_file()
-            self.DisplayEntries()
+            self.display_entries()
 
             # If the selected index was the last row in the list
             if self.LastSelectedRow == self.LastRow:
@@ -373,31 +366,32 @@ class Editor(QWidget):
                 # Otherwise select the same index in the list
                 self.NewSelectedRow = self.LastSelectedRow
             # Create an index from this row and set it
-            self.NewIndex = self.DeviceList.model().index(self.NewSelectedRow,
-                                                          0)
+            self.NewIndex = self.DeviceList.model().index(
+                self.NewSelectedRow, 0)
             self.DeviceList.setCurrentIndex(self.NewIndex)
 
-    def OpenAddEntryDialog(self, EditMode):
-        self.AddEntryDialog = EntryPopup(EditMode, self)
+    def open_add_entry_dialog(self, edit_mode):
+        self.AddEntryDialog = EntryPopup(edit_mode, self)
         #      self.w.setGeometry(QRect(100, 100, 400, 200))
         self.AddEntryDialog.show()
 
-    def doit(self, EditMode):
+    def doit(self, edit_mode):
         self.SelectedIndex = self.CategoryList.selectionModel().currentIndex()
         if str(self.SelectedIndex.data().toString()) == 'Verbs':
-            self.w = Verbs.CardPopup(EditMode, self)
+            self.w = Verbs.CardPopup(edit_mode, self)
         else:
-            self.w = Cards.CardPopup(EditMode, self)
+            self.w = Cards.CardPopup(edit_mode, self)
         self.w.setModal(True)
         self.w.show()
 
-    def doitCat(self, EditMode):
-        self.w = CategoryPopup(EditMode, self)
+    def doit_cat(self, edit_mode):
+        self.w = CategoryPopup(edit_mode, self)
         self.w.setModal(True)
         self.w.show()
 
 
 # Start the application    
+# noinspection PyUnresolvedReferences
 def main():
     print('Launching ...')
     usage = """usage: %prog [options]

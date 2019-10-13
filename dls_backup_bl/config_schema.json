@@ -1,0 +1,30 @@
+{
+  "title": "BackupConfig",
+  "$id": "dls_backup_beamline",
+  "description": "represents a set of devices for backup on a beamline",
+  "type": "object",
+  "properties": {
+    "motor_controllers": {
+      "type": "array",
+      "items": {
+        "controller": "string",
+        "server": "string",
+        "port": "integer"
+      }
+    },
+    "terminal_servers": {
+      "type": "array",
+      "items": {
+        "server": "string",
+        "ts_type": ["moxa", "acs", "acsold"]
+      }
+    },
+    "zebras": {
+      "type": "array",
+      "items": {
+        "dns_name": "string"
+      }
+    }
+  },
+  "required": ["motor_controllers", "terminal_servers", "zebras"]
+}
