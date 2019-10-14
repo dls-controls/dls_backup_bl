@@ -326,3 +326,7 @@ class BackupBeamline:
                 self.do_backups()
         else:
             print("\n\n" + setup_message)
+
+
+def main():
+    BackupBeamline().main()

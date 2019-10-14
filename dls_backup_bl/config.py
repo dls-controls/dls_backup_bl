@@ -24,7 +24,7 @@ class MotorController:
     port: int
     server: str
 
-    # todo put these in a base class
+    # todo put this in a base class
     def __getitem__(self, item):
         return self.__dict__[item]
 
