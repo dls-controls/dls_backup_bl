@@ -2,10 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="40654a3a-2331-4169-9714-67d74274835f" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pipfile" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pipfile.lock" beforeDir="false" afterPath="$PROJECT_DIR$/Pipfile.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dls_backup_bl/backup.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/backup.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dls_backup_bl/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/config.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dls_backup_bl/importjson.py" beforeDir="false" afterPath="$PROJECT_DIR$/dls_backup_bl/importjson.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -20,7 +19,7 @@
     <SUITE FILE_PATH="coverage/dls_backup_bl$scratch_3.coverage" NAME="scratch_3 Coverage Results" MODIFIED="1570963510925" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$APPLICATION_CONFIG_DIR$/scratches" />
     <SUITE FILE_PATH="coverage/dls_backup_bl$testconfig.coverage" NAME="testconfig Coverage Results" MODIFIED="1570971370861" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/dls_backup_bl" />
     <SUITE FILE_PATH="coverage/dls_backup_bl$Backup_import.coverage" NAME="I15 Backup import Coverage Results" MODIFIED="1570871565294" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/dls_backup_bl$Backup_to_motion.coverage" NAME="Backup to motion Coverage Results" MODIFIED="1570910208681" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/dls_backup_bl$Backup_to_motion.coverage" NAME="Backup to motion Coverage Results" MODIFIED="1571046128697" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="FileColors">
     <fileColor scope="Non-Project Files (Material Default)" color="2E3C43" />
@@ -30,13 +29,37 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/dls_backup_bl/config.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="362">
-              <caret line="76" column="41" lean-forward="true" selection-start-line="76" selection-start-column="41" selection-end-line="76" selection-end-column="41" />
+            <state relative-caret-position="493">
+              <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/dls_backup_bl/backup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="509">
+              <caret line="296" column="41" selection-start-line="296" selection-start-column="41" selection-end-line="296" selection-end-column="41" />
+              <folding>
+                <element signature="e#0#15#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/dls_backup_bl/importjson.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="289">
+              <caret line="17" column="61" selection-start-line="17" selection-start-column="61" selection-end-line="17" selection-end-column="61" />
+              <folding>
+                <element signature="e#0#29#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -85,7 +108,9 @@
     <option name="CHANGED_PATHS">
       <list>
         <option value="$PROJECT_DIR$/Pipfile" />
+        <option value="$PROJECT_DIR$/dls_backup_bl/backup.py" />
         <option value="$PROJECT_DIR$/dls_backup_bl/config.py" />
+        <option value="$PROJECT_DIR$/dls_backup_bl/importjson.py" />
       </list>
     </option>
   </component>
@@ -154,7 +179,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.config">
+  <component name="RunManager" selected="Python.Backup to motion">
     <configuration name="Backup to motion" type="PythonConfigurationType" factoryName="Python">
       <module name="dls_backup_bl" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -169,7 +194,7 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="dls_backup" />
-      <option name="PARAMETERS" value="--beamline G00" />
+      <option name="PARAMETERS" value="--beamline G00 --email giles.knap@diamond.ac.uk" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -394,12 +419,12 @@
       <workItem from="1570859133408" duration="43206000" />
       <workItem from="1570964107254" duration="10085000" />
       <workItem from="1571037858435" duration="376000" />
-      <workItem from="1571038256016" duration="6188000" />
+      <workItem from="1571038256016" duration="8276000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="6564000" />
+    <option name="totallyTimeSpent" value="8652000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="1920" y="27" width="3440" height="1413" extended-state="6" />
@@ -408,12 +433,12 @@
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49892932" visible="true" weight="0.101120286" />
       <window_info id="Favorites" order="1" side_tool="true" />
       <window_info anchor="bottom" id="TODO" order="0" weight="0.3294025" />
-      <window_info anchor="bottom" id="Terminal" order="1" sideWeight="0.5044222" side_tool="true" visible="true" weight="0.34198114" />
+      <window_info active="true" anchor="bottom" id="Terminal" order="1" sideWeight="0.504717" side_tool="true" visible="true" weight="0.34198114" />
       <window_info anchor="bottom" id="Event Log" order="2" sideWeight="0.49882075" side_tool="true" weight="0.3008982" />
       <window_info anchor="bottom" id="Version Control" order="3" sideWeight="0.49911556" weight="0.32861635" />
       <window_info anchor="bottom" id="Message" order="4" />
-      <window_info anchor="bottom" id="Find" order="5" sideWeight="0.4994104" weight="0.3294025" />
-      <window_info active="true" anchor="bottom" id="Run" order="6" sideWeight="0.49557784" visible="true" weight="0.34198114" />
+      <window_info anchor="bottom" id="Find" order="5" sideWeight="0.49911556" weight="0.3294025" />
+      <window_info anchor="bottom" id="Run" order="6" sideWeight="0.495283" visible="true" weight="0.34198114" />
       <window_info anchor="bottom" id="Debug" order="7" sideWeight="0.4970519" weight="0.39937106" />
       <window_info anchor="bottom" id="Cvs" order="8" weight="0.25" />
       <window_info anchor="bottom" id="Database Changes" order="9" />
@@ -475,23 +500,8 @@
           <option name="timeStamp" value="13" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/dls_backup_bl/backup.py</url>
-          <line>187</line>
-          <option name="timeStamp" value="14" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/dls_backup_bl/backup.py</url>
-          <line>202</line>
-          <option name="timeStamp" value="15" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/dls_backup_bl/config.py</url>
-          <line>156</line>
-          <option name="timeStamp" value="21" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/dls_backup_bl/config.py</url>
-          <line>71</line>
+          <line>75</line>
           <option name="timeStamp" value="29" />
         </line-breakpoint>
       </breakpoints>
@@ -541,12 +551,32 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/dls_backup_bl/backup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="509">
+          <caret line="296" column="41" selection-start-line="296" selection-start-column="41" selection-end-line="296" selection-end-column="41" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/dls_backup_bl/config.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="362">
-          <caret line="76" column="41" lean-forward="true" selection-start-line="76" selection-start-column="41" selection-end-line="76" selection-end-column="41" />
+        <state relative-caret-position="493">
+          <caret line="29" lean-forward="true" selection-start-line="29" selection-end-line="29" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dls_backup_bl/importjson.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="289">
+          <caret line="17" column="61" selection-start-line="17" selection-start-column="61" selection-end-line="17" selection-end-column="61" />
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
           </folding>
         </state>
       </provider>

@@ -9,7 +9,7 @@ from typing import List
 
 from git import Repo, InvalidGitRepositoryError
 
-from dls_backup_bl.config import BackupConfig
+from dls_backup_bl.config import BackupsConfig
 from dls_backup_bl.importjson import import_json
 from .brick import backup_motor_controller
 from .defaults import Defaults
@@ -17,6 +17,15 @@ from .tserver import backup_terminal_server
 from .zebra import backup_zebra
 
 log = getLogger(__name__)
+
+empty_message = """
+
+BACKUP ABORTED
+
+The configuration file contains no devices for backup. 
+Please import the dls-pmac-analyse cfg file with --import-cfg and then 
+use dls-edit-backup.py to complete the device configuration.
+"""
 
 
 class BackupBeamline:
@@ -26,7 +35,7 @@ class BackupBeamline:
         self.json_data: object = None
         self.thread_pool: ThreadPool = None
         self.defaults: Defaults = None
-        self.config: BackupConfig = None
+        self.config: BackupsConfig = None
 
         self.motor_controllers: List = None
         self.terminal_servers: List = None
@@ -130,9 +139,9 @@ class BackupBeamline:
         # Go through every motor controller listed in JSON file
         for motor_controller in self.config.motion_controllers:
             # Pull out the controller details
-            controller = motor_controller["Controller"]
-            server = motor_controller["Server"]
-            port = motor_controller["Port"]
+            controller = motor_controller.controller
+            server = motor_controller.server
+            port = motor_controller.port
 
             # Check whether a terminal server is used or not
             uses_ts = int(port) != 1025
@@ -201,9 +210,6 @@ class BackupBeamline:
                         log.info('\t' + File)
 
                 git_repo.index.add(change_list)
-                # Note repo.git.add is used to handle deleted files
-                # todo not doing this since it overrides ignore (OK?)
-                # git_repo.git.add(all=True)
                 git_repo.index.commit("commit by dls-backup-bl")
                 log.critical("Committed changes")
             else:
@@ -250,6 +256,34 @@ class BackupBeamline:
             log.critical(msg)
             log.debug(msg, exc_info=True)
 
+    def do_backups(self):
+        log.info("START OF BACKUP for beamline %s to %s",
+                 self.defaults.beamline, self.defaults.backup_folder)
+
+        # Initiate a thread pool with the desired number of threads
+        self.thread_pool = ThreadPool(self.args.threads)
+
+        # queue threads for each type of backup
+        self.do_geobricks(pmac=self.args.one)
+        # self.do_t_servers()
+        # self.do_zebras()
+
+        # Wait for completion of all backup threads
+        self.thread_pool.close()
+        self.thread_pool.join()
+
+        # finish up
+        self.sort_log()
+        self.commit_changes()
+        self.send_email(self.args.email)
+
+        log.warning("END OF BACKUP for beamline %s to %s",
+                    self.defaults.beamline, self.defaults.backup_folder)
+
+        print("\n\n\n--------- Summary ----------")
+        with self.defaults.critical_log_file.open() as f:
+            print(f.read())
+
     def main(self):
         self.parse_args()
         self.defaults = Defaults(
@@ -260,35 +294,13 @@ class BackupBeamline:
         # logging is only set up now since defaults chooses logfile location
         self.setup_logging(self.args.log_level)
 
-        self.config = BackupConfig(self.defaults.config_file)
+        self.config = BackupsConfig.load(self.defaults.config_file)
         if self.args.import_cfg:
             import_file = Path(self.args.import_cfg)
             import_json(import_file, self.defaults.config_file)
-
-        elif self.config.load_config(check_empty=True):
-            log.info("START OF BACKUP for beamline %s to %s",
-                     self.defaults.beamline, self.defaults.backup_folder)
-
-            # Initiate a thread pool with the desired number of threads
-            self.thread_pool = ThreadPool(self.args.threads)
-
-            # queue threads for each type of backup
-            self.do_geobricks(pmac=self.args.one)
-            # self.do_t_servers()
-            # self.do_zebras()
-
-            # Wait for completion of all backup threads
-            self.thread_pool.close()
-            self.thread_pool.join()
-
-            # finish up
-            self.sort_log()
-            self.commit_changes()
-            self.send_email(self.args.email)
-
-            log.warning("END OF BACKUP for beamline %s to %s",
-                        self.defaults.beamline, self.defaults.backup_folder)
-
-            print("\n\n\n--------- Summary ----------")
-            with self.defaults.critical_log_file.open() as f:
-                print(f.read())
+        else:
+            self.config.load(self.defaults.config_file)
+            if self.config.count_devices() ==0:
+                print("\n\nempty_message")
+            else:
+                self.do_backups()
