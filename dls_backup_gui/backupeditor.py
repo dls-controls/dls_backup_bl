@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import (
     QAction, QVBoxLayout, QStyle, QMessageBox
 )
 
-from dls_backup_bl.config import BackupConfig
+from dls_backup_bl.config import BackupsConfig
 from .categories import CategoryPopup
 from .entries import EntryPopup
 

@@ -11,9 +11,10 @@ log = getLogger(__name__)
 # The classes MotorController, TerminalServer, Zebra, TsType
 # define the schema of the configuration file and the object graph that
 # represents the configuration in memory the class BackupsConfig is the
-# root of those representations
+# root of those representations and provides load and save methods
 # todo this works fine but soooo much boilerplate code - work out how to
-#  create a base class like Tuple
+#  create a base class like NamedTuple that automatically does json_repr
+#  and __init__()
 
 class MotorController(object):
     def __init__(self, controller, port, server):

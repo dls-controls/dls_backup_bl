@@ -1,5 +1,4 @@
 import argparse
-import json
 import logging
 import smtplib
 from logging import getLogger
@@ -23,10 +22,18 @@ empty_message = """
 BACKUP ABORTED
 
 The configuration file contains no devices for backup. 
-Please import the dls-pmac-analyse cfg file with --import-cfg and then 
+Please import the dls-pmac-analyse cfg file with --import-cfg and / or
 use dls-edit-backup.py to complete the device configuration.
 """
+setup_message = """
 
+BACKUP NOT SET UP
+
+There is no backup area set up for this beamline.
+
+Please import the dls-pmac-analyse cfg file with --import-cfg and / or 
+use dls-edit-backup.py to complete the device configuration.
+"""
 
 class BackupBeamline:
     def __init__(self):
@@ -129,13 +136,14 @@ class BackupBeamline:
         parser.add_argument('-l', '--log-level', action="store",
                             default='info',
                             help="Set logging to error, warning, info, debug")
-        parser.add_argument('-o', '--one', action="store",
-                            help="only backup the one named device")
+        parser.add_argument('-d', '--devices', action="store", nargs='+',
+                            help="only backup the listed named device")
 
         # Parse the command line arguments
         self.args = parser.parse_args()
 
-    def do_geobricks(self, pmac: str = None):
+    def do_geobricks(self, pmacs: List[str] = None):
+        count = 0
         # Go through every motor controller listed in JSON file
         for motor_controller in self.config.motion_controllers:
             # Pull out the controller details
@@ -151,10 +159,13 @@ class BackupBeamline:
                 controller, server, port, uses_ts, self.defaults
             )
 
-            if not pmac or pmac == controller:
+            if not pmacs or controller in pmacs:
+                count += 1
                 self.thread_pool.apply_async(backup_motor_controller, args)
+            return count
 
     def do_t_servers(self, t_server: str = None):
+        count = 0
         # Go through every terminal server listed in JSON file
         for terminal_server in self.terminal_servers:
             # Pull out the server details
@@ -165,9 +176,12 @@ class BackupBeamline:
                 server, ts_type, self.defaults
             )
             if not t_server or t_server == server:
+                count += 1
                 self.thread_pool.apply_async(backup_terminal_server, args)
+        return count
 
     def do_zebras(self, zebra: str = None):
+        count = 0
         # Go through every zebra listed in JSON file
         for z in self.zebras:
             # Pull out the PV name detail
@@ -176,7 +190,9 @@ class BackupBeamline:
             args = (name, self.defaults)
 
             if not zebra or zebra == name:
+                count += 1
                 self.thread_pool.apply_async(backup_zebra, args)
+        return count
 
     # noinspection PyBroadException
     def commit_changes(self):
@@ -264,9 +280,9 @@ class BackupBeamline:
         self.thread_pool = ThreadPool(self.args.threads)
 
         # queue threads for each type of backup
-        self.do_geobricks(pmac=self.args.one)
-        # self.do_t_servers()
-        # self.do_zebras()
+        total = self.do_geobricks(pmacs=self.args.devices)
+        # total += self.do_t_servers()
+        # total += self.do_zebras()
 
         # Wait for completion of all backup threads
         self.thread_pool.close()
@@ -274,6 +290,9 @@ class BackupBeamline:
 
         # finish up
         self.sort_log()
+        if total == 0:
+            log.critical("Nothing was backed up "
+                         "(incorrect --devices argument?)")
         self.commit_changes()
         self.send_email(self.args.email)
 
@@ -290,17 +309,17 @@ class BackupBeamline:
             self.args.beamline, self.args.dir, self.args.json_file,
             self.args.retries
         )
-        self.defaults.check_folders()
-        # logging is only set up now since defaults chooses logfile location
-        self.setup_logging(self.args.log_level)
-
-        self.config = BackupsConfig.load(self.defaults.config_file)
         if self.args.import_cfg:
+            self.defaults.check_folders()
             import_file = Path(self.args.import_cfg)
             import_json(import_file, self.defaults.config_file)
-        else:
+        elif self.defaults.config_file.exists():
+            self.config = BackupsConfig.load(self.defaults.config_file)
+            self.setup_logging(self.args.log_level)
             self.config.load(self.defaults.config_file)
-            if self.config.count_devices() ==0:
-                print("\n\nempty_message")
+            if self.config.count_devices() == 0:
+                print("\n\n" + empty_message)
             else:
                 self.do_backups()
+        else:
+            print("\n\n" + setup_message)
