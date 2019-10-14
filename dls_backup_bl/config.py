@@ -4,17 +4,27 @@ from enum import IntEnum
 from logging import getLogger
 from pathlib import Path
 from typing import List, NamedTuple
-from pickle import dumps
 
 log = getLogger(__name__)
 
 
-# The classes MotorController, TerminalServer, Zebra, Backups, TsType
-# define the schema of the configuration file
-class MotorController(NamedTuple):
-    Controller: str
-    Server: str
-    Port: int
+# The classes MotorController, TerminalServer, Zebra, TsType
+# define the schema of the configuration file and the object graph that
+# represents the configuration in memory the class BackupsConfig is the
+# root of those representations
+
+class MotorController(object):
+    def __init__(self, controller, server, port):
+        self.controller: str = controller
+        self.server: str = server
+        self.port: int = port
+
+    def json_repr(self):
+        return {
+            "Controller": self.controller,
+            "Server": self.server,
+            "Port": self.port
+        }
 
 
 class TsType(IntEnum):
@@ -23,42 +33,57 @@ class TsType(IntEnum):
     old_acs = 2
 
 
-class TerminalServer(NamedTuple):
-    Server: str
-    Type: TsType
+class TerminalServer(object):
+    def __init__(self, server, ts_type):
+        self.server: str = server
+        self.ts_type: TsType = ts_type
+
+    def json_repr(self):
+        return {
+            "Server": self.server,
+            "Type": self.ts_type
+        }
 
 
 class Zebra(NamedTuple):
     Name: str
 
 
-class Backups(NamedTuple):
-    motion_controllers: List[MotorController]
-    terminal_servers: List[TerminalServer]
-    zebras: List[Zebra]
+class BackupsConfig(object):
+    def __init__(self, motion_controllers, terminal_servers, zebras):
+        self.motion_controllers: List[MotorController] = motion_controllers
+        self.terminal_servers: List[TerminalServer] = terminal_servers
+        self.zebras: List[Zebra] = zebras
+
+    def json_repr(self):
+        return {
+            "MotionControllers": self.motion_controllers,
+            "TerminalServers": self.terminal_servers,
+            "Zebras": self.zebras
+        }
 
     @staticmethod
     def empty():
-        return Backups([], [], [])
+        return BackupsConfig([], [], [])
 
-    # gk 10/2019 this is my crude attempt to reconstruct useful named tuples
-    # from the serialized data. Is there no generic way to do this though json?
-    # I created a json schema, thinking that this would allow it but apart from
-    # the very out of date https://github.com/cwacek/python-jsonschema-objects
-    # I see no solution out there.
-    # the crude approach works OK for this simple structure
     @staticmethod
     def load(json_file: Path):
         with json_file.open() as f:
             raw_items = json.loads(f.read())
-        m = [MotorController(*i) for i in raw_items[0]]
-        t = [TerminalServer(*i) for i in raw_items[1]]
-        z = [Zebra(*i) for i in raw_items[2]]
-        return Backups(m, t, z)
+        m = [MotorController(*i.values()) for i in
+             raw_items["MotionControllers"]]
+        t = [TerminalServer(*i.values()) for i in
+             raw_items["TerminalServers"]]
+        z = [Zebra(*i.values()) for i in 
+             raw_items["Zebras"]]
+        return BackupsConfig(m, t, z)
 
     def dump(self, json_file: Path):
         with json_file.open("w") as f:
-            f.write(json.dumps(self))
+            json.dump(self, f, cls=ComplexEncoder, sort_keys=True, indent=4)
+
+    def dumps(self):
+        return json.dumps(self, cls=ComplexEncoder, sort_keys=True, indent=4)
 
     def count_devices(self):
         return len(self.motion_controllers) + \
@@ -66,28 +91,34 @@ class Backups(NamedTuple):
                len(self.zebras)
 
 
-# Todo - to get the old schema we need some dictionaries
-#  but tuples are nicer for in memory structure - can we get both?
+class ComplexEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if hasattr(obj, 'json_repr'):
+            return obj.json_repr()
+        else:
+            return json.JSONEncoder.default(self, obj)
+
+
 mc = MotorController(
-    Controller="BL00G-MO-STEP-01",
-    Server="192.168.0·1",
-    Port=1025)
+    controller="BL00G-MO-STEP-01",
+    server="192.168.001",
+    port=1025)
+mc2 = MotorController(
+    controller="BL00G-MO-STEP-02",
+    server="192.168.002",
+    port=1025)
+ts = TerminalServer(server="ts1", ts_type=TsType.moxa)
 
-b = Backups.empty()
-b.motion_controllers.append(mc)
+b = BackupsConfig.empty()
+b.motion_controllers += [mc, mc2]
+b.terminal_servers.append(ts)
 
-print(b)
-f = Path('/tmp/b.json')
+f = Path("/tmp/tstBackup.json")
 b.dump(f)
-b2 = Backups.load(f)
-print(b2)
-print(b2.motion_controllers[0].Controller)
-
-print(dumps(b))
+b2 = BackupsConfig.load(f)
+print(b2.dumps())
 exit(0)
 
-# does not work since dumps can only serialize dict, list etc.
-print(json.dumps(b))
 
 class BackupConfig():
     def __init__(self, json_file: Path):
