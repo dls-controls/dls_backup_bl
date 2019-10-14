@@ -5,6 +5,8 @@ from logging import getLogger
 from pathlib import Path
 from typing import List, NamedTuple
 
+from attr import dataclass
+
 log = getLogger(__name__)
 
 
@@ -16,18 +18,11 @@ log = getLogger(__name__)
 #  create a base class like NamedTuple that automatically does json_repr
 #  and __init__()
 
-class MotorController(object):
-    def __init__(self, controller, port, server):
-        self.controller: str = controller
-        self.server: str = server
-        self.port: int = port
-
-    def json_repr(self):
-        return {
-            "Controller": self.controller,
-            "Server": self.server,
-            "Port": self.port
-        }
+@dataclass
+class MotorController:
+    controller: str
+    port: int
+    server: str
 
 
 class TsType(IntEnum):
@@ -36,19 +31,14 @@ class TsType(IntEnum):
     old_acs = 2
 
 
-class TerminalServer(object):
-    def __init__(self, server, ts_type):
-        self.server: str = server
-        self.ts_type: TsType = ts_type
-
-    def json_repr(self):
-        return {
-            "Server": self.server,
-            "Type": self.ts_type
-        }
+@dataclass
+class TerminalServer:
+    server: str
+    ts_type: TsType
 
 
-class Zebra(NamedTuple):
+@dataclass
+class Zebra:
     Name: str
 
 
@@ -58,12 +48,8 @@ class BackupsConfig(object):
         self.terminal_servers: List[TerminalServer] = terminal_servers
         self.zebras: List[Zebra] = zebras
 
-    def json_repr(self):
-        return {
-            "MotorControllers": self.motion_controllers,
-            "TerminalServers": self.terminal_servers,
-            "Zebras": self.zebras
-        }
+    def device_types(self):
+        return self.__dict__.keys()
 
     @staticmethod
     def empty():
@@ -76,11 +62,11 @@ class BackupsConfig(object):
             with json_file.open() as f:
                 raw_items = json.loads(f.read())
             m = [MotorController(*i.values()) for i in
-                 raw_items["MotorControllers"]]
+                 raw_items["motion_controllers"]]
             t = [TerminalServer(*i.values()) for i in
-                 raw_items["TerminalServers"]]
+                 raw_items["terminal_servers"]]
             z = [Zebra(*i.values()) for i in
-                 raw_items["Zebras"]]
+                 raw_items["zebras"]]
         except Exception:
             msg = "JSON file missing or invalid"
             log.debug(msg, exc_info=True)
@@ -94,7 +80,7 @@ class BackupsConfig(object):
             with json_file.open("w") as f:
                 json.dump(self, f, cls=ComplexEncoder, sort_keys=True, indent=4)
         except Exception:
-            msg = "Unable to configuration file"
+            msg = "Unable to save configuration file"
             log.debug(msg, exc_info=True)
             log.error(msg)
 
@@ -109,8 +95,8 @@ class BackupsConfig(object):
 
 class ComplexEncoder(json.JSONEncoder):
     def default(self, obj):
-        if hasattr(obj, 'json_repr'):
-            return obj.json_repr()
+        if hasattr(obj, '__dict__'):
+            return obj.__dict__
         else:
             return json.JSONEncoder.default(self, obj)
 

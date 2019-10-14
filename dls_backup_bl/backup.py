@@ -35,6 +35,7 @@ Please import the dls-pmac-analyse cfg file with --import-cfg and / or
 use dls-edit-backup.py to complete the device configuration.
 """
 
+
 class BackupBeamline:
     def __init__(self):
         self.args = None
@@ -162,7 +163,7 @@ class BackupBeamline:
             if not pmacs or controller in pmacs:
                 count += 1
                 self.thread_pool.apply_async(backup_motor_controller, args)
-            return count
+        return count
 
     def do_t_servers(self, t_server: str = None):
         count = 0
@@ -311,9 +312,11 @@ class BackupBeamline:
         )
         if self.args.import_cfg:
             self.defaults.check_folders()
+            self.setup_logging(self.args.log_level)
             import_file = Path(self.args.import_cfg)
             import_json(import_file, self.defaults.config_file)
         elif self.defaults.config_file.exists():
+            self.defaults.check_folders()
             self.config = BackupsConfig.load(self.defaults.config_file)
             self.setup_logging(self.args.log_level)
             self.config.load(self.defaults.config_file)

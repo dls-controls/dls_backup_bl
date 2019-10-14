@@ -35,6 +35,7 @@ class Defaults:
         :param backup_folder: override the default location for backups
         """
         self._retries = retires if int(retires) > 0 else Defaults._retries
+        self.temp_dir: Path = Path(tempfile.mkdtemp())
 
         try:
             if beamline is None:
@@ -44,9 +45,10 @@ class Defaults:
             bl_no = int(beamline[1:])
             self._beamline = "BL{:02d}{}".format(bl_no,  beamline[0].upper())
         except (IndexError, AssertionError, ValueError, TypeError):
-            raise ValueError(
-                "Beamline must be of the form i16. Check environment "
+            print(
+                "\n\nBeamline must be of the form i16. Check environment "
                 "variable ${BEAMLINE} or use argument --beamline")
+            exit(1)
 
         if backup_folder:
             self._backup_folder = Path(backup_folder)
@@ -61,7 +63,6 @@ class Defaults:
             )
             self._config_file = self._backup_folder / name
 
-        self.temp_dir: Path = Path(tempfile.mkdtemp())
 
     def __del__(self):
         shutil.rmtree(str(self.temp_dir), ignore_errors=True)

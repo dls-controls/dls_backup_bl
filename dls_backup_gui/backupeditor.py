@@ -22,8 +22,8 @@ from .entries import EntryPopup
 class Editor(QWidget):
     def __init__(self):
         QWidget.__init__(self)
-
-        self.config = BackupConfig(Path('test/test_brick.json'))
+        self.filename = 'test/test_brick.json'
+        self.config = BackupsConfig.load(Path(self.filename))
         self.initialise_ui()
 
     def centre_window(self):
@@ -51,15 +51,11 @@ class Editor(QWidget):
         # Create tab widget
         self.Tabs = QTabWidget()
 
-        # Create individual tabs
-        self.PMACTab = QWidget()
-        self.TerminalServerTab = QWidget()
-        self.ZebraTab = QWidget()
-
-        # Add individual tabs to tab widget
-        self.Tabs.addTab(self.PMACTab, "MotorControllers")
-        self.Tabs.addTab(self.TerminalServerTab, "TerminalServers")
-        self.Tabs.addTab(self.ZebraTab, "Zebras")
+        self.tab_items = {}
+        # Create and add individual tabs to tab widget
+        for tab_name in self.config.device_types():
+            self.tab_items[tab_name] = QWidget()
+            self.Tabs.addTab(self.tab_items[tab_name], tab_name)
 
         # Create a table for entries
         self.DeviceList = QTableView(self)
@@ -91,7 +87,7 @@ class Editor(QWidget):
         self.DeviceLayout = QHBoxLayout()
         self.DeviceLayout.addWidget(self.DeviceList)
         # Set an initial state      
-        self.PMACTab.setLayout(self.DeviceLayout)
+        self.Tabs.children()[0].setLayout(self.DeviceLayout)
 
         # Link the buttons to their actions
         self.Tabs.currentChanged.connect(self.tab_selected)
@@ -114,16 +110,6 @@ class Editor(QWidget):
         self.OpenFileLabel = QLabel()
         self.OpenFileLabel.setFont(self.FilePathFont)
 
-        # Create an Open File action
-        self.OpenAction = QAction(QIcon('Open.png'),
-                                  'Open a JSON File', self)
-        self.OpenAction.setShortcut('Ctrl+O')
-        self.OpenAction.triggered.connect(self.show_open_dialog)
-
-        # Add the Open Action and File Path label to the tool bar
-        self.ToolBar.addAction(self.OpenAction)
-        self.ToolBar.addWidget(self.OpenFileLabel)
-
         # Create layout for all the different elements
         self.MainLayout = QVBoxLayout()
         self.MainLayout.addWidget(self.ToolBar)
@@ -137,28 +123,10 @@ class Editor(QWidget):
         # Establish QSettings to store/retrieve program settings
         self.EditorSettings = QSettings("DLS", "Backup Editor")
 
-        # Look for the previously opened JSON file path and open it
-        self.JSONFileName = "test_brick.json"  # self.EditorSettings.value(
-        # "JSONFilePath").toString()
-        self.open_json_file()
-
         self.display_entries()
         # Display the GUI
         self.show()
 
-    def show_open_dialog(self):
-        self.JSONFileName = QFileDialog.getOpenFileName(
-            self, 'Open JSON File', '/home', "JSON Files (*.json)")
-        self.open_json_file()
-
-    def open_json_file(self):
-
-        # If a file is specified, open it, display the path, and store the
-        # location
-        if self.JSONFileName:
-            self.config.read_json_file()
-            self.OpenFileLabel.setText(self.JSONFileName)
-            self.EditorSettings.setValue("JSONFilePath", self.JSONFileName)
 
     def tab_selected(self, arg=None):
         self.display_entries()
@@ -173,9 +141,9 @@ class Editor(QWidget):
         self.SelectedDevice = str(self.Tabs.tabText(self.Tabs.currentIndex()))
         self.ListModel = QStandardItemModel()
 
-        for Card in self.config.json_data[self.SelectedDevice]:
+        for Card in self.config.__dict__[self.SelectedDevice]:
             self.Row = []
-            for Field in Card:
+            for Field in Card.__dict__:
                 self.Row.append(QStandardItem(Card[str(Field)]))
             self.ListModel.appendRow(self.Row)
         self.DeviceList.setModel(self.ListModel)

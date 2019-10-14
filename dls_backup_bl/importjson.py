@@ -12,7 +12,9 @@ def import_json(cfg_file: Path, json_file):
     config_object.configFile = str(cfg_file)
     config_object.processConfigFile()
 
-    json_config = BackupsConfig.load(json_file)
+    # the below could be used to append but is this likely desirable?
+    #json_config = BackupsConfig.load(json_file)
+    json_config = BackupsConfig.empty()
 
     for pmac, details in config_object.pmacs.items():
         mc = MotorController(pmac, details.port, details.host)
