@@ -58,6 +58,7 @@ target/
 
 # PyCharm and Eclipse project files
 /.idea
+/.idea/workspace.xml
 /.project
 /.cproject
 /.settings/

@@ -24,6 +24,13 @@ class MotorController:
     port: int
     server: str
 
+    # todo put these in a base class
+    def __getitem__(self, item):
+        return self.__dict__[item]
+
+    def keys(self):
+        return self.__dict__.keys()
+
 
 class TsType(IntEnum):
     moxa = 0
@@ -42,14 +49,15 @@ class Zebra:
     Name: str
 
 
+@dataclass
 class BackupsConfig(object):
-    def __init__(self, motion_controllers, terminal_servers, zebras):
-        self.motion_controllers: List[MotorController] = motion_controllers
-        self.terminal_servers: List[TerminalServer] = terminal_servers
-        self.zebras: List[Zebra] = zebras
+    motion_controllers: List[MotorController]
+    terminal_servers: List[TerminalServer]
+    zebras: List[Zebra]
 
-    def device_types(self):
-        return self.__dict__.keys()
+    # todo put this in a base class
+    def __getitem__(self, item):
+        return self.__dict__[item]
 
     @staticmethod
     def empty():

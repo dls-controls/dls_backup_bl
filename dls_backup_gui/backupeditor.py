@@ -53,7 +53,7 @@ class Editor(QWidget):
 
         self.tab_items = {}
         # Create and add individual tabs to tab widget
-        for tab_name in self.config.device_types():
+        for tab_name in self.config.__dict__.keys():
             self.tab_items[tab_name] = QWidget()
             self.Tabs.addTab(self.tab_items[tab_name], tab_name)
 
@@ -141,9 +141,9 @@ class Editor(QWidget):
         self.SelectedDevice = str(self.Tabs.tabText(self.Tabs.currentIndex()))
         self.ListModel = QStandardItemModel()
 
-        for Card in self.config.__dict__[self.SelectedDevice]:
+        for Card in self.config[self.SelectedDevice]:
             self.Row = []
-            for Field in Card.__dict__:
+            for Field in Card.keys():
                 self.Row.append(QStandardItem(Card[str(Field)]))
             self.ListModel.appendRow(self.Row)
         self.DeviceList.setModel(self.ListModel)
