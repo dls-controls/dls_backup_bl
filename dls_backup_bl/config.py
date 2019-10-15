@@ -14,22 +14,20 @@ log = getLogger(__name__)
 # define the schema of the configuration file and the object graph that
 # represents the configuration in memory the class BackupsConfig is the
 # root of those representations and provides load and save methods
-# todo this works fine but soooo much boilerplate code - work out how to
-#  create a base class like NamedTuple that automatically does json_repr
-#  and __init__()
 
-@dataclass
-class MotorController:
-    controller: str
-    port: int
-    server: str
-
-    # todo put this in a base class
+class JsonAbleDictionaryTuple:
     def __getitem__(self, item):
         return self.__dict__[item]
 
     def keys(self):
         return self.__dict__.keys()
+
+
+@dataclass
+class MotorController(JsonAbleDictionaryTuple):
+    controller: str
+    port: int
+    server: str
 
 
 class TsType(IntEnum):
@@ -39,29 +37,25 @@ class TsType(IntEnum):
 
 
 @dataclass
-class TerminalServer:
+class TerminalServer(JsonAbleDictionaryTuple):
     server: str
     ts_type: TsType
 
 
 @dataclass
-class Zebra:
+class Zebra(JsonAbleDictionaryTuple):
     Name: str
 
 
 @dataclass
-class BackupsConfig(object):
+class BackupsConfig(JsonAbleDictionaryTuple):
     motion_controllers: List[MotorController]
     terminal_servers: List[TerminalServer]
     zebras: List[Zebra]
 
-    # todo put this in a base class
-    def __getitem__(self, item):
-        return self.__dict__[item]
-
-    @staticmethod
-    def empty():
-        return BackupsConfig([], [], [])
+    @classmethod
+    def empty(cls):
+        return cls([], [], [])
 
     # noinspection PyBroadException
     @staticmethod
