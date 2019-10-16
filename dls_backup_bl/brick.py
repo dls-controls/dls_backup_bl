@@ -31,6 +31,12 @@ class Brick:
         self.analyse: Pmac = None
         self.desc = f"pmac {controller} at {server}:{port}"
 
+    # this destructor saves having loads of disconnect logic in the exception
+    # handlers. Without it the test brick quickly ran out of connections
+    def __del__(self):
+        if self.pti:
+            self.pti.disconnect()
+
     def check_connection(self):
         for attempt_num in range(self.defaults.retries):
             # noinspection PyBroadException
@@ -56,8 +62,6 @@ class Brick:
         # None means that readHardware will decide for itself
         self.analyse.setGeobrick(None)
 
-    # todo this function could be removed with a little restructuring of
-    #  pmac_analyse
     def connect_direct(self):
         # make sure the pmac config we have backed up is also saved
         # on the brick itself
@@ -68,8 +72,6 @@ class Brick:
         self.pti.setConnectionParams(self.server, self.port)
         self.pti.connect()
 
-    # todo this function could be removed with a little restructuring of
-    #  pmac_analyse
     def determine_axes(self):
         # each installed macro station supports 8 axes
         (return_str, status) = self.pti.sendCommand('i20 i21 i22 i23')
@@ -93,16 +95,40 @@ class Brick:
         return axis_count
 
     def backup_positions(self):
+        log.info(f"Getting motor positions for {self.desc}.")
         if not self.check_connection():
             return
-        self.connect_direct()
-        axes = self.determine_axes()
-        for axis in range(axes):
-            cmd = f"M{axis+1}62"
-            (return_str, status) = self.pti.sendCommand(cmd)
-            if not status:
-                raise PmacReadError(return_str)
-            print(f"{cmd} = {return_str[:-1]}")
+
+        for attempt_num in range(self.defaults.retries):
+            # noinspection PyBroadException
+            try:
+                self.connect_direct()
+                axes = self.determine_axes()
+
+                pmc = []
+                for axis in range(axes):
+                    cmd = f"M{axis + 1}62"
+                    (return_str, status) = self.pti.sendCommand(cmd)
+                    if not status:
+                        raise PmacReadError(return_str)
+                    pmc.append(f"{cmd} = {return_str[:-2]}\n")
+
+                f_name = f"{self.controller}_positions.pmc"
+                new_file = self.defaults.motion_folder / f_name
+                with new_file.open("w") as f:
+                    f.writelines(pmc)
+                self.pti.disconnect()
+                self.pti = None
+
+                log.critical(f"SUCCESS: positions retrieved for {self.desc}")
+            except Exception:
+                num = attempt_num + 1
+                msg = f"ERROR: position retrieval for {self.desc} failed on " \
+                    f"attempt {num} of {self.defaults.retries}"
+                log.debug(msg, exc_info=True)
+                log.error(msg)
+                continue
+            break
 
     def backup_controller(self):
         if not self.check_connection():
@@ -110,8 +136,7 @@ class Brick:
 
         # Call dls-pmacanalyse backup
         # If backup fails retry specified number of times before giving up
-        msg = f"Backing up {self.desc}."
-        log.info(msg)
+        log.info(f"Backing up {self.desc}.")
         for attempt_num in range(self.defaults.retries):
             # noinspection PyBroadException
             try:
@@ -127,6 +152,7 @@ class Brick:
                 self.connect_direct()
                 self.pti.sendCommand("save")
                 self.pti.disconnect()
+                self.pti = None
 
                 log.critical(f"SUCCESS: {self.desc} backed up")
             except Exception:

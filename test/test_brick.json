@@ -13,7 +13,7 @@
         {
             "controller": "GK_TEST_BRICK_02",
             "port": 1026,
-            "server": "172.23.240.97"
+            "server": "172.23.240.979"
         },
         {
             "controller": "GK_TEST_BRICK_01",
