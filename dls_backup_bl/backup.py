@@ -11,7 +11,7 @@ from git import Repo, InvalidGitRepositoryError
 
 from dls_backup_bl.config import BackupsConfig
 from dls_backup_bl.importjson import import_json
-from .brick import backup_motor_controller
+from .brick import Brick
 from .defaults import Defaults
 from .tserver import backup_terminal_server
 from .zebra import backup_zebra
@@ -164,7 +164,8 @@ class BackupBeamline:
 
             if not pmacs or controller in pmacs:
                 count += 1
-                self.thread_pool.apply_async(backup_motor_controller, args)
+                b = Brick(*args)
+                self.thread_pool.apply_async(b.backup_controller)
         return count
 
     def do_t_servers(self, t_server: str = None):
