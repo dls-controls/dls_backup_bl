@@ -1,28 +1,29 @@
-import signal
-import sys
 from functools import partial
-from optparse import OptionParser
+from logging import getLogger
 from pathlib import Path
 
 from PyQt5.QtCore import Qt, QSize, QSettings
-from PyQt5.QtGui import QIcon, QStandardItemModel, QFont, QStandardItem
+from PyQt5.QtGui import QStandardItemModel, QFont, QStandardItem
 from PyQt5.QtWidgets import (
-    QApplication, QLabel, QWidget, QDesktopWidget,
+    QLabel, QWidget, QDesktopWidget,
     QTabWidget, QTableView, QAbstractItemView, QPushButton,
-    QHBoxLayout, QFileDialog, QHeaderView, QToolBar, QStatusBar,
-    QAction, QVBoxLayout, QStyle, QMessageBox
+    QHBoxLayout, QHeaderView, QToolBar, QStatusBar,
+    QVBoxLayout, QStyle, QMessageBox
 )
 
 from dls_backup_bl.config import BackupsConfig
 from .categories import CategoryPopup
 from .entries import EntryPopup
 
+log = getLogger(__name__)
+
 
 # noinspection PyArgumentList,PyUnresolvedReferences,PyAttributeOutsideInit
-class Editor(QWidget):
+class BackupEditor(QWidget):
     def __init__(self):
         QWidget.__init__(self)
         self.filename = 'test/test_brick.json'
+        self.file = Path(self.filename)
         self.config = BackupsConfig.load(Path(self.filename))
         self.initialise_ui()
 
@@ -51,11 +52,16 @@ class Editor(QWidget):
         # Create tab widget
         self.Tabs = QTabWidget()
 
-        self.tab_items = {}
+        self.tab_widgets = []
+        self.tab_names = []
+        self.tab_entry_type = []
         # Create and add individual tabs to tab widget
-        for tab_name in self.config.__dict__.keys():
-            self.tab_items[tab_name] = QWidget()
-            self.Tabs.addTab(self.tab_items[tab_name], tab_name)
+        for i, tab_name in enumerate(self.config.keys()):
+            w = QWidget()
+            self.tab_widgets.append(w)
+            self.tab_names.append(tab_name)
+            self.tab_entry_type.append(BackupsConfig.my_types()[i])
+            self.Tabs.addTab(w, tab_name)
 
         # Create a table for entries
         self.DeviceList = QTableView(self)
@@ -87,7 +93,7 @@ class Editor(QWidget):
         self.DeviceLayout = QHBoxLayout()
         self.DeviceLayout.addWidget(self.DeviceList)
         # Set an initial state      
-        self.Tabs.children()[0].setLayout(self.DeviceLayout)
+        self.tab_widgets[0].setLayout(self.DeviceLayout)
 
         # Link the buttons to their actions
         self.Tabs.currentChanged.connect(self.tab_selected)
@@ -127,15 +133,9 @@ class Editor(QWidget):
         # Display the GUI
         self.show()
 
-
     def tab_selected(self, arg=None):
         self.display_entries()
-        if arg == 0:
-            self.PMACTab.setLayout(self.DeviceLayout)
-        if arg == 1:
-            self.TerminalServerTab.setLayout(self.DeviceLayout)
-        if arg == 2:
-            self.ZebraTab.setLayout(self.DeviceLayout)
+        self.tab_widgets[arg].setLayout(self.DeviceLayout)
 
     def display_entries(self):
         self.SelectedDevice = str(self.Tabs.tabText(self.Tabs.currentIndex()))
@@ -322,8 +322,8 @@ class Editor(QWidget):
                 self.SelectedRow = self.SelectedIndexes[
                     Row * self.NumColumns].row()
                 # print self.SelectedRow
-                del self.config.json_data[self.SelectedDevice][self.SelectedRow]
-            self.config.write_json_file()
+                del self.config[self.SelectedDevice][self.SelectedRow]
+            self.config.save(self.file)
             self.display_entries()
 
             # If the selected index was the last row in the list
@@ -356,28 +356,3 @@ class Editor(QWidget):
         self.w = CategoryPopup(edit_mode, self)
         self.w.setModal(True)
         self.w.show()
-
-
-# Start the application    
-# noinspection PyUnresolvedReferences
-def main():
-    print('Launching ...')
-    usage = """usage: %prog [options]
-    %prog edits configuration files for the dls-backup-bl.py tool"""
-    parser = OptionParser(usage)
-    parser.add_option("-v", "--verbose",
-                      action="store_true", dest="verbose", default=False,
-                      help="Print more details (than necessary in most "
-                           "cases...)")
-
-    app = QApplication(sys.argv)
-    app.lastWindowClosed.connect(app.quit)
-    win = Editor()
-    win.show()
-    # catch CTRL-C
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
-    app.exec_()
-
-
-if __name__ == "__main__":
-    main()

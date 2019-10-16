@@ -3,7 +3,7 @@ import sys
 from enum import IntEnum
 from logging import getLogger
 from pathlib import Path
-from typing import List, NamedTuple
+from typing import List
 
 from attr import dataclass
 
@@ -19,8 +19,12 @@ class JsonAbleDictionaryTuple:
     def __getitem__(self, item):
         return self.__dict__[item]
 
-    def keys(self):
-        return self.__dict__.keys()
+    @classmethod
+    def keys(cls):
+        return cls.__annotations__.keys()
+
+    def items(self):
+        return self.__dict__.items()
 
 
 @dataclass
@@ -52,6 +56,10 @@ class BackupsConfig(JsonAbleDictionaryTuple):
     motion_controllers: List[MotorController]
     terminal_servers: List[TerminalServer]
     zebras: List[Zebra]
+
+    @classmethod
+    def my_types(cls):
+        return [MotorController, TerminalServer, Zebra]
 
     @classmethod
     def empty(cls):
@@ -101,7 +109,3 @@ class ComplexEncoder(json.JSONEncoder):
             return obj.__dict__
         else:
             return json.JSONEncoder.default(self, obj)
-
-
-
-

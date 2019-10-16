@@ -1,14 +1,20 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
+# WHY DOES THIS NOT WORK??
+# from .backupeditor import BackupEditor
+
 from collections import OrderedDict
 from functools import partial
+from logging import getLogger
 
 from PyQt5.QtWidgets import (
     QDialog, QGridLayout,
     QLineEdit, QLabel, QPushButton,
     QHBoxLayout, QVBoxLayout
 )
+
+log = getLogger(__name__)
 
 
 class EntryPopup(QDialog):
@@ -22,15 +28,10 @@ class EntryPopup(QDialog):
         self.ButtonsLayout = QHBoxLayout()
         self.VerLayout = QVBoxLayout()
 
-        self.SelectedDevice = str(
-            self.parent.Tabs.tabText(self.parent.Tabs.currentIndex()))
-
-        if self.SelectedDevice == "MotorControllers":
-            self.FieldsList = ["Controller", "Port", "Server"]
-        elif self.SelectedDevice == "TerminalServers":
-            self.FieldsList = ["Server", "Type"]
-        else:
-            self.FieldsList = ["Name"]
+        this_tab = self.parent.Tabs.currentIndex()
+        self.SelectedDevice = str(self.parent.Tabs.tabText(this_tab))
+        self.data_type = parent.tab_entry_type[this_tab]
+        self.FieldsList = self.data_type.keys()
 
         self.LineEditList = []
 
@@ -118,24 +119,21 @@ class EntryPopup(QDialog):
         self.SelectedDevice = str(
             self.parent.Tabs.tabText(self.parent.Tabs.currentIndex()))
         self.RowNumber = self.parent.DeviceList.selectionModel(
-
         ).currentIndex().row()
-        self.NewEntry = OrderedDict()
 
-        for i in range(len(self.FieldsList)):
-            self.NewEntry[self.FieldsList[i]] = self.LineEditList[i].text()
+        values = [
+            self.LineEditList[i].text() for i in
+            range(len(self.FieldsList))
+        ]
+        new_data = self.data_type(*values)
 
         if EditMode:
-            self.parent.config.json_data[self.SelectedDevice][
-                self.RowNumber] = self.NewEntry
+            self.parent.config[self.SelectedDevice][
+                self.RowNumber] = new_data
         else:
-            self.parent.config.json_data[self.SelectedDevice].append(self.NewEntry)
+            self.parent.config[self.SelectedDevice].append(new_data)
 
-        self.parent.config.json_data[self.SelectedDevice] = sorted(
-            self.parent.config.json_data[self.SelectedDevice],
-            key=lambda dicts: dicts[self.FieldsList[0]])
-
-        self.parent.config.write_json_file()
+        self.parent.config.save(self.parent.file)
         self.parent.display_entries()
         if NextEntry:
             for EditBox in self.LineEditList:
