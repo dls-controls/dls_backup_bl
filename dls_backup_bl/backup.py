@@ -297,7 +297,7 @@ class BackupBeamline:
             log.critical("Nothing was backed up "
                          "(incorrect --devices argument?)")
         self.commit_changes()
-        self.send_email(self.args.email)
+        self.send_email()
 
         log.warning("END OF BACKUP for beamline %s to %s",
                     self.defaults.beamline, self.defaults.backup_folder)
