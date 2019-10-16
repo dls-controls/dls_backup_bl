@@ -1,5 +1,6 @@
 import argparse
 import logging
+import signal
 import smtplib
 from logging import getLogger
 from multiprocessing.pool import ThreadPool
@@ -48,6 +49,7 @@ class BackupBeamline:
         self.motor_controllers: List = None
         self.terminal_servers: List = None
         self.zebras: List = None
+        self.email: str = None
 
     def setup_logging(self, level: str):
         """
@@ -246,25 +248,25 @@ class BackupBeamline:
         with self.defaults.critical_log_file.open("w") as f:
             f.writelines(sorted_text)
 
-    def send_email(self, email: str):
+    def send_email(self):
         with self.defaults.critical_log_file.open("r") as f:
             e_text = f.read()
 
-        if email is None:
+        if self.email is None:
             log.info("Email address not supplied")
             return
 
         # noinspection PyBroadException
         try:
             e_from = "From: {}\r\n".format(self.defaults.diamond_sender)
-            e_to = "To: {}\r\n".format(email)
+            e_to = "To: {}\r\n".format(self.email)
             e_subject = "Subject: {} Backup Report\r\n\r\n".format(
                 self.defaults.beamline
             )
             msg = e_from + e_to + e_subject + e_text
             mail_server = smtplib.SMTP(self.defaults.diamond_smtp)
             mail_server.sendmail(
-                self.defaults.diamond_sender, email, msg
+                self.defaults.diamond_sender, self.email, msg
             )
             mail_server.quit()
             log.critical("Sent Email report")
@@ -304,8 +306,18 @@ class BackupBeamline:
         with self.defaults.critical_log_file.open() as f:
             print(f.read())
 
+    def cancel(self, sig, frame):
+        log.critical("Cancelled by the user")
+        self.send_email()
+        exit(1)
+
     def main(self):
         self.parse_args()
+        self.email = self.args.email
+
+        # catch CTRL-C
+        signal.signal(signal.SIGINT, self.cancel)
+
         self.defaults = Defaults(
             self.args.beamline, self.args.dir, self.args.json_file,
             self.args.retries

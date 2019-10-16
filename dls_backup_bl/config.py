@@ -5,7 +5,7 @@ from logging import getLogger
 from pathlib import Path
 from typing import List
 
-from attr import dataclass
+import attr
 
 log = getLogger(__name__)
 
@@ -27,10 +27,10 @@ class JsonAbleDictionaryTuple:
         return self.__dict__.items()
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class MotorController(JsonAbleDictionaryTuple):
     controller: str
-    port: int
+    port: int = attr.ib(converter=int)
     server: str
 
 
@@ -40,18 +40,18 @@ class TsType(IntEnum):
     old_acs = 2
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class TerminalServer(JsonAbleDictionaryTuple):
     server: str
     ts_type: TsType
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class Zebra(JsonAbleDictionaryTuple):
     Name: str
 
 
-@dataclass
+@attr.s(auto_attribs=True)
 class BackupsConfig(JsonAbleDictionaryTuple):
     motion_controllers: List[MotorController]
     terminal_servers: List[TerminalServer]
@@ -93,6 +93,7 @@ class BackupsConfig(JsonAbleDictionaryTuple):
             msg = "Unable to save configuration file"
             log.debug(msg, exc_info=True)
             log.error(msg)
+            raise
 
     def dumps(self):
         return json.dumps(self, cls=ComplexEncoder, sort_keys=True, indent=4)

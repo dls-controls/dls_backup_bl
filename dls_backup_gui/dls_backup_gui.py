@@ -6,6 +6,7 @@ from logging import getLogger
 
 from PyQt5.QtWidgets import QApplication
 
+from dls_backup_bl.defaults import Defaults
 from .backupeditor import BackupEditor
 
 log = getLogger(__name__)
@@ -31,7 +32,6 @@ def parse_args():
 
 
 # Start the application
-# noinspection PyUnresolvedReferences
 def main():
     args = parse_args()
 
@@ -41,9 +41,12 @@ def main():
         level=numeric_level
     )
 
+    defaults = Defaults(beamline=args.beamline, config_file=args.json_file,
+                        config_file_only=True)
+
     app = QApplication(sys.argv)
     app.lastWindowClosed.connect(app.quit)
-    win = BackupEditor()
+    win = BackupEditor(defaults.config_file)
     win.show()
     # catch CTRL-C
     signal.signal(signal.SIGINT, signal.SIG_DFL)

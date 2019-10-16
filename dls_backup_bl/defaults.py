@@ -24,8 +24,9 @@ class Defaults:
     _retries: int = 4
 
     def __init__(
-            self, beamline: str, backup_folder: Path,
-            config_file: Path, retires: int
+            self, beamline: str = None, backup_folder: Path = None,
+            config_file: Path = None, retires: int = 0,
+            config_file_only: bool = False
     ):
         """
         Create an object to hold important file paths.
@@ -33,22 +34,31 @@ class Defaults:
 
         :param beamline: the name of the beamline in the form 'i16'
         :param backup_folder: override the default location for backups
+        :param config_file: where to read config if not from default
+        :param retries: number of backup retries on failure
+        :param config_file_only: if this is true do not require a valid
+               beamline setting when config_file is supplied. this is for
+               use by the GUI
         """
         self._retries = retires if int(retires) > 0 else Defaults._retries
         self.temp_dir: Path = Path(tempfile.mkdtemp())
 
-        try:
-            if beamline is None:
-                beamline = environ.get("BEAMLINE")
-                assert beamline is not None
+        if config_file_only and config_file is not None:
+            self._beamline = ''
+        else:
+            try:
+                if beamline is None:
+                    beamline = environ.get("BEAMLINE")
+                    assert beamline is not None
 
-            bl_no = int(beamline[1:])
-            self._beamline = "BL{:02d}{}".format(bl_no,  beamline[0].upper())
-        except (IndexError, AssertionError, ValueError, TypeError):
-            print(
-                "\n\nBeamline must be of the form i16. Check environment "
-                "variable ${BEAMLINE} or use argument --beamline")
-            exit(1)
+                bl_no = int(beamline[1:])
+                self._beamline = \
+                    "BL{:02d}{}".format(bl_no,  beamline[0].upper())
+            except (IndexError, AssertionError, ValueError, TypeError):
+                print(
+                    "\n\nBeamline must be of the form i16. Check environment "
+                    "variable ${BEAMLINE} or use argument --beamline")
+                exit(1)
 
         if backup_folder:
             self._backup_folder = Path(backup_folder)
@@ -62,7 +72,6 @@ class Defaults:
                 self._beamline, Defaults._config_file_suffix)
             )
             self._config_file = self._backup_folder / name
-
 
     def __del__(self):
         shutil.rmtree(str(self.temp_dir), ignore_errors=True)

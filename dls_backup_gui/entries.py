@@ -11,8 +11,8 @@ from logging import getLogger
 from PyQt5.QtWidgets import (
     QDialog, QGridLayout,
     QLineEdit, QLabel, QPushButton,
-    QHBoxLayout, QVBoxLayout
-)
+    QHBoxLayout, QVBoxLayout,
+    QMessageBox)
 
 log = getLogger(__name__)
 
@@ -56,8 +56,6 @@ class EntryPopup(QDialog):
         if EditMode:
             self.AddNextButton.setVisible(False)
             self.setWindowTitle('Edit Entry')
-            # self.Name.setText(self.parent.CategoryList.currentIndex().data(
-            # ).toString())
             for n in range(0, len(self.FieldsList)):
                 self.LineEditList[n].setText(
                     self.parent.DeviceList.selectedIndexes()[n].data())
@@ -87,7 +85,6 @@ class EntryPopup(QDialog):
             Ordinal = ord(UnicodeNum)
 
     def ButtonVisibility(self):
-
         Present = False
         EmptyLineEdit = False
 
@@ -125,19 +122,25 @@ class EntryPopup(QDialog):
             self.LineEditList[i].text() for i in
             range(len(self.FieldsList))
         ]
-        new_data = self.data_type(*values)
-
-        if EditMode:
-            self.parent.config[self.SelectedDevice][
-                self.RowNumber] = new_data
+        try:
+            new_data = self.data_type(*values)
+        except ValueError as e:
+            QMessageBox.warning(
+                self, "Warning",
+                "Invalid field\n" + str(e),
+                QMessageBox.Ok)
         else:
-            self.parent.config[self.SelectedDevice].append(new_data)
+            if EditMode:
+                self.parent.config[self.SelectedDevice][
+                    self.RowNumber] = new_data
+            else:
+                self.parent.config[self.SelectedDevice].append(new_data)
 
-        self.parent.config.save(self.parent.file)
-        self.parent.display_entries()
-        if NextEntry:
-            for EditBox in self.LineEditList:
-                EditBox.setText("")
-            self.LineEditList[0].setFocus()
-        else:
-            self.close()
+            self.parent.config.save(self.parent.file)
+            self.parent.display_entries()
+            if NextEntry:
+                for EditBox in self.LineEditList:
+                    EditBox.setText("")
+                self.LineEditList[0].setFocus()
+            else:
+                self.close()

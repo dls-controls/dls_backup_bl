@@ -2,30 +2,34 @@
     "motion_controllers": [
         {
             "controller": "GK_TEST_BRICK_01",
-            "port": "1025",
+            "port": 1026,
             "server": "172.23.240.97"
         },
         {
             "controller": "GK_TEST_BRICK_02",
-            "port": "1025",
+            "port": 1025,
             "server": "172.23.240.97"
         },
         {
             "controller": "GK_TEST_BRICK_03",
-            "port": "1025g",
+            "port": 1025,
             "server": "172.23.240.97"
         },
         {
             "controller": "GK_TEST_BRICK_04",
-            "port": "1025",
+            "port": 1025,
             "server": "172.23.240.97"
         },
         {
             "controller": "GK_TEST_BRICK_05",
-            "port": "1025yy",
+            "port": 1025,
             "server": "172.23.240.999"
         }
     ],
     "terminal_servers": [],
-    "zebras": []
+    "zebras": [
+        {
+            "Name": "fdasfasfdas"
+        }
+    ]
 }
