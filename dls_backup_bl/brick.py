@@ -113,12 +113,13 @@ class Brick:
                         raise PmacReadError(return_str)
                     pmc.append(f"{cmd} = {return_str[:-2]}\n")
 
+                self.pti.disconnect()
+                self.pti = None
+
                 f_name = f"{self.controller}_positions.pmc"
                 new_file = self.defaults.motion_folder / f_name
                 with new_file.open("w") as f:
                     f.writelines(pmc)
-                self.pti.disconnect()
-                self.pti = None
 
                 log.critical(f"SUCCESS: positions retrieved for {self.desc}")
             except Exception:
@@ -129,6 +130,9 @@ class Brick:
                 log.error(msg)
                 continue
             break
+
+    def restore_positions(self):
+        pass
 
     def backup_controller(self):
         if not self.check_connection():

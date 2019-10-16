@@ -44,6 +44,18 @@ class Positions(Enum):
     compare = 'compare'
 
 
+class Colours:
+    HEADER = '\033[95m'
+    BLUE = '\033[94m'
+    GREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    END_C = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+
+# noinspection PyBroadException
 class BackupBeamline:
     def __init__(self):
         self.args = None
@@ -156,7 +168,7 @@ class BackupBeamline:
         # Parse the command line arguments
         self.args = parser.parse_args()
 
-    def do_geobricks(self, pmacs: List[str] = None, positions = None):
+    def do_geobricks(self, pmacs: List[str] = None):
         count = 0
         # Go through every motor controller listed in JSON file
         for motor_controller in self.config.motion_controllers:
@@ -176,8 +188,11 @@ class BackupBeamline:
             if not pmacs or controller in pmacs:
                 count += 1
                 b = Brick(*args)
-                if self.args.positions == 'save':
+                if self.args.positions == 'save' or \
+                        self.args.positions == 'compare':
                     func = b.backup_positions
+                elif self.args.positions == 'restore':
+                    func = b.restore_positions
                 else:
                     func = b.backup_controller
 
@@ -214,7 +229,36 @@ class BackupBeamline:
                 self.thread_pool.apply_async(backup_zebra, args)
         return count
 
-    # noinspection PyBroadException
+    def compare_changes(self):
+        try:
+            git_repo = Repo(self.defaults.backup_folder)
+
+            diff = git_repo.index.diff(
+                None,
+                create_patch=True,
+                paths='*' + self.defaults.positions_suffix
+            )
+
+            print("\n\n\n--------- Motor Position Changes ----------\n")
+            for d in diff:
+                print(f"{d.a_blob.path}")
+                patch = d.diff.decode('utf8')
+                lines = patch.split('\n')
+                for l in lines:
+                    if l.startswith('-'):
+                        print(f'{Colours.FAIL}{l}')
+                    if l.startswith('+'):
+                        print(f'{Colours.BLUE}{l}')
+                print(Colours.END_C)
+            if len(diff) == 0:
+                print("There are no changes to positions since the last "
+                      "commit")
+
+        except BaseException:
+            msg = 'ERROR: Comparison failed.'
+            log.critical(msg)
+            log.debug(msg, exc_info=True)
+
     def commit_changes(self):
         # Link to beamline backup git repository in the motion area
         try:
@@ -273,7 +317,6 @@ class BackupBeamline:
             log.info("Email address not supplied")
             return
 
-        # noinspection PyBroadException
         try:
             e_from = "From: {}\r\n".format(self.defaults.diamond_sender)
             e_to = "To: {}\r\n".format(self.email)
@@ -292,11 +335,20 @@ class BackupBeamline:
             log.critical(msg)
             log.debug(msg, exc_info=True)
 
+    def start_positions(self):
+        if self.args.positions == 'restore':
+            print("\nAre you sure? This will restore the most recent commit "
+                  "and\noverwrite the motor positions on all pmacs (Y/N)")
+            reply = input().lower()[0]
+            if reply is not 'y':
+                exit(0)
+        log.critical(f'PERFORMING MOTOR POSITIONS {self.args.positions} '
+                     f'for beamline {self.defaults.beamline}'
+                     f'backup at {self.defaults.motion_folder}')
+
     def do_backups(self):
         if self.args.positions:
-            log.critical(f'PERFORMING MOTOR POSITIONS {self.args.positions} '
-                         f'for beamline {self.defaults.beamline}'
-                         f'backup is at {self.defaults.backup_folder}')
+            self.start_positions()
         else:
             log.info("START OF BACKUP for beamline %s to %s",
                      self.defaults.beamline, self.defaults.backup_folder)
@@ -320,13 +372,13 @@ class BackupBeamline:
         if total == 0:
             log.critical("Nothing was backed up "
                          "(incorrect --devices argument?)")
-        self.commit_changes()
-        self.send_email()
 
-        log.warning("END OF BACKUP for beamline %s to %s",
-                    self.defaults.beamline, self.defaults.backup_folder)
+        if self.args.positions in [None, "save"]:
+            self.commit_changes()
+        elif self.args.positions == "compare":
+            self.compare_changes()
 
-        print("\n\n\n--------- Summary ----------")
+        print("\n--------- Summary ----------")
         with self.defaults.critical_log_file.open() as f:
             print(f.read())
 
