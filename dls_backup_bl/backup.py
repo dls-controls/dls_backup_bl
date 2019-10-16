@@ -2,6 +2,7 @@ import argparse
 import logging
 import signal
 import smtplib
+from enum import Enum
 from logging import getLogger
 from multiprocessing.pool import ThreadPool
 from pathlib import Path
@@ -35,6 +36,12 @@ There is no backup area set up for this beamline.
 Please import the dls-pmac-analyse cfg file with --import-cfg and / or 
 use dls-edit-backup.py to complete the device configuration.
 """
+
+
+class Positions(Enum):
+    save = 'save'
+    restore = 'restore'
+    compare = 'compare'
 
 
 class BackupBeamline:
@@ -141,11 +148,15 @@ class BackupBeamline:
                             help="Set logging to error, warning, info, debug")
         parser.add_argument('-d', '--devices', action="store", nargs='+',
                             help="only backup the listed named device")
+        parser.add_argument('-p', '--positions', action="store",
+                            # todo make this neat
+                            type=str, choices=['save', 'restore', 'compare'],
+                            help="save and restore motor positions")
 
         # Parse the command line arguments
         self.args = parser.parse_args()
 
-    def do_geobricks(self, pmacs: List[str] = None):
+    def do_geobricks(self, pmacs: List[str] = None, positions = None):
         count = 0
         # Go through every motor controller listed in JSON file
         for motor_controller in self.config.motion_controllers:
@@ -165,7 +176,12 @@ class BackupBeamline:
             if not pmacs or controller in pmacs:
                 count += 1
                 b = Brick(*args)
-                self.thread_pool.apply_async(b.backup_controller)
+                if self.args.positions == 'save':
+                    func = b.backup_positions
+                else:
+                    func = b.backup_controller
+
+                self.thread_pool.apply_async(func)
         return count
 
     def do_t_servers(self, t_server: str = None):
@@ -277,16 +293,23 @@ class BackupBeamline:
             log.debug(msg, exc_info=True)
 
     def do_backups(self):
-        log.info("START OF BACKUP for beamline %s to %s",
-                 self.defaults.beamline, self.defaults.backup_folder)
+        if self.args.positions:
+            log.critical(f'PERFORMING MOTOR POSITIONS {self.args.positions} '
+                         f'for beamline {self.defaults.beamline}'
+                         f'backup is at {self.defaults.backup_folder}')
+        else:
+            log.info("START OF BACKUP for beamline %s to %s",
+                     self.defaults.beamline, self.defaults.backup_folder)
 
         # Initiate a thread pool with the desired number of threads
         self.thread_pool = ThreadPool(self.args.threads)
 
         # queue threads for each type of backup
         total = self.do_geobricks(pmacs=self.args.devices)
-        # total += self.do_t_servers()
-        # total += self.do_zebras()
+        if self.args.positions is None:
+            pass
+            # total += self.do_t_servers()
+            # total += self.do_zebras()
 
         # Wait for completion of all backup threads
         self.thread_pool.close()
@@ -323,6 +346,7 @@ class BackupBeamline:
             self.args.beamline, self.args.dir, self.args.json_file,
             self.args.retries
         )
+
         if self.args.import_cfg:
             self.defaults.check_folders()
             self.setup_logging(self.args.log_level)
