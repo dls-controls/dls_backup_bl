@@ -34,14 +34,20 @@ def compare_changes(defaults: Defaults):
             output.append(f"\n{d.a_blob.path}")
             patch = d.diff.decode('utf8')
             lines = patch.split('\n')
+            changes = []
             for line in lines:
                 if line.startswith('-') or line.startswith('+'):
-                    output.append(line)
+                    changes.append(line)
+            # order by axis number
+            changes.sort(
+                key=lambda s: int(s[2:].split(' ')[0])
+            )
+            output += changes
         if len(diff) == 0:
             output.append("There are no changes to positions since the last "
                           "commit")
 
-        filepath = defaults.motion_folder / "positions_comparison.txt"
+        filepath = defaults.motion_folder / defaults.positions_file
         with filepath.open("w") as f:
             f.writelines(map(lambda l: l+'\n', output))
 
@@ -52,8 +58,15 @@ def compare_changes(defaults: Defaults):
                 line = Colours.GREEN + line + Colours.END_C
             print(line)
 
+        # commit the most recent positions comparison for a record of
+        # where motors had moved to before the restore
+        comparison_file = str(defaults.motion_folder / defaults.positions_file)
+        git_repo.index.add([comparison_file])
+        git_repo.index.commit(
+            "commit of positions comparisons by dls-backup-bl")
+
     except BaseException:
-        msg = 'ERROR: Comparison failed.'
+        msg = 'ERROR: Repository positions comparison failed.'
         log.critical(msg)
         log.debug(msg, exc_info=True)
 
@@ -90,13 +103,32 @@ def commit_changes(defaults: Defaults):
                     log.info('\t' + File)
 
             git_repo.index.add(change_list)
-            git_repo.index.commit("commit by dls-backup-bl")
+            git_repo.index.commit(
+                "commit of devices backup by dls-backup-bl")
             log.critical("Committed changes")
         else:
             log.critical("No changes since last backup")
     except BaseException:
-        msg = "ERROR: _repo not updated"
+        msg = "ERROR: repository not updated"
         log.debug(msg, exc_info=True)
         log.error(msg)
     else:
         log.warning("SUCCESS: _repo changes committed")
+
+
+# noinspection PyBroadException
+def restore_positions(defaults: Defaults):
+    try:
+        git_repo = Repo(defaults.backup_folder)
+        cli = git_repo.git
+
+        # restore the last committed motor positions
+        cli.checkout(
+            'master',
+            str(defaults.motion_folder) + '/*' + defaults.positions_suffix
+        )
+
+    except BaseException:
+        msg = 'ERROR: Repository positions restore failed.'
+        log.critical(msg)
+        log.debug(msg, exc_info=True)

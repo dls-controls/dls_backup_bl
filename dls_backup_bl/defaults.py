@@ -13,6 +13,7 @@ class Defaults:
     diamond_sender: str = 'backup_bl@diamond.ac.uk'
     root_folder = Path("/dls_sw/work/motion/Backups/")
     positions_suffix = "_positions.pmc"
+    positions_file = "positions_comparison.txt"
     threads: int = 10
 
     # internal defaults

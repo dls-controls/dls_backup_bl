@@ -11,8 +11,6 @@ from dls_pmaclib.dls_pmacremote import PmacTelnetInterface, \
 log = getLogger(__name__)
 
 
-# todo this class could be simplified with a little restructuring of
-#  pmac_analyse
 class Brick:
     def __init__(
             self,
@@ -130,6 +128,10 @@ class Brick:
                 log.error(msg)
                 continue
             break
+        else:
+            msg = f"ERROR: {self.desc} all {self.defaults.retries} " \
+                  f"attempts to save positions failed"
+            log.critical(msg)
 
     def restore_positions(self):
         pass
@@ -169,5 +171,5 @@ class Brick:
             break
         else:
             msg = f"ERROR: {self.desc} all {self.defaults.retries} " \
-                  f"attempts failed"
+                  f"backup attempts failed"
             log.critical(msg)

@@ -10,7 +10,7 @@ from typing import List
 
 from .config import BackupsConfig
 from .importjson import import_json
-from .repository import commit_changes, compare_changes
+from .repository import commit_changes, compare_changes, restore_positions
 from .brick import Brick
 from .defaults import Defaults
 from .tserver import backup_terminal_server
@@ -258,6 +258,8 @@ class BackupBeamline:
             reply = input().lower()[0]
             if reply is not 'y':
                 exit(0)
+            restore_positions(self.defaults)
+
         log.critical(f'PERFORMING MOTOR POSITIONS {self.args.positions} '
                      f'for beamline {self.defaults.beamline}'
                      f'backup at {self.defaults.motion_folder}')
