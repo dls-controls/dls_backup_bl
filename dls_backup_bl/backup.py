@@ -8,10 +8,9 @@ from multiprocessing.pool import ThreadPool
 from pathlib import Path
 from typing import List
 
-from git import Repo, InvalidGitRepositoryError
-
-from dls_backup_bl.config import BackupsConfig
-from dls_backup_bl.importjson import import_json
+from .config import BackupsConfig
+from .importjson import import_json
+from .repository import commit_changes, compare_changes
 from .brick import Brick
 from .defaults import Defaults
 from .tserver import backup_terminal_server
@@ -42,17 +41,6 @@ class Positions(Enum):
     save = 'save'
     restore = 'restore'
     compare = 'compare'
-
-
-class Colours:
-    HEADER = '\033[95m'
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    END_C = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
 
 
 # noinspection PyBroadException
@@ -229,78 +217,6 @@ class BackupBeamline:
                 self.thread_pool.apply_async(backup_zebra, args)
         return count
 
-    def compare_changes(self):
-        try:
-            git_repo = Repo(self.defaults.backup_folder)
-
-            diff = git_repo.index.diff(
-                None,
-                create_patch=True,
-                paths='*' + self.defaults.positions_suffix
-            )
-
-            print("\n\n\n--------- Motor Position Changes ----------\n")
-            for d in diff:
-                print(f"{d.a_blob.path}")
-                patch = d.diff.decode('utf8')
-                lines = patch.split('\n')
-                for l in lines:
-                    if l.startswith('-'):
-                        print(f'{Colours.FAIL}{l}')
-                    if l.startswith('+'):
-                        print(f'{Colours.BLUE}{l}')
-                print(Colours.END_C)
-            if len(diff) == 0:
-                print("There are no changes to positions since the last "
-                      "commit")
-
-        except BaseException:
-            msg = 'ERROR: Comparison failed.'
-            log.critical(msg)
-            log.debug(msg, exc_info=True)
-
-    def commit_changes(self):
-        # Link to beamline backup git repository in the motion area
-        try:
-            try:
-                git_repo = Repo(self.defaults.backup_folder)
-            except InvalidGitRepositoryError:
-                log.error("There is no git repo - creating a repo")
-                git_repo = Repo.init(self.defaults.backup_folder)
-
-            # Gather up any changes
-            untracked_files = git_repo.untracked_files
-            modified_files = [
-                diff.a_blob.path for diff in git_repo.index.diff(None)
-            ]
-            change_list = untracked_files + modified_files
-            ignore = self.defaults.log_file.name
-
-            # If there are changes, commit them
-            if ignore in change_list:
-                change_list.remove(ignore)
-            if change_list:
-                if untracked_files:
-                    log.info("The following files are untracked:")
-                    for File in untracked_files:
-                        log.info('\t' + File)
-                if modified_files:
-                    log.info("The following files are modified or deleted:")
-                    for File in modified_files:
-                        log.info('\t' + File)
-
-                git_repo.index.add(change_list)
-                git_repo.index.commit("commit by dls-backup-bl")
-                log.critical("Committed changes")
-            else:
-                log.critical("No changes since last backup")
-        except BaseException:
-            msg = "ERROR: _repo not updated"
-            log.debug(msg, exc_info=True)
-            log.error(msg)
-        else:
-            log.warning("SUCCESS: _repo changes committed")
-
     def sort_log(self):
         # Order the results alphabetically to make them easier to read
         with self.defaults.critical_log_file.open("r") as f:
@@ -374,9 +290,9 @@ class BackupBeamline:
                          "(incorrect --devices argument?)")
 
         if self.args.positions in [None, "save"]:
-            self.commit_changes()
+            commit_changes(self.defaults)
         elif self.args.positions == "compare":
-            self.compare_changes()
+            compare_changes(self.defaults)
 
         print("\n--------- Summary ----------")
         with self.defaults.critical_log_file.open() as f:
