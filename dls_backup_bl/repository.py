@@ -47,6 +47,10 @@ def compare_changes(defaults: Defaults):
             output.append("There are no changes to positions since the last "
                           "commit")
         else:
+            filepath = defaults.motion_folder / defaults.positions_file
+            with filepath.open("w") as f:
+                f.writelines(map(lambda l: l + '\n', output))
+
             # commit the most recent positions comparison for a record of
             # where motors had moved to before the restore
             comparison_file = str(
@@ -54,10 +58,6 @@ def compare_changes(defaults: Defaults):
             git_repo.index.add([comparison_file])
             git_repo.index.commit(
                 "commit of positions comparisons by dls-backup-bl")
-
-        filepath = defaults.motion_folder / defaults.positions_file
-        with filepath.open("w") as f:
-            f.writelines(map(lambda l: l+'\n', output))
 
         for line in output:
             if line.startswith('-'):

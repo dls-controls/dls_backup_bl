@@ -17,7 +17,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description='Edit a dls-backup-bl beamline configuration file',
         usage="%(prog)s [options]")
-    parser.add_argument('-n', '--beamline', action="store",
+    parser.add_argument('-b', '--beamline', action="store",
                         help="Name of the beamline to backup. "
                              "The format is 'i16' or 'b07'. Defaults to "
                              "the current beamline")
