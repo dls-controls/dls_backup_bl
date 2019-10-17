@@ -149,7 +149,7 @@ class BackupBeamline:
         parser.add_argument('-d', '--devices', action="store", nargs='+',
                             help="only backup the listed named device")
         parser.add_argument('-p', '--positions', action="store",
-                            # todo make this neat
+                            # todo make this neat, using Positions Enum
                             type=str, choices=['save', 'restore', 'compare'],
                             help="save and restore motor positions")
 
@@ -251,22 +251,17 @@ class BackupBeamline:
             log.critical(msg)
             log.debug(msg, exc_info=True)
 
-    def start_positions(self):
-        if self.args.positions == 'restore':
-            print("\nAre you sure? This will restore the most recent commit "
-                  "and\noverwrite the motor positions on all pmacs (Y/N)")
-            reply = input().lower()[0]
-            if reply is not 'y':
-                exit(0)
-            restore_positions(self.defaults)
-
-        log.critical(f'PERFORMING MOTOR POSITIONS {self.args.positions} '
-                     f'for beamline {self.defaults.beamline}'
-                     f'backup at {self.defaults.motion_folder}')
+    def check_restore(self):
+        print("\nAre you sure? This will restore the most recent commit "
+              "and\noverwrite the motor positions on all pmacs (Y/N)")
+        reply = input()
+        if reply[0].lower() != 'y':
+            exit(0)
+        restore_positions(self.defaults)
 
     def do_backups(self):
-        if self.args.positions:
-            self.start_positions()
+        if self.args.positions == 'restore':
+            self.check_restore()
         else:
             log.info("START OF BACKUP for beamline %s to %s",
                      self.defaults.beamline, self.defaults.backup_folder)
@@ -291,14 +286,22 @@ class BackupBeamline:
             log.critical("Nothing was backed up "
                          "(incorrect --devices argument?)")
 
-        if self.args.positions in [None, "save"]:
-            commit_changes(self.defaults)
+        if not self.args.positions:
+            commit_changes(self.defaults, do_positions=False)
+        elif self.args.positions == "save":
+            commit_changes(self.defaults, do_positions=True)
         elif self.args.positions == "compare":
             compare_changes(self.defaults)
 
         print("\n--------- Summary ----------")
         with self.defaults.critical_log_file.open() as f:
             print(f.read())
+
+        if self.args.positions:
+            print("The following command reviews the position files")
+            print(
+                f"more {self.defaults.motion_folder}/*"
+                f"{self.defaults.positions_suffix}")
 
     def cancel(self, sig, frame):
         log.critical("Cancelled by the user")

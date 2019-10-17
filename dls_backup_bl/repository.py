@@ -73,7 +73,7 @@ def compare_changes(defaults: Defaults):
 
 
 # noinspection PyBroadException
-def commit_changes(defaults: Defaults):
+def commit_changes(defaults: Defaults, do_positions=False):
     # Link to beamline backup git repository in the motion area
     try:
         try:
@@ -89,8 +89,11 @@ def commit_changes(defaults: Defaults):
         ]
         change_list = untracked_files + modified_files
 
+        ignores = [defaults.log_file.name]
+        if not do_positions:
+            ignores.append(defaults.positions_suffix)
         # dont commit the debug log or motor positions from a recent comparison
-        for ignore in [defaults.log_file.name, defaults.positions_suffix]:
+        for ignore in ignores:
             change_list = [i for i in change_list if ignore not in i]
 
         # If there are changes, commit them
