@@ -122,11 +122,11 @@ class BackupBeamline:
         parser.add_argument('-i', '--import-cfg', action="store",
                             help="import brick configuration from a "
                                  "dls-pmac-analyse configuration file.")
-        parser.add_argument('-n', '--beamline', action="store",
+        parser.add_argument('-b', '--beamline', action="store",
                             help="Name of the beamline to backup. "
                                  "The format is 'i16' or 'b07'. Defaults to "
                                  "the current beamline")
-        parser.add_argument('-b', '--dir', action="store",
+        parser.add_argument('--dir', action="store",
                             help="Directory to save backups to. Defaults to"
                                  "/dls_sw/motion/Backups/$(BEAMLINE)")
         parser.add_argument('-j', action="store", dest="json_file",

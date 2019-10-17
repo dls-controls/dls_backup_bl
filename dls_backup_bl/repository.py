@@ -46,6 +46,14 @@ def compare_changes(defaults: Defaults):
         if len(diff) == 0:
             output.append("There are no changes to positions since the last "
                           "commit")
+        else:
+            # commit the most recent positions comparison for a record of
+            # where motors had moved to before the restore
+            comparison_file = str(
+                defaults.motion_folder / defaults.positions_file)
+            git_repo.index.add([comparison_file])
+            git_repo.index.commit(
+                "commit of positions comparisons by dls-backup-bl")
 
         filepath = defaults.motion_folder / defaults.positions_file
         with filepath.open("w") as f:
@@ -57,13 +65,6 @@ def compare_changes(defaults: Defaults):
             elif line.startswith('+'):
                 line = Colours.GREEN + line + Colours.END_C
             print(line)
-
-        # commit the most recent positions comparison for a record of
-        # where motors had moved to before the restore
-        comparison_file = str(defaults.motion_folder / defaults.positions_file)
-        git_repo.index.add([comparison_file])
-        git_repo.index.commit(
-            "commit of positions comparisons by dls-backup-bl")
 
     except BaseException:
         msg = 'ERROR: Repository positions comparison failed.'
@@ -87,11 +88,12 @@ def commit_changes(defaults: Defaults):
             diff.a_blob.path for diff in git_repo.index.diff(None)
         ]
         change_list = untracked_files + modified_files
-        ignore = defaults.log_file.name
+
+        # dont commit the debug log or motor positions from a recent comparison
+        for ignore in [defaults.log_file.name, defaults.positions_suffix]:
+            change_list = [i for i in change_list if ignore not in i]
 
         # If there are changes, commit them
-        if ignore in change_list:
-            change_list.remove(ignore)
         if change_list:
             if untracked_files:
                 log.info("The following files are untracked:")
