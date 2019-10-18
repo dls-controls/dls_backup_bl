@@ -1,10 +1,10 @@
 import argparse
+import logging
 import signal
 import sys
-import logging
 from logging import getLogger
 
-from PyQt5.QtWidgets import QApplication
+from PyQt5.QtWidgets import QApplication, QMessageBox
 
 from dls_backup_bl.defaults import Defaults
 from .backupeditor import BackupEditor
@@ -43,14 +43,32 @@ def main():
 
     defaults = Defaults(beamline=args.beamline, config_file=args.json_file,
                         config_file_only=True)
+    defaults.check_folders()
 
     app = QApplication(sys.argv)
-    app.lastWindowClosed.connect(app.quit)
-    win = BackupEditor(defaults.config_file)
-    win.show()
-    # catch CTRL-C
-    signal.signal(signal.SIGINT, signal.SIG_DFL)
-    app.exec_()
+    go = QMessageBox.question(
+            None, "New Backup Area",
+            f"There is no backup area for {defaults.beamline}\n"
+            f"do you want to create one ?",
+            QMessageBox.Yes, QMessageBox.No
+        )
+    if not defaults.config_file.exists():
+        go = QMessageBox.question(
+            None, "New Backup Area",
+            f"There is no backup area for {defaults.beamline}\n"
+            f"do you want to create one ?",
+            QMessageBox.Yes, QMessageBox.No
+        )
+    else:
+        go = True
+
+    if go:
+        app.lastWindowClosed.connect(app.quit)
+        win = BackupEditor(defaults.config_file)
+        win.show()
+        # catch CTRL-C
+        signal.signal(signal.SIGINT, signal.SIG_DFL)
+        app.exec_()
 
 
 if __name__ == "__main__":

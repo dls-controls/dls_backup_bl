@@ -27,7 +27,7 @@ class Defaults:
 
     def __init__(
             self, beamline: str = None, backup_folder: Path = None,
-            config_file: Path = None, retires: int = 0,
+            config_file: Path = None, retries: int = 0,
             config_file_only: bool = False
     ):
         """
@@ -42,25 +42,13 @@ class Defaults:
                beamline setting when config_file is supplied. this is for
                use by the GUI
         """
-        self._retries = retires if int(retires) > 0 else Defaults._retries
+        self._retries = retries if int(retries) > 0 else Defaults._retries
         self.temp_dir: Path = Path(tempfile.mkdtemp())
 
         if config_file_only and config_file is not None:
             self._beamline = ''
         else:
-            try:
-                if beamline is None:
-                    beamline = environ.get("BEAMLINE")
-                    assert beamline is not None
-
-                bl_no = int(beamline[1:])
-                self._beamline = \
-                    "BL{:02d}{}".format(bl_no,  beamline[0].upper())
-            except (IndexError, AssertionError, ValueError, TypeError):
-                print(
-                    "\n\nBeamline must be of the form i16. Check environment "
-                    "variable ${BEAMLINE} or use argument --beamline")
-                exit(1)
+            self.get_beamline(beamline)
 
         if backup_folder:
             self._backup_folder = Path(backup_folder)
@@ -77,6 +65,38 @@ class Defaults:
 
     def __del__(self):
         shutil.rmtree(str(self.temp_dir), ignore_errors=True)
+
+    def get_beamline(self, short_form):
+        """
+        converts the short form of beamline name found environment
+        variable ${BEAMLINE} e.g. i09-1 to a PV prefix e.g. BL09J
+        which is used in the Backup folder name.
+
+        This is (reasonably) deterministic but there are at least
+        one exceptions to the rules.
+        """
+        try:
+            if short_form is None:
+                short_form = environ.get("BEAMLINE")
+                assert short_form is not None
+
+            # sepcial cases
+            if short_form == 'i02-2':
+                self._beamline = 'BL02I'
+            else:
+                bl_letter = short_form[0].upper()
+                bl_nums = short_form[1:].split('-')
+                if len(bl_nums) == 2:
+                    bl_letter = chr(ord(bl_letter) + 1)
+                bl_no = int(bl_nums[0])
+                self._beamline = \
+                    "BL{:02d}{}".format(bl_no, bl_letter)
+        except (IndexError, AssertionError, ValueError, TypeError):
+            print(
+                "\n\nBeamline must be of the form i16 or i09-1."
+                "\nCheck environment variable ${BEAMLINE} or use argument "
+                "--beamline (-b)")
+            exit(1)
 
     def check_folders(self):
         self.motion_folder.mkdir(parents=True, exist_ok=True)
@@ -125,7 +145,7 @@ class Defaults:
         return self._backup_folder / Defaults._critical_log_file
 
     json = """{
-    "MotorControllers": [ ],
-    "TerminalServers": [ ],
-    "Zebras": [ ]
+    "motion_controllers": [ ],
+    "terminal_servers": [ ],
+    "zebras": [ ]
     }"""

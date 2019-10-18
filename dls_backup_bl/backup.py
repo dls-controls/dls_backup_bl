@@ -8,11 +8,11 @@ from multiprocessing.pool import ThreadPool
 from pathlib import Path
 from typing import List
 
+from .brick import Brick
 from .config import BackupsConfig
+from .defaults import Defaults
 from .importjson import import_json
 from .repository import commit_changes, compare_changes, restore_positions
-from .brick import Brick
-from .defaults import Defaults
 from .tserver import backup_terminal_server
 from .zebra import backup_zebra
 
@@ -152,6 +152,9 @@ class BackupBeamline:
                             # todo make this neat, using Positions Enum
                             type=str, choices=['save', 'restore', 'compare'],
                             help="save and restore motor positions")
+        parser.add_argument('--bf', action="store_true",
+                            help="report the motion backup folder that the "
+                                 "tool will use.")
 
         # Parse the command line arguments
         self.args = parser.parse_args()
@@ -320,15 +323,17 @@ class BackupBeamline:
             self.args.retries
         )
 
-        if self.args.import_cfg:
+        if self.args.bf:
+            print(self.defaults.backup_folder)
+        elif self.args.import_cfg:
             self.defaults.check_folders()
             self.setup_logging(self.args.log_level)
             import_file = Path(self.args.import_cfg)
             import_json(import_file, self.defaults.config_file)
         elif self.defaults.config_file.exists():
             self.defaults.check_folders()
-            self.config = BackupsConfig.load(self.defaults.config_file)
             self.setup_logging(self.args.log_level)
+            self.config = BackupsConfig.load(self.defaults.config_file)
             self.config.load(self.defaults.config_file)
             if self.config.count_devices() == 0:
                 print("\n\n" + empty_message)
