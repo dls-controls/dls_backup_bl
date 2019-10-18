@@ -46,12 +46,6 @@ def main():
     defaults.check_folders()
 
     app = QApplication(sys.argv)
-    go = QMessageBox.question(
-            None, "New Backup Area",
-            f"There is no backup area for {defaults.beamline}\n"
-            f"do you want to create one ?",
-            QMessageBox.Yes, QMessageBox.No
-        )
     if not defaults.config_file.exists():
         go = QMessageBox.question(
             None, "New Backup Area",
