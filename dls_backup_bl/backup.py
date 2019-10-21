@@ -152,7 +152,7 @@ class BackupBeamline:
                             # todo make this neat, using Positions Enum
                             type=str, choices=['save', 'restore', 'compare'],
                             help="save and restore motor positions")
-        parser.add_argument('--bf', action="store_true",
+        parser.add_argument('--folder', action="store_true",
                             help="report the motion backup folder that the "
                                  "tool will use.")
 
@@ -323,7 +323,7 @@ class BackupBeamline:
             self.args.retries
         )
 
-        if self.args.bf:
+        if self.args.folder:
             print(self.defaults.backup_folder)
         elif self.args.import_cfg:
             self.defaults.check_folders()
