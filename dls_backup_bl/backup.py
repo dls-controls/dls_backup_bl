@@ -294,7 +294,7 @@ class BackupBeamline:
         elif self.args.positions == "save":
             commit_changes(self.defaults, do_positions=True)
         elif self.args.positions == "compare":
-            compare_changes(self.defaults)
+            compare_changes(self.defaults, pmacs=self.args.devices)
 
         print("\n--------- Summary ----------")
         with self.defaults.critical_log_file.open() as f:

@@ -1,10 +1,11 @@
+import re
 import shutil
 import telnetlib
 from logging import getLogger
 
 from dls_backup_bl.defaults import Defaults
-from dls_pmacanalyse.dls_pmacanalyse import Pmac, PmacReadError
 from dls_pmacanalyse import GlobalConfig
+from dls_pmacanalyse.dls_pmacanalyse import Pmac, PmacReadError
 from dls_pmaclib.dls_pmacremote import PmacTelnetInterface, \
     PmacEthernetInterface, RemotePmacInterface
 
@@ -29,6 +30,11 @@ class Brick:
         self.pti: RemotePmacInterface = None
         self.analyse: Pmac = None
         self.desc = f"pmac {controller} at {server}:{port}"
+        n = f"{self.controller}{defaults.positions_suffix}"
+        self.positions_file = self.defaults.motion_folder / n
+        f_name = f"{self.controller}{defaults.positions_suffix}"
+        self.f_name = f"{self.controller}.pmc"
+        self.file = self.defaults.motion_folder / f_name
 
     # this destructor saves having loads of disconnect logic in the exception
     # handlers. Without it the test brick quickly ran out of connections
@@ -88,25 +94,24 @@ class Brick:
 
                 pmc = []
                 for axis in range(axes):
-                    cmd = f"M{axis + 1}62"
-                    (return_str, status) = self.pti.sendCommand(cmd)
-                    if not status:
-                        raise PmacReadError(return_str)
-                    pmc.append(f"{cmd} = {return_str[:-2]}\n")
+                    # store position and homed state
+                    for cmd in [f"M{axis + 1}62", f"M{axis + 1}45"]:
+                        (return_str, status) = self.pti.sendCommand(cmd)
+                        if not status:
+                            raise PmacReadError(return_str)
+                        pmc.append(f"{cmd} = {return_str[:-2]}\n")
 
                 self.pti.disconnect()
                 self.pti = None
 
-                f_name = f"{self.controller}_positions.pmc"
-                new_file = self.defaults.motion_folder / f_name
-                with new_file.open("w") as f:
+                with self.positions_file.open("w") as f:
                     f.writelines(pmc)
-                
+
                 log.critical(f"SUCCESS: positions retrieved for {self.desc}")
             except Exception:
                 num = attempt_num + 1
                 msg = f"ERROR: position retrieval for {self.desc} failed on " \
-                    f"attempt {num} of {self.defaults.retries}"
+                      f"attempt {num} of {self.defaults.retries}"
                 log.debug(msg, exc_info=True)
                 log.error(msg)
                 continue
@@ -122,15 +127,13 @@ class Brick:
         for attempt_num in range(self.defaults.retries):
             try:
                 self._connect_direct()
-                f_name = f"{self.controller}_positions.pmc"
-                new_file = self.defaults.motion_folder / f_name
-                with new_file.open("r") as f:
+                with self.positions_file.open("r") as f:
                     # munge into format for sendSeries
                     pmc = list(
-                        [(n+1, l[:-1]) for n, l in enumerate(f.readlines())]
+                        [(n + 1, l[:-1]) for n, l in enumerate(f.readlines())]
                     )
                 self.pti.sendCommand('\u000b')
-                for (success, line, cmd, response)in self.pti.sendSeries(pmc):
+                for (success, line, cmd, response) in self.pti.sendSeries(pmc):
                     if not success:
                         log.critical(
                             f"ERROR: command '{cmd}' failed for {self.desc} ("
@@ -162,9 +165,8 @@ class Brick:
                 self.analyse.readHardware(
                     self.defaults.temp_dir, False, False, False, False)
 
-                f_name = f"{self.controller}.pmc"
-                new_file = self.defaults.temp_dir / f_name
-                old_file = self.defaults.motion_folder / f_name
+                new_file = self.defaults.temp_dir / self.f_name
+                old_file = self.defaults.motion_folder / self.f_name
                 shutil.move(str(new_file), str(old_file))
 
                 self._connect_direct()
@@ -185,3 +187,46 @@ class Brick:
             msg = f"ERROR: {self.desc} all {self.defaults.retries} " \
                   f"backup attempts failed"
             log.critical(msg)
+
+    old_m_var = re.compile(r"-M([0-9]{1,2})62 = ([0-9]+)")
+    new_m_var = re.compile(r"\+M([0-9]{1,2})62 = ([0-9]+)")
+    get_i08 = {i: re.compile(rf"i{i:d}08 *= *([0-9]+)") for i in range(1, 33)}
+
+    @classmethod
+    def diff_to_counts(
+            cls, brick: str, diff_output: str, defaults: Defaults):
+        """
+        converts a diff output for Mxx62 file to a readable list of changes
+        of counts per axis
+        :param brick: name of the brick
+        :param diff_output: output from a diff of the _positions file.
+        :param defaults: a Defaults structure with names of folders etc.
+        :return: str: human readable list of count differences per axis
+        """
+        pmc_file = defaults.motion_folder / (brick + '.pmc')
+        try:
+            with pmc_file.open('r') as f:
+                pmc = f.read()
+        except (FileNotFoundError, LookupError):
+            log.error(f'could not read i08 for {brick} '
+                      f'assuming i08 == 32 for all axes')
+            pmc = ''
+
+        old_values = {int(m): int(val) for m, val in
+                      re.findall(cls.old_m_var, diff_output)}
+        new_values = {int(m): int(val) for m, val in re.findall(
+            cls.new_m_var, diff_output) if int(m) in old_values.keys()}
+
+        output = ''
+        for m, val in new_values.items():
+            r = re.search(cls.get_i08[m], pmc)
+            if r:
+                factor = int(r[1]) * 32
+            else:
+                factor = 1024
+            counts = int(val / factor)
+            diff = int((val - old_values[m]) / factor)
+            if diff > 0:
+                output += f"Axis {m} changed by {diff} counts to {counts}\n"
+
+        return output

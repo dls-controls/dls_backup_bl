@@ -1,8 +1,10 @@
 from logging import getLogger
+from pathlib import Path
 
 from git import Repo, InvalidGitRepositoryError
 
-from dls_backup_bl.defaults import Defaults
+from .defaults import Defaults
+from .brick import Brick
 
 log = getLogger(__name__)
 
@@ -19,37 +21,31 @@ class Colours:
 
 
 # noinspection PyBroadException
-def compare_changes(defaults: Defaults):
+def compare_changes(defaults: Defaults, pmacs):
     try:
         git_repo = Repo(defaults.backup_folder)
 
-        diff = git_repo.index.diff(
-            None,
-            create_patch=True,
-            paths='*' + defaults.positions_suffix
-        )
+        paths = '*' + defaults.positions_suffix
+        diff = git_repo.index.diff(None, create_patch=True, paths=paths)
 
-        output = ["\n --------- Motor Position Changes ----------"]
+        output = "\n --------- Motor Position Changes ----------"
         for d in diff:
-            output.append(f"\n{d.a_blob.path}")
-            patch = d.diff.decode('utf8')
-            lines = patch.split('\n')
-            changes = []
-            for line in lines:
-                if line.startswith('-') or line.startswith('+'):
-                    changes.append(line)
-            # order by axis number
-            changes.sort(
-                key=lambda s: int(s[2:].split(' ')[0])
-            )
-            output += changes
+            name = f"{d.a_blob.path}"
+            name = Path(name).name
+            name = name.replace(defaults.positions_suffix, '')
+            if not pmacs or name in pmacs:
+                patch = d.diff.decode('utf8')
+                count_diffs = Brick.diff_to_counts(name, patch, defaults)
+                if count_diffs != '':
+                    output += f"\n{name}\n{count_diffs}"
+
         if len(diff) == 0:
-            output.append("There are no changes to positions since the last "
+            output += ("\nThere are no changes to positions since the last "
                           "commit")
         else:
             filepath = defaults.motion_folder / defaults.positions_file
             with filepath.open("w") as f:
-                f.writelines(map(lambda l: l + '\n', output))
+                f.write(output)
 
             # commit the most recent positions comparison for a record of
             # where motors had moved to before the restore
@@ -59,12 +55,7 @@ def compare_changes(defaults: Defaults):
             git_repo.index.commit(
                 "commit of positions comparisons by dls-backup-bl")
 
-        for line in output:
-            if line.startswith('-'):
-                line = Colours.FAIL + line + Colours.END_C
-            elif line.startswith('+'):
-                line = Colours.GREEN + line + Colours.END_C
-            print(line)
+        print(f"{Colours.FAIL}{output}{Colours.END_C}")
 
     except BaseException:
         msg = 'ERROR: Repository positions comparison failed.'

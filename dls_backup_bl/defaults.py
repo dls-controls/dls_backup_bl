@@ -16,8 +16,7 @@ class Defaults:
     positions_file = "positions_comparison.txt"
     threads: int = 10
 
-    # internal defaults
-    _motion_folder = Path("MotionControllers/")
+    motion_subfolder = Path("MotionControllers/")
     _zebra_folder = Path("Zebras/")
     _ts_folder = Path("TerminalServers/")
     _config_file_suffix = Path("backup.json")
@@ -122,7 +121,7 @@ class Defaults:
 
     @property
     def motion_folder(self) -> Path:
-        return self._backup_folder / Defaults._motion_folder
+        return self._backup_folder / Defaults.motion_subfolder
 
     @property
     def zebra_folder(self) -> Path:
