@@ -190,33 +190,35 @@ class BackupBeamline:
                 self.thread_pool.apply_async(func)
         return count
 
-    def do_t_servers(self, t_server: str = None):
+    def do_t_servers(self, servers: List[str] = None):
         count = 0
         # Go through every terminal server listed in JSON file
-        for terminal_server in self.terminal_servers:
+        for terminal_server in self.config.terminal_servers:
             # Pull out the server details
-            server = terminal_server["Server"]
-            ts_type = terminal_server["Type"]
-            # Add a backup job to the pool
+            server = terminal_server.server
             args = (
-                server, ts_type, self.defaults
+                server, terminal_server.ts_type, self.defaults
             )
-            if not t_server or t_server == server:
+            # allows substring match of any devices entry against this server
+            if not servers or any([(i in server) for i in servers]):
                 count += 1
+                # Add a backup job to the pool
                 self.thread_pool.apply_async(backup_terminal_server, args)
         return count
 
-    def do_zebras(self, zebra: str = None):
+    def do_zebras(self, zebras: str = None):
         count = 0
         # Go through every zebra listed in JSON file
-        for z in self.zebras:
+        for z in self.config.zebras:
             # Pull out the PV name detail
-            name = z["Name"]
+            name = z.Name
             # Add a backup job to the pool
             args = (name, self.defaults)
 
-            if not zebra or zebra == name:
+            # allows substring match of any devices entry against this server
+            if not zebras or any([(i in name) for i in zebras]):
                 count += 1
+                # Add a backup job to the pool
                 self.thread_pool.apply_async(backup_zebra, args)
         return count
 
@@ -275,9 +277,8 @@ class BackupBeamline:
         # queue threads for each type of backup
         total = self.do_geobricks(pmacs=self.args.devices)
         if self.args.positions is None:
-            pass
-            # total += self.do_t_servers()
-            # total += self.do_zebras()
+            total += self.do_t_servers(servers=self.args.devices)
+            total += self.do_zebras(zebras=self.args.devices)
 
         # Wait for completion of all backup threads
         self.thread_pool.close()

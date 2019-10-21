@@ -79,14 +79,16 @@ def commit_changes(defaults: Defaults, do_positions=False):
         modified_files = [
             diff.a_blob.path for diff in git_repo.index.diff(None)
         ]
-        change_list = untracked_files + modified_files
 
         ignores = [defaults.log_file.name]
         if not do_positions:
             ignores.append(defaults.positions_suffix)
         # dont commit the debug log or motor positions from a recent comparison
         for ignore in ignores:
-            change_list = [i for i in change_list if ignore not in i]
+            untracked_files = [i for i in untracked_files if ignore not in i]
+            modified_files = [i for i in modified_files if ignore not in i]
+
+        change_list = untracked_files + modified_files
 
         # If there are changes, commit them
         if change_list:

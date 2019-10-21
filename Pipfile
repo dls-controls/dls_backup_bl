@@ -15,4 +15,4 @@ numpy = "*"
 cothread = "*"
 gitpython = "*"
 attrs = ">=19.1.0"
-
+requests = "*"

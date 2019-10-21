@@ -21,7 +21,12 @@
             "server": "172.22.33.22"
         }
     ],
-    "terminal_servers": [],
+    "terminal_servers": [
+        {
+            "server": "bl45p-nt-tserv-01",
+            "ts_type": "moxa"
+        }
+    ],
     "zebras": [
         {
             "Name": "fdasfasfdas"
