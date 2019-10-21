@@ -101,6 +101,12 @@ class Brick:
                             raise PmacReadError(return_str)
                         pmc.append(f"{cmd} = {return_str[:-2]}\n")
 
+                for plc in range(1, 33):
+                    cmd = f"M{plc + 5000}"
+                    (return_str, status) = self.pti.sendCommand(cmd)
+                    if not status:
+                        raise PmacReadError(return_str)
+                    pmc.append(f"{cmd} = {return_str[:-2]}\n")
                 self.pti.disconnect()
                 self.pti = None
 
@@ -188,6 +194,7 @@ class Brick:
                   f"backup attempts failed"
             log.critical(msg)
 
+    plc_running = re.compile(r"-M50([0-3][0-9]) = ([0-9]+)")
     old_m_var = re.compile(r"-M([0-9]{1,2})62 = ([0-9]+)")
     new_m_var = re.compile(r"\+M([0-9]{1,2})62 = ([0-9]+)")
     get_i08 = {i: re.compile(rf"i{i:d}08 *= *([0-9]+)") for i in range(1, 33)}
@@ -212,12 +219,21 @@ class Brick:
                       f'assuming i08 == 32 for all axes')
             pmc = ''
 
+        output = ''
+
+        old_plcs = {int(m): int(val) for m, val in
+                    re.findall(cls.plc_running, diff_output)}
+        for plc, state in old_plcs.items():
+            if state == 0:
+                output += f"PLC {plc} was running but now is stopped\n"
+            else:
+                output += f"PLC {plc} was stopped but now is running\n"
+
         old_values = {int(m): int(val) for m, val in
                       re.findall(cls.old_m_var, diff_output)}
         new_values = {int(m): int(val) for m, val in re.findall(
             cls.new_m_var, diff_output) if int(m) in old_values.keys()}
 
-        output = ''
         for m, val in new_values.items():
             r = re.search(cls.get_i08[m], pmc)
             if r:
