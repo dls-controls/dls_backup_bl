@@ -29,6 +29,7 @@ def compare_changes(defaults: Defaults, pmacs):
         diff = git_repo.index.diff(None, create_patch=True, paths=paths)
 
         output = "\n --------- Motor Position Changes ----------"
+        file_out = "\n --------- Mxx62 differences ----------"
         for d in diff:
             name = f"{d.a_blob.path}"
             name = Path(name).name
@@ -38,22 +39,22 @@ def compare_changes(defaults: Defaults, pmacs):
                 count_diffs = Brick.diff_to_counts(name, patch, defaults)
                 if count_diffs != '':
                     output += f"\n{name}\n{count_diffs}"
+                file_out += f"\n{name}\n{patch}"
 
         if len(diff) == 0:
             output += ("\nThere are no changes to positions since the last "
                           "commit")
-        else:
-            filepath = defaults.motion_folder / defaults.positions_file
-            with filepath.open("w") as f:
-                f.write(output)
+        filepath = defaults.motion_folder / defaults.positions_file
+        with filepath.open("w") as f:
+            f.write(f"{output}\n{file_out}")
 
-            # commit the most recent positions comparison for a record of
-            # where motors had moved to before the restore
-            comparison_file = str(
-                defaults.motion_folder / defaults.positions_file)
-            git_repo.index.add([comparison_file])
-            git_repo.index.commit(
-                "commit of positions comparisons by dls-backup-bl")
+        # commit the most recent positions comparison for a record of
+        # where motors had moved to before the restore
+        comparison_file = str(
+            defaults.motion_folder / defaults.positions_file)
+        git_repo.index.add([comparison_file])
+        git_repo.index.commit(
+            "commit of positions comparisons by dls-backup-bl")
 
         print(f"{Colours.FAIL}{output}{Colours.END_C}")
 
