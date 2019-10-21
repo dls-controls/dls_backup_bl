@@ -139,7 +139,10 @@ class BackupEditor(QWidget):
 
     def display_entries(self):
         self.SelectedDevice = str(self.Tabs.tabText(self.Tabs.currentIndex()))
+
+        data_type = self.tab_entry_type[self.Tabs.currentIndex()]
         self.ListModel = QStandardItemModel()
+        self.ListModel.setHorizontalHeaderLabels(data_type.keys())
 
         for device in self.config[self.SelectedDevice]:
             self.Row = []
