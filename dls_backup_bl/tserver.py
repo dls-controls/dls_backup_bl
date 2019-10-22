@@ -44,21 +44,83 @@ class TsConfig:
         else:
             log.error(f"unknown type for {desc}")
 
+    def make_moxa_login(self, page: str, username: str, password: str):
+        match = re.search(
+            "(?:fake_challenge|FakeChallenge) value=([^>]*)>", page)
+        if match is None:
+            raise ValueError(
+                "This returns a web page that doesn't look like a moxa login "
+                "screen")
+        fake_challenge = match.groups()[0]
+
+        # do what the function SetPass() does on the login screen
+        md = hashlib.md5(fake_challenge.encode('utf8')).hexdigest()
+        p = ""
+        for c in password:
+            p += "%x" % ord(c)
+        md5_pass = ""
+        for i in range(len(p)):
+            m = int(p[i], 16)
+            n = int(md[i], 16)
+            md5_pass += "%x" % (m ^ n)
+
+        login_data = dict(Username=username, MD5Password=md5_pass)
+        return login_data
+
+    def get_moxa_config_old(self, username, password, remote_path):
+        # get the base page to pickup the "fake_challenge" variable
+        url = "https://" + self.ts
+        base = urlopen(url).read()
+        match = re.search(
+            "<INPUT type=hidden name=fake_challenge value=([^>]*)>", base)
+        if match is None:
+            print(
+                "This returns a web page that doesn't look like a moxa login "
+                "screen")
+            return False
+        fake_challenge = match.groups()[0]
+
+        # do what the function SetPass() does on the login screen
+        md = hashlib.md5(fake_challenge).hexdigest()
+        p = ""
+        for c in password:
+            p += "%x" % ord(c)
+        md5_pass = ""
+        for i in range(len(p)):
+            m = int(p[i], 16)
+            n = int(md[i], 16)
+            md5_pass += "%x" % (m ^ n)
+
+        # store login cookie
+        cj = CookieJar()
+        opener = build_opener(HTTPCookieProcessor(cj))
+        login_data = urlencode(dict(Username=username, MD5Password=md5_pass))
+        resp = opener.open(url, login_data)
+        if "Login Failed" in resp.read():
+            print("Wrong password for this moxa")
+            return False
+        txt = path.join(self.path, remote_path)
+        print("Saving config to", txt)
+        open(txt, "w").write(opener.open(url + "/" + remote_path).read())
+        return True
+
     def get_moxa_config(self, username, password, remote_path):
         # get the base page to pickup the "fake_challenge" variable
 
         cfg_path = self.path / (self.ts + "_config.dec")
 
-        url = f"http://{self.ts}/{remote_path}"
+        url = f"https://{self.ts}"
+        config_url = f"{url}/{remote_path}"
 
         session = requests.Session()
-        session.auth = (username, password)
-
-        auth = session.post('http://' + self.ts)
-        response = session.get(url, stream=True)
+        response = session.post('https://' + self.ts, verify=False)
+        response.raise_for_status()
+        login = self.make_moxa_login(response.text, username, password)
+        response = session.post(url, data=login)
+        response = session.get(config_url)
         response.raise_for_status()
         with cfg_path.open("wb") as f:
-            shutil.copyfileobj(response.raw, f)
+            f.write(response.content)
         return True
 
     def get_acs_config(self, username, password, remote_path):
