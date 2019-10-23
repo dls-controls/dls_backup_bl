@@ -12,12 +12,16 @@ def import_json(cfg_file: Path, json_file):
     config_object.configFile = str(cfg_file)
     config_object.processConfigFile()
 
-    # the below could be used to append but is this likely desirable?
-    #json_config = BackupsConfig.load(json_file)
-    json_config = BackupsConfig.empty()
+    # we append to the existing json file, overwriting any duplicate
+    # entries
+    json_config = BackupsConfig.from_json(json_file)
 
     for pmac, details in config_object.pmacs.items():
         mc = MotorController(pmac, details.port, details.host)
+        for i in range(len(json_config.motion_controllers)):
+            if json_config.motion_controllers[i].controller == pmac:
+                json_config.motion_controllers.pop(i)
+                break
         json_config.motion_controllers.append(mc)
         log.info("imported pmac {} at {}:{}".format(
             pmac, details.host, details.port

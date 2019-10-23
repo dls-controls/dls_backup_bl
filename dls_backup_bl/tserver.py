@@ -28,22 +28,23 @@ class TsConfig:
         log.info(f"backing up {self.desc}")
 
         self.success = False
-        if ts_type == "moxa":
+        if ts_type.lower() == "moxa":
             self.success = self.get_moxa_config(
                 username or "admin", password or "tslinux", "Config.txt"
             )
-        elif ts_type == "acs":
+        elif ts_type.lower() == "acs":
             self.success = self.get_acs_config(
                 username or "root", password or "tslinux",
                 "/mnt/flash/config.tgz"
             )
-        elif ts_type == "acsold":
+        elif ts_type.lower() == "acsold":
             self.success = self.get_acs_config(
                 username or "root", password or "tslinux", "/proc/flash/script"
             )
         else:
-            log.error(f"unknown type for {desc}")
+            log.error(f"unknown type for {self.desc}")
 
+    @staticmethod
     def make_moxa_login(self, page: str, username: str, password: str):
         match = re.search(
             "(?:fake_challenge|FakeChallenge) value=([^>]*)>", page)

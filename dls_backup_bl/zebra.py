@@ -20,11 +20,12 @@ def backup_zebra(name: str, defaults: Defaults):
 
             # todo may need a (empty) temp path and then copy to zebra_folder
             caput('%s:%s' % (str(name), 'CONFIG_FILE'), folder, datatype=999)
-            caput('%s:%s' % (str(name), 'CONFIG_WRITE.PROC'), 1, timeout=30,
+            caput('%s:%s' % (str(name), 'CONFIG_WRITE.PROC'), 1, timeout=60,
                   wait=True)
             # Store button PV triggered successfully
-            pv_name = '%s:%s'.format(str(name), 'CONFIG_STATUS')
-            pv = str(caget(pv_name, datatype=999))
+            pv_name = f"{str(name)}:CONFIG_STATUS"
+            log.info(f"checking status {pv_name}")
+            pv = str(caget(pv_name, datatype=999, timeout=20))
             while "Writing" in pv:
                 # Waiting for write to complete
                 sleep(1)

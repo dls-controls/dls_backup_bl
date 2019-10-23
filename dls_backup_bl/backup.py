@@ -218,8 +218,8 @@ class BackupBeamline:
             # allows substring match of any devices entry against this server
             if not zebras or any([(i in name) for i in zebras]):
                 count += 1
-                # Add a backup job to the pool
-                self.thread_pool.apply_async(backup_zebra, args)
+                # call zebra backup in main thread since it uses cothread
+                backup_zebra(*args)
         return count
 
     def sort_log(self):
