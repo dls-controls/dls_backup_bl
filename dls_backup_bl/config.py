@@ -67,7 +67,7 @@ class BackupsConfig(JsonAbleDictionaryTuple):
 
     # noinspection PyBroadException
     @staticmethod
-    def load(json_file: Path):
+    def from_json(json_file: Path):
         try:
             with json_file.open() as f:
                 raw_items = json.loads(f.read())

@@ -10,7 +10,7 @@ ipython = "*"
 [packages]
 pyqt5 = "*"
 pexpect = "*"
-dls-pmacanalyse = ">=2.1.0"
+dls-pmacanalyse = ">=2.0.1"
 numpy = "*"
 cothread = "*"
 gitpython = "*"

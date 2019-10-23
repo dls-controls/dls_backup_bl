@@ -22,7 +22,7 @@ class BackupEditor(QWidget):
     def __init__(self, config_file: Path):
         QWidget.__init__(self)
         self.file = config_file
-        self.config = BackupsConfig.load(config_file)
+        self.config = BackupsConfig.from_json(config_file)
         self.initialise_ui()
 
     def centre_window(self):

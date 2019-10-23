@@ -33,7 +33,7 @@ BACKUP NOT SET UP
 There is no backup area set up for this beamline.
 
 Please import the dls-pmac-analyse cfg file with --import-cfg and / or 
-use dls-edit-backup.py to complete the device configuration.
+use dls-backup-gui.py to complete the device configuration.
 """
 
 
@@ -334,8 +334,7 @@ class BackupBeamline:
         elif self.defaults.config_file.exists():
             self.defaults.check_folders()
             self.setup_logging(self.args.log_level)
-            self.config = BackupsConfig.load(self.defaults.config_file)
-            self.config.load(self.defaults.config_file)
+            self.config = BackupsConfig.from_json(self.defaults.config_file)
             if self.config.count_devices() == 0:
                 print("\n\n" + empty_message)
             else:
