@@ -1,3 +1,4 @@
+import math
 import re
 import shutil
 import telnetlib
@@ -128,7 +129,7 @@ class Brick:
             log.critical(msg)
 
     # only send the positions (filter out running PLCs and homed state)
-    restore_commands = re.compile("M[0-9]{1,2}62 = [0-9]+")
+    restore_commands = re.compile("M[0-9]{1,2}62 = -?[0-9]+")
 
     def restore_positions(self):
         log.info(f"Sending motor positions for {self.desc}.")
@@ -202,10 +203,10 @@ class Brick:
                   f"backup attempts failed"
             log.critical(msg)
 
-    plc_running = re.compile(r"-M50([0-3][0-9]) = ([0-9]+)")
-    old_m_var = re.compile(r"-M([0-9]{1,2})62 = ([0-9]+)")
-    new_m_var = re.compile(r"\+M([0-9]{1,2})62 = ([0-9]+)")
-    get_i08 = {i: re.compile(rf"i{i:d}08 *= *([0-9]+)") for i in range(1, 33)}
+    plc_running = re.compile(r"-M50([0-3][0-9]) = (-?[0-9]+)")
+    old_m_var = re.compile(r"-M([0-9]{1,2})62 = (-?[0-9]+)")
+    new_m_var = re.compile(r"\+M([0-9]{1,2})62 = (-?[0-9]+)")
+    get_i08 = {i: re.compile(rf"i{i:d}08 *= *(-?[0-9]+)") for i in range(1, 33)}
 
     @classmethod
     def diff_to_counts(
@@ -250,7 +251,7 @@ class Brick:
                 factor = 1024
             counts = int(val / factor)
             diff = int((val - old_values[m]) / factor)
-            if diff > 0:
+            if math.fabs(diff) > 0:
                 output += f"Axis {m} changed by {diff} counts to {counts}\n"
 
         return output

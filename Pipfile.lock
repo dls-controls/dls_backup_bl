@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "be68e20c2bcb8a69b431d404307247e7bdd6b2950b75bceb0e8123eac1160ab9"
+            "sha256": "0ba33650dada4bbea5ebdd9939691159963b7a765f01dfbcfe25c0b406bad8df"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -42,8 +42,12 @@
             "version": "==2.16+dls1"
         },
         "dls-pmacanalyse": {
-            "editable": true,
-            "path": "./../dls_pmacanalyse"
+            "hashes": [
+                "sha256:0a924c5e6de224abc9419bfc7a52f5fd126ea0180e1c7b81031d78086ea6798d",
+                "sha256:455163cdfd63186ba24e036348568b2d3be9080a2036acaf777fe3caff87714c"
+            ],
+            "index": "pypi",
+            "version": "==2.0.0"
         },
         "dls-pmaclib": {
             "hashes": [
