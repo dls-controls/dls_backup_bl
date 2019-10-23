@@ -127,6 +127,9 @@ class Brick:
                   f"attempts to save positions failed"
             log.critical(msg)
 
+    # only send the positions (filter out running PLCs and homed state)
+    restore_commands = re.compile("M[0-9]{1,2}62 = [0-9]+")
+
     def restore_positions(self):
         log.info(f"Sending motor positions for {self.desc}.")
 
@@ -134,10 +137,15 @@ class Brick:
             try:
                 self._connect_direct()
                 with self.positions_file.open("r") as f:
-                    # munge into format for sendSeries
+                    # munge into format for sendSeries and only send commands
+                    # that match restore_commands
+                    lines = f.readlines()
                     pmc = list(
-                        [(n + 1, l[:-1]) for n, l in enumerate(f.readlines())]
+                        [(n + 1, l[:-1]) for n, l in enumerate(lines)
+                         if re.search(self.restore_commands, l)]
                     )
+                # send ctrl K to kill all axes (otherwise the servo loop
+                # will fight the change of position)
                 self.pti.sendCommand('\u000b')
                 for (success, line, cmd, response) in self.pti.sendSeries(pmc):
                     if not success:
