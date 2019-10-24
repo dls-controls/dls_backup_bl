@@ -126,12 +126,15 @@ class BackupBeamline:
                             help="Name of the beamline to backup. "
                                  "The format is 'i16' or 'b07'. Defaults to "
                                  "the current beamline")
+        parser.add_argument('--domain', action="store",
+                            help='When BLXXY is not appropriate, use domain for'
+                                 ' the backup folder name. e.g. --domain ME01D')
         parser.add_argument('--dir', action="store",
                             help="Directory to save backups to. Defaults to"
-                                 "/dls_sw/motion/Backups/$(BEAMLINE)")
+                                 "/dls_sw/motion/Backups/BLXXY")
         parser.add_argument('-j', action="store", dest="json_file",
                             help="JSON file of devices to be backed up. "
-                                 "Defaults to DIR/$(BEAMLINE)-backup.json")
+                                 "Defaults to DIR/BLXXY-backup.json")
         parser.add_argument('-r', '--retries', action="store", type=int,
                             default=4,
                             help="Number of times to attempt backup. "
@@ -176,7 +179,7 @@ class BackupBeamline:
                 controller, server, port, uses_ts, self.defaults
             )
 
-            if not pmacs or controller in pmacs:
+            if not pmacs or any([(i in controller) for i in pmacs]):
                 count += 1
                 b = Brick(*args)
                 if self.args.positions == 'save' or \
@@ -321,7 +324,7 @@ class BackupBeamline:
 
         self.defaults = Defaults(
             self.args.beamline, self.args.dir, self.args.json_file,
-            self.args.retries
+            self.args.retries, domain=self.args.domain
         )
 
         if self.args.folder:

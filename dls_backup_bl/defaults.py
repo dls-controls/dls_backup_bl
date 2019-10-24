@@ -27,7 +27,8 @@ class Defaults:
     def __init__(
             self, beamline: str = None, backup_folder: Path = None,
             config_file: Path = None, retries: int = 0,
-            config_file_only: bool = False
+            config_file_only: bool = False,
+            domain: str = None
     ):
         """
         Create an object to hold important file paths.
@@ -40,12 +41,15 @@ class Defaults:
         :param config_file_only: if this is true do not require a valid
                beamline setting when config_file is supplied. this is for
                use by the GUI
+       :param domain: override the beamline name to give no BLXXY folder name
         """
         self._retries = retries if int(retries) > 0 else Defaults._retries
         self.temp_dir: Path = Path(tempfile.mkdtemp())
 
         if config_file_only and config_file is not None:
             self._beamline = ''
+        elif domain:
+            self._beamline = domain
         else:
             self.get_beamline(beamline)
 
@@ -79,7 +83,7 @@ class Defaults:
                 short_form = environ.get("BEAMLINE")
                 assert short_form is not None
 
-            # sepcial cases
+            # special cases
             if short_form == 'i02-2':
                 self._beamline = 'BL02I'
             else:

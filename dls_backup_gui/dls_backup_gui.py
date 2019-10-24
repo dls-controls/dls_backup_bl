@@ -21,6 +21,9 @@ def parse_args():
                         help="Name of the beamline to backup. "
                              "The format is 'i16' or 'b07'. Defaults to "
                              "the current beamline")
+    parser.add_argument('--domain', action="store",
+                        help='When BLXXY is not appropriate, use domain for'
+                             ' the backup folder name. e.g. --domain ME01D')
     parser.add_argument('-j', action="store", dest="json_file",
                         help="JSON file of devices to be backed up. "
                              "Defaults to DIR/$(BEAMLINE)-backup.json")
@@ -42,8 +45,8 @@ def main():
     )
 
     defaults = Defaults(beamline=args.beamline, config_file=args.json_file,
-                        config_file_only=True)
-    defaults.check_folders()
+                        config_file_only=True,
+                        domain=args.domain)
 
     app = QApplication(sys.argv)
     if not defaults.config_file.exists():
@@ -57,6 +60,7 @@ def main():
         go = True
 
     if go:
+        defaults.check_folders()
         app.lastWindowClosed.connect(app.quit)
         win = BackupEditor(defaults.config_file)
         win.show()
