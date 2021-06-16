@@ -3,6 +3,7 @@ import re
 from logging import getLogger
 from pathlib import Path
 
+import os
 import pexpect
 import requests
 
@@ -108,6 +109,12 @@ class TsConfig:
             child.expect('Password:', timeout=120)
         child.sendline(password)
         i = child.expect([pexpect.EOF, "scp: [^ ]* No such file or directory"])
+        try:
+            os.chmod(str(tar), 0o664)
+        except Exception as e:
+            msg= "Warning: Permissions for ACS Terminal server backup file could not be changed."
+            log.critical(msg)
+            pass
         if i == 1:
             log.error("Remote path %s doesn't exist on this ACS" % remote_path)
             return False
