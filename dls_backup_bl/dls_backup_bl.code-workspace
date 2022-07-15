@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": ".."
+		},
+		{
+			"path": "../../../epics-containers/python3-pip-skeleton"
+		}
+	],
+    "settings": {}
+}

@@ -8,6 +8,7 @@ __pycache__/
 # Distribution / packaging
 .Python
 env/
+.venv
 build/
 develop-eggs/
 dist/
@@ -22,6 +23,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+**/_version.py
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -41,7 +43,9 @@ htmlcov/
 .cache
 nosetests.xml
 coverage.xml
-*,cover
+cov.xml
+.pytest_cache/
+.mypy_cache/
 
 # Translations
 *.mo
@@ -56,17 +60,8 @@ docs/_build/
 # PyBuilder
 target/
 
-# PyCharm and Eclipse project files
-/.idea
-/.idea/workspace.xml
-/.project
-/.cproject
-/.settings/
-/.pydevproject
-
 # DLS build dir and virtual environment
 /prefix/
 /venv/
 /lightweight-venv/
 /installed.files
-
