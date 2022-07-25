@@ -10,7 +10,7 @@ Practical step-by-step guides for the more experienced user.
 
     reference/api
     reference/contributing
-    Releases <https://github.com/epics-containers/dls_backup_bl/releases>
+    Releases <https://github.com/dls-controls/dls_backup_bl/releases>
     Index <genindex.html#http://>
 
 ..

@@ -40,7 +40,7 @@ You can now use ``pip`` to install the library::
 If you require a feature that is not currently released you can also install
 from github::
 
-    python3 -m pip install git+https://github.com/epics-containers/dls_backup_bl.git
+    python3 -m pip install git+https://github.com/dls-controls/dls_backup_bl.git
 
 The library should now be installed and the commandline interface on your path.
 You can check the version that has been installed by typing::
