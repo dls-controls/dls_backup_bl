@@ -1,7 +1,7 @@
 import shutil
 import tempfile
-from pathlib import Path
 from os import environ
+from pathlib import Path
 
 
 class Defaults:
@@ -50,7 +50,12 @@ class Defaults:
         self._retries = retries if int(retries) > 0 else Defaults._retries
         self.temp_dir: Path = Path(tempfile.mkdtemp())
 
-        if config_file_only and config_file is not None:
+        # providing backup folder and config file negates the need for a beamline
+        self.no_beamline_ok = (
+            backup_folder is not None and config_file is not None
+        ) or (config_file_only and config_file is not None)
+
+        if self.no_beamline_ok:
             self._beamline = ""
         elif domain:
             self._beamline = domain

@@ -4,14 +4,15 @@ import shutil
 import telnetlib
 from logging import getLogger
 
-from dls_backup_bl.defaults import Defaults
-from dls_pmacanalyse import GlobalConfig
-from dls_pmacanalyse.dls_pmacanalyse import Pmac, PmacReadError
+from dls_pmacanalyse.globalconfig import GlobalConfig
+from dls_pmacanalyse.pmac import Pmac, PmacReadError
 from dls_pmaclib.dls_pmacremote import (
-    PmacTelnetInterface,
     PmacEthernetInterface,
+    PmacTelnetInterface,
     RemotePmacInterface,
 )
+
+from dls_backup_bl.defaults import Defaults
 
 log = getLogger(__name__)
 

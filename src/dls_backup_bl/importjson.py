@@ -1,8 +1,9 @@
 from logging import getLogger
 from pathlib import Path
 
+from dls_pmacanalyse.globalconfig import GlobalConfig
+
 from dls_backup_bl.config import BackupsConfig, MotorController
-from dls_pmacanalyse import GlobalConfig
 
 log = getLogger(__name__)
 
