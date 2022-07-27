@@ -1,9 +1,11 @@
+# typ
+
 import hashlib
+import os
 import re
 from logging import getLogger
 from pathlib import Path
 
-import os
 import pexpect
 import requests
 
@@ -11,11 +13,10 @@ from .defaults import Defaults
 
 log = getLogger(__name__)
 
-requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += "HIGH:!DH:!aNULL"
+requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += "HIGH:!DH:!aNULL"  # type: ignore
 try:
-    requests.packages.urllib3.contrib.pyopenssl.DEFAULT_SSL_CIPHER_LIST += (
-        "HIGH:!DH:!aNULL"
-    )
+    contrib = requests.packages.urllib3.contrib  # type: ignore
+    contrib.pyopenssl.DEFAULT_SSL_CIPHER_LIST += "HIGH:!DH:!aNULL"
 except AttributeError:
     # no pyopenssl support used / needed / available
     pass
@@ -30,7 +31,7 @@ class TsConfig:
         backup_directory: Path,
         username: str = None,
         password: str = None,
-        ts_type: str = None,
+        ts_type: str = "",
     ):
         self.ts = ts
         self.path: Path = backup_directory
@@ -118,8 +119,11 @@ class TsConfig:
         i = child.expect([pexpect.EOF, "scp: [^ ]* No such file or directory"])
         try:
             os.chmod(str(tar), 0o664)
-        except Exception as e:
-            msg = "Warning: Permissions for ACS Terminal server backup file could not be changed."
+        except Exception:
+            msg = (
+                "Warning: Permissions for ACS Terminal server backup"
+                " file could not be changed."
+            )
             log.critical(msg)
             pass
         if i == 1:

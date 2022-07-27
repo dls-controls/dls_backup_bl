@@ -1,7 +1,7 @@
 from logging import getLogger
 from time import sleep
 
-from cothread.catools import caput, caget
+from cothread.catools import caget, caput
 
 from dls_backup_bl.defaults import Defaults
 
@@ -44,7 +44,7 @@ def backup_zebra(name: str, defaults: Defaults):
             log.error(msg)
             continue
         except BaseException:
-            msg = "ERROR: Problem backing up ".format(name)
+            msg = "ERROR: Problem backing up {}".format(name)
             log.debug(msg, exc_info=True)
             log.error(msg)
             continue
