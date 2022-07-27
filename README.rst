@@ -3,30 +3,80 @@ dls_backup_bl
 
 |code_ci| |docs_ci| |coverage| |pypi_version| |license|
 
-This is where you should write a short paragraph that describes what your module does,
-how it does it, and why people should use it.
+A tool for backing up the configuration of the following devices on 
+a Beamline:
+
+- Motion Controller
+  
+  - VME pmacs
+  - geobricks
+ 
+- zebras
+- Terminal servers
+
+  - ACS
+  - Moxa 
 
 ============== ==============================================================
+Confluence     https://confluence.diamond.ac.uk/x/WoxKBg
 PyPI           ``pip install dls_backup_bl``
 Source code    https://github.com/dls-controls/dls_backup_bl
 Documentation  https://epics-containers.github.io/dls_backup_bl
 Releases       https://github.com/dls-controls/dls_backup_bl/releases
 ============== ==============================================================
 
-This is where you should put some images or code snippets that illustrate
-some relevant examples. If it is a library then you might put some
-introductory code here:
+How to Use
+----------
 
-.. code:: python
+All examples here use the beamline i16. Substitute i16 with the beamline name you 
+are working with.
 
-    from dls_backup_bl.hello import HelloClass
+Run these tools on a beamline workstation or provide the 
+beamline name with the command line parameter ``--beamline i16``.
 
-    hello = HelloClass("me")
-    print(hello.format_greeting())
+First create a configuration file that describes the devices on the 
+beamline. The following command will allow you to view and edit the
+list of devices that the backup process will manage::
 
-Or if it is a commandline tool then you might put some example commands here::
+    dls-backup-gui
 
-    dls_backup_bl person --times=2
+This will open a GUI that will allow you to configure the devices.
+
+Once the configuration is complete you can launch the full backup with::
+
+    dls_backup_bl
+
+Note that you can backup a subset of devices like this::
+
+    dls_backup_bl --devices BL16I-MO-STEP-01 BL16I-MO-STEP-02
+
+More Help
+---------
+
+Both tools have help which describes the command line options::
+
+    dls-backup-gui --help
+    dls_backup_bl --help
+
+This confluence page has much more detailed
+https://confluence.diamond.ac.uk/x/WoxKBg
+
+Backup Files
+------------
+
+All the backup files are stored in ``/dls_sw/work/motion/Backups/BL16I``
+
+The device description file is 
+``/dls_sw/work/motion/Backups/BL16I/BL16I-backup.json``
+
+There are also log files in this directory. Plus a subfolder for each class
+of backup device.
+
+The backup folder is a git 
+repository and all backups are incremental only. The full history of 
+backups can be retrieved with git commands.
+
+
 
 .. |code_ci| image:: https://github.com/dls-controls/dls_backup_bl/workflows/Code%20CI/badge.svg?branch=main
     :target: https://github.com/dls-controls/dls_backup_bl/actions?query=workflow%3A%22Code+CI%22

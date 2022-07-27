@@ -8,6 +8,8 @@ from multiprocessing.pool import ThreadPool
 from pathlib import Path
 from typing import List
 
+from dls_backup_bl import __version__
+
 from .brick import Brick
 from .config import BackupsConfig
 from .defaults import Defaults
@@ -22,7 +24,7 @@ empty_message = """
 
 BACKUP ABORTED
 
-The configuration file contains no devices for backup. 
+The configuration file contains no devices for backup.
 Please import the dls-pmac-analyse cfg file with --import-cfg and / or
 use dls-edit-backup.py to complete the device configuration.
 """
@@ -32,7 +34,7 @@ BACKUP NOT SET UP
 
 There is no backup area set up for this beamline.
 
-Please import the dls-pmac-analyse cfg file with --import-cfg and / or 
+Please import the dls-pmac-analyse cfg file with --import-cfg and / or
 use dls-backup-gui.py to complete the device configuration.
 """
 
@@ -209,6 +211,12 @@ class BackupBeamline:
             action="store_true",
             help="report the motion backup folder that the " "tool will use.",
         )
+        parser.add_argument(
+            "-v",
+            "--version",
+            action="store_true",
+            help="report version and exit",
+        )
 
         # Parse the command line arguments
         self.args = parser.parse_args()
@@ -366,6 +374,10 @@ class BackupBeamline:
 
     def main(self):
         self.parse_args()
+        if self.args.version:
+            print(__version__)
+            exit(0)
+
         self.email = self.args.email
 
         # catch CTRL-C
@@ -400,3 +412,8 @@ class BackupBeamline:
 
 def main():
     BackupBeamline().main()
+
+
+# test with: pipenv run python -m dls_backup_bl
+if __name__ == "__main__":
+    main()

@@ -6,6 +6,7 @@ from logging import getLogger
 
 from PyQt5.QtWidgets import QApplication, QMessageBox
 
+from dls_backup_bl import __version__
 from dls_backup_bl.defaults import Defaults
 
 from .backup_editor import BackupEditor
@@ -47,6 +48,13 @@ def parse_args():
         default="info",
         help="Set logging to error, warning, info, debug",
     )
+    parser.add_argument(
+        "-v",
+        "--version",
+        action="store_true",
+        help="report version and exit",
+    )
+
     # Parse the command line arguments
     return parser.parse_args()
 
@@ -54,6 +62,9 @@ def parse_args():
 # Start the application
 def main():
     args = parse_args()
+    if args.version:
+        print(__version__)
+        exit(0)
 
     # console log file for immediate feedback
     numeric_level = getattr(logging, args.log_level.upper(), None)
