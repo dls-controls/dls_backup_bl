@@ -17,8 +17,14 @@ using ``autoclass`` and ``autofunction`` directives instead of
 
     Version number as calculated by https://github.com/pypa/setuptools_scm
 
-.. automodule:: dls_backup_bl.hello
+.. automodule:: dls_backup_bl.backup
     :members:
 
-    ``dls_backup_bl.hello``
+    ``dls_backup_bl.backup``
+    -----------------------------------------
+
+.. automodule:: dls_backup_gui.backup_editor
+    :members:
+
+    ``dls_backup_gui.backup_editor``
     -----------------------------------------

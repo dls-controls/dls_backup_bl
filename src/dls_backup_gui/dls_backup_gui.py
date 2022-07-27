@@ -7,7 +7,8 @@ from logging import getLogger
 from PyQt5.QtWidgets import QApplication, QMessageBox
 
 from dls_backup_bl.defaults import Defaults
-from .backupeditor import BackupEditor
+
+from .backup_editor import BackupEditor
 
 log = getLogger(__name__)
 
