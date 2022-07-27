@@ -7,8 +7,11 @@ from logging import getLogger
 from dls_backup_bl.defaults import Defaults
 from dls_pmacanalyse import GlobalConfig
 from dls_pmacanalyse.dls_pmacanalyse import Pmac, PmacReadError
-from dls_pmaclib.dls_pmacremote import PmacTelnetInterface, \
-    PmacEthernetInterface, RemotePmacInterface
+from dls_pmaclib.dls_pmacremote import (
+    PmacTelnetInterface,
+    PmacEthernetInterface,
+    RemotePmacInterface,
+)
 
 log = getLogger(__name__)
 
@@ -16,12 +19,7 @@ log = getLogger(__name__)
 # noinspection PyBroadException
 class Brick:
     def __init__(
-            self,
-            controller: str,
-            server: str,
-            port: int,
-            t_serv: bool,
-            defaults: Defaults
+        self, controller: str, server: str, port: int, t_serv: bool, defaults: Defaults
     ):
         self.controller = controller
         self.server = server
@@ -68,7 +66,7 @@ class Brick:
             # None means that readHardware will decide for itself
             self.analyse.setGeobrick(None)
         except BaseException:
-            log.error(f'pmac_analyse connection failed for {self.desc}')
+            log.error(f"pmac_analyse connection failed for {self.desc}")
 
     def _connect_direct(self):
         # make sure the pmac config we have backed up is also saved
@@ -81,7 +79,7 @@ class Brick:
             self.pti.setConnectionParams(self.server, self.port)
             self.pti.connect()
         except BaseException:
-            log.error(f'connection failed for {self.desc}')
+            log.error(f"connection failed for {self.desc}")
 
     def backup_positions(self):
         log.info(f"Getting motor positions for {self.desc}.")
@@ -117,15 +115,19 @@ class Brick:
                 log.critical(f"SUCCESS: positions retrieved for {self.desc}")
             except Exception:
                 num = attempt_num + 1
-                msg = f"ERROR: position retrieval for {self.desc} failed on " \
-                      f"attempt {num} of {self.defaults.retries}"
+                msg = (
+                    f"ERROR: position retrieval for {self.desc} failed on "
+                    f"attempt {num} of {self.defaults.retries}"
+                )
                 log.debug(msg, exc_info=True)
                 log.error(msg)
                 continue
             break
         else:
-            msg = f"ERROR: {self.desc} all {self.defaults.retries} " \
-                  f"attempts to save positions failed"
+            msg = (
+                f"ERROR: {self.desc} all {self.defaults.retries} "
+                f"attempts to save positions failed"
+            )
             log.critical(msg)
 
     # only send the positions (filter out running PLCs and homed state)
@@ -142,29 +144,37 @@ class Brick:
                     # that match restore_commands
                     lines = f.readlines()
                     pmc = list(
-                        [(n + 1, l[:-1]) for n, l in enumerate(lines)
-                         if re.search(self.restore_commands, l)]
+                        [
+                            (n + 1, l[:-1])
+                            for n, l in enumerate(lines)
+                            if re.search(self.restore_commands, l)
+                        ]
                     )
                 # send ctrl K to kill all axes (otherwise the servo loop
                 # will fight the change of position)
-                self.pti.sendCommand('\u000b')
+                self.pti.sendCommand("\u000b")
                 for (success, line, cmd, response) in self.pti.sendSeries(pmc):
                     if not success:
                         log.critical(
                             f"ERROR: command '{cmd}' failed for {self.desc} ("
-                            f"{response})")
+                            f"{response})"
+                        )
 
                 log.critical(f"SUCCESS: positions restored for {self.desc}")
             except BaseException:
-                msg = f"ERROR: {self.desc} position restore failed on " \
-                      f"attempt {attempt_num + 1} of {self.defaults.retries}"
+                msg = (
+                    f"ERROR: {self.desc} position restore failed on "
+                    f"attempt {attempt_num + 1} of {self.defaults.retries}"
+                )
                 log.debug(msg, exc_info=True)
                 log.error(msg)
                 continue
             break
         else:
-            msg = f"ERROR: {self.desc} all {self.defaults.retries} " \
-                  f"backup attempts failed"
+            msg = (
+                f"ERROR: {self.desc} all {self.defaults.retries} "
+                f"backup attempts failed"
+            )
             log.critical(msg)
 
     def backup_controller(self):
@@ -178,7 +188,8 @@ class Brick:
             try:
                 self._connect_analyse()
                 self.analyse.readHardware(
-                    self.defaults.temp_dir, False, False, False, False)
+                    self.defaults.temp_dir, False, False, False, False
+                )
 
                 new_file = self.defaults.temp_dir / self.f_name
                 old_file = self.defaults.motion_folder / self.f_name
@@ -192,15 +203,19 @@ class Brick:
                 log.critical(f"SUCCESS: {self.desc} backed up")
             except Exception:
                 num = attempt_num + 1
-                msg = f"ERROR: {self.desc} backup failed on attempt {num} " \
-                      f"of {self.defaults.retries}"
+                msg = (
+                    f"ERROR: {self.desc} backup failed on attempt {num} "
+                    f"of {self.defaults.retries}"
+                )
                 log.debug(msg, exc_info=True)
                 log.error(msg)
                 continue
             break
         else:
-            msg = f"ERROR: {self.desc} all {self.defaults.retries} " \
-                  f"backup attempts failed"
+            msg = (
+                f"ERROR: {self.desc} all {self.defaults.retries} "
+                f"backup attempts failed"
+            )
             log.critical(msg)
 
     plc_running = re.compile(r"-M50([0-3][0-9]) = (-?[0-9]+)")
@@ -209,8 +224,7 @@ class Brick:
     get_i08 = {i: re.compile(rf"i{i:d}08 *= *(-?[0-9]+)") for i in range(1, 33)}
 
     @classmethod
-    def diff_to_counts(
-            cls, brick: str, diff_output: str, defaults: Defaults):
+    def diff_to_counts(cls, brick: str, diff_output: str, defaults: Defaults):
         """
         converts a diff output for Mxx62 file to a readable list of changes
         of counts per axis
@@ -219,29 +233,35 @@ class Brick:
         :param defaults: a Defaults structure with names of folders etc.
         :return: str: human readable list of count differences per axis
         """
-        pmc_file = defaults.motion_folder / (brick + '.pmc')
+        pmc_file = defaults.motion_folder / (brick + ".pmc")
         try:
-            with pmc_file.open('r') as f:
+            with pmc_file.open("r") as f:
                 pmc = f.read()
         except (FileNotFoundError, LookupError):
-            log.error(f'could not read i08 for {brick} '
-                      f'assuming i08 == 32 for all axes')
-            pmc = ''
+            log.error(
+                f"could not read i08 for {brick} " f"assuming i08 == 32 for all axes"
+            )
+            pmc = ""
 
-        output = ''
+        output = ""
 
-        old_plcs = {int(m): int(val) for m, val in
-                    re.findall(cls.plc_running, diff_output)}
+        old_plcs = {
+            int(m): int(val) for m, val in re.findall(cls.plc_running, diff_output)
+        }
         for plc, state in old_plcs.items():
             if state == 0:
                 output += f"PLC {plc} was running but now is stopped\n"
             else:
                 output += f"PLC {plc} was stopped but now is running\n"
 
-        old_values = {int(m): int(val) for m, val in
-                      re.findall(cls.old_m_var, diff_output)}
-        new_values = {int(m): int(val) for m, val in re.findall(
-            cls.new_m_var, diff_output) if int(m) in old_values.keys()}
+        old_values = {
+            int(m): int(val) for m, val in re.findall(cls.old_m_var, diff_output)
+        }
+        new_values = {
+            int(m): int(val)
+            for m, val in re.findall(cls.new_m_var, diff_output)
+            if int(m) in old_values.keys()
+        }
 
         for m, val in new_values.items():
             r = re.search(cls.get_i08[m], pmc)

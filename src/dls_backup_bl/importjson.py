@@ -23,8 +23,6 @@ def import_json(cfg_file: Path, json_file):
                 json_config.motion_controllers.pop(i)
                 break
         json_config.motion_controllers.append(mc)
-        log.info("imported pmac {} at {}:{}".format(
-            pmac, details.host, details.port
-        ))
+        log.info("imported pmac {} at {}:{}".format(pmac, details.host, details.port))
 
     json_config.save(json_file)
