@@ -4,19 +4,18 @@
 # WHY DOES THIS NOT WORK??
 # from .backupeditor import BackupEditor
 
-from collections import OrderedDict
 from functools import partial
 from logging import getLogger
 
 from PyQt5.QtWidgets import (
     QDialog,
     QGridLayout,
-    QLineEdit,
-    QLabel,
-    QPushButton,
     QHBoxLayout,
-    QVBoxLayout,
+    QLabel,
+    QLineEdit,
     QMessageBox,
+    QPushButton,
+    QVBoxLayout,
 )
 
 log = getLogger(__name__)
@@ -89,6 +88,7 @@ class EntryPopup(QDialog):
         for n, letter in enumerate(thing.text()):
             UnicodeNum = letter.toUtf8()
             Ordinal = ord(UnicodeNum)
+            Ordinal = Ordinal  # fixing linting but this is a null function
 
     def ButtonVisibility(self):
         Present = False

@@ -1,10 +1,10 @@
 from logging import getLogger
 from pathlib import Path
 
-from git import Repo, InvalidGitRepositoryError
+from git import InvalidGitRepositoryError, Repo
 
-from .defaults import Defaults
 from .brick import Brick
+from .defaults import Defaults
 
 log = getLogger(__name__)
 
