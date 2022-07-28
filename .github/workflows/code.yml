@@ -28,9 +28,6 @@ jobs:
           tox -e pre-commit,mypy
 
   wheel:
-    env:
-      # cothread won't import without that
-      EPICS_BASE: "/epics"
     strategy:
       fail-fast: false
       matrix:
@@ -83,8 +80,6 @@ jobs:
       PY_IGNORE_IMPORTMISMATCH: "1"
       # enable QT tests with no X Display
       QT_QPA_PLATFORM: "offscreen"
-      # cothread won't import without that
-      EPICS_BASE: "/epics"
 
     steps:
       - name: Checkout
