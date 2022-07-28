@@ -18,9 +18,6 @@ on:
 jobs:
   lint:
     runs-on: "ubuntu-latest"
-    env:
-      # cothread won't import without that
-      EPICS_BASE: "/epics"
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -31,6 +28,9 @@ jobs:
           tox -e pre-commit,mypy
 
   wheel:
+    env:
+      # cothread won't import without that
+      EPICS_BASE: "/epics"
     strategy:
       fail-fast: false
       matrix:
