@@ -2,16 +2,25 @@ from functools import partial
 from logging import getLogger
 from pathlib import Path
 
-from PyQt5.QtCore import Qt, QSize, QSettings, QRect
-from PyQt5.QtGui import QStandardItemModel, QFont, QStandardItem
+from PyQt5.QtCore import QRect, QSettings, QSize, Qt
+from PyQt5.QtGui import QFont, QStandardItem, QStandardItemModel
 from PyQt5.QtWidgets import (
-    QLabel, QWidget, QDesktopWidget,
-    QTabWidget, QTableView, QAbstractItemView, QPushButton,
-    QHBoxLayout, QToolBar, QStatusBar,
-    QVBoxLayout, QMessageBox
+    QAbstractItemView,
+    QDesktopWidget,
+    QHBoxLayout,
+    QLabel,
+    QMessageBox,
+    QPushButton,
+    QStatusBar,
+    QTableView,
+    QTabWidget,
+    QToolBar,
+    QVBoxLayout,
+    QWidget,
 )
 
 from dls_backup_bl.config import BackupsConfig
+
 from .entries import EntryPopup
 
 log = getLogger(__name__)
@@ -35,14 +44,12 @@ class BackupEditor(QWidget):
 
     # noinspection PyAttributeOutsideInit
     def initialise_ui(self):
-        # Set up the window and centre it on the screen  
-        self.setWindowTitle('Backup Editor')
+        # Set up the window and centre it on the screen
+        self.setWindowTitle("Backup Editor")
         self.MinimumSize = QSize(750, 450)
         self.resize(self.MinimumSize)
         self.setMinimumSize(self.MinimumSize)
-        self.setWindowFlags(
-            Qt.WindowCloseButtonHint |
-            Qt.WindowMinimizeButtonHint)
+        self.setWindowFlags(Qt.WindowCloseButtonHint | Qt.WindowMinimizeButtonHint)
 
         # self.setWindowIcon(QIcon('icon.png'))
         self.centre_window()
@@ -70,15 +77,15 @@ class BackupEditor(QWidget):
         self.DeviceList.setSelectionBehavior(QAbstractItemView.SelectRows)
 
         # Create an Add Entry button
-        self.AddEntryButton = QPushButton('New', self)
+        self.AddEntryButton = QPushButton("New", self)
         self.AddEntryButton.setIconSize(QSize(24, 24))
 
         # Create a Remove Entry button
-        self.RemoveEntryButton = QPushButton('Delete', self)
+        self.RemoveEntryButton = QPushButton("Delete", self)
         self.RemoveEntryButton.setIconSize(QSize(24, 24))
 
         # Create an Edit Entry button
-        self.EditEntryButton = QPushButton('Edit', self)
+        self.EditEntryButton = QPushButton("Edit", self)
         self.EditEntryButton.setIconSize(QSize(24, 24))
 
         # Create layout for the entry buttons
@@ -90,15 +97,17 @@ class BackupEditor(QWidget):
         # Add the table to the tab layout
         self.DeviceLayout = QHBoxLayout()
         self.DeviceLayout.addWidget(self.DeviceList)
-        # Set an initial state      
+        # Set an initial state
         self.tab_widgets[0].setLayout(self.DeviceLayout)
 
         # Link the buttons to their actions
         self.Tabs.currentChanged.connect(self.tab_selected)
         self.AddEntryButton.clicked.connect(
-            partial(self.open_add_entry_dialog, edit_mode=False))
+            partial(self.open_add_entry_dialog, edit_mode=False)
+        )
         self.EditEntryButton.clicked.connect(
-            partial(self.open_add_entry_dialog, edit_mode=True))
+            partial(self.open_add_entry_dialog, edit_mode=True)
+        )
         self.RemoveEntryButton.clicked.connect(self.remove_entry)
 
         # Create a tool bar
@@ -107,7 +116,7 @@ class BackupEditor(QWidget):
         # Create a status bar
         self.StatusBar = QStatusBar(self)
 
-        # Create a file path label and set font 
+        # Create a file path label and set font
         self.FilePathFont = QFont()
         self.FilePathFont.setBold(True)
         self.FilePathFont.setPointSize(12)
@@ -155,9 +164,7 @@ class BackupEditor(QWidget):
 
         for ColumnNum in range(0, self.NumColumns):
             self.CurrentColumnWidth = self.DeviceList.columnWidth(ColumnNum)
-            self.DeviceList.setColumnWidth(
-                ColumnNum, self.CurrentColumnWidth + 20
-            )
+            self.DeviceList.setColumnWidth(ColumnNum, self.CurrentColumnWidth + 20)
         self.DeviceList.selectRow(0)
         self.button_refresh()
 
@@ -172,34 +179,35 @@ class BackupEditor(QWidget):
     def remove_entry(self):
         self.SelectedDeviceList = ""
         self.NumColumns = self.DeviceList.model().columnCount()
-        self.NumRows = int(
-            len(self.DeviceList.selectedIndexes()) / self.NumColumns)
+        self.NumRows = int(len(self.DeviceList.selectedIndexes()) / self.NumColumns)
         self.SelectedIndexes = self.DeviceList.selectedIndexes()
         for Row in range(0, self.NumRows):
             self.RowString = ""
             self.SelectedRow = self.SelectedIndexes[Row * self.NumColumns].row()
             for Column in range(0, self.NumColumns):
-                self.RowString = self.RowString + self.DeviceList.model().item(
-                    self.SelectedRow, Column).text() + "\t"
-            self.SelectedDeviceList = self.SelectedDeviceList + "\n" + \
-                                      self.RowString
+                self.RowString = (
+                    self.RowString
+                    + self.DeviceList.model().item(self.SelectedRow, Column).text()
+                    + "\t"
+                )
+            self.SelectedDeviceList = self.SelectedDeviceList + "\n" + self.RowString
         # Find the number of rows before a removal
-        self.LastRow = (self.DeviceList.model().rowCount() - 1)
+        self.LastRow = self.DeviceList.model().rowCount() - 1
 
         self.MsgBoxResponse = QMessageBox.question(
-            self, "Remove?",
+            self,
+            "Remove?",
             "Are you sure you want to remove:\n" + self.SelectedDeviceList,
-            QMessageBox.Yes, QMessageBox.No
+            QMessageBox.Yes,
+            QMessageBox.No,
         )
         if self.MsgBoxResponse == QMessageBox.Yes:
-            self.SelectedDevice = str(
-                self.Tabs.tabText(self.Tabs.currentIndex()))
+            self.SelectedDevice = str(self.Tabs.tabText(self.Tabs.currentIndex()))
             self.SelectedIndexes.sort()
 
             self.LastSelectedRow = self.SelectedIndexes[-1].row()
             for Row in range((self.NumRows - 1), -1, -1):
-                self.SelectedRow = self.SelectedIndexes[
-                    Row * self.NumColumns].row()
+                self.SelectedRow = self.SelectedIndexes[Row * self.NumColumns].row()
                 # print self.SelectedRow
                 del self.config[self.SelectedDevice][self.SelectedRow]
             self.config.save(self.file)
@@ -208,13 +216,12 @@ class BackupEditor(QWidget):
             # If the selected index was the last row in the list
             if self.LastSelectedRow == self.LastRow:
                 # Select the new bottom of the list
-                self.NewSelectedRow = (self.DeviceList.model().rowCount() - 1)
+                self.NewSelectedRow = self.DeviceList.model().rowCount() - 1
             else:
                 # Otherwise select the same index in the list
                 self.NewSelectedRow = self.LastSelectedRow
             # Create an index from this row and set it
-            self.NewIndex = self.DeviceList.model().index(
-                self.NewSelectedRow, 0)
+            self.NewIndex = self.DeviceList.model().index(self.NewSelectedRow, 0)
             self.DeviceList.setCurrentIndex(self.NewIndex)
 
     def open_add_entry_dialog(self, edit_mode):

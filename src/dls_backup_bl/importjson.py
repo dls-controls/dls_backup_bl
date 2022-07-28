@@ -1,8 +1,9 @@
 from logging import getLogger
 from pathlib import Path
 
+from dls_pmacanalyse.globalconfig import GlobalConfig
+
 from dls_backup_bl.config import BackupsConfig, MotorController
-from dls_pmacanalyse import GlobalConfig
 
 log = getLogger(__name__)
 
@@ -23,8 +24,6 @@ def import_json(cfg_file: Path, json_file):
                 json_config.motion_controllers.pop(i)
                 break
         json_config.motion_controllers.append(mc)
-        log.info("imported pmac {} at {}:{}".format(
-            pmac, details.host, details.port
-        ))
+        log.info("imported pmac {} at {}:{}".format(pmac, details.host, details.port))
 
     json_config.save(json_file)

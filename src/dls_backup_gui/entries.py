@@ -4,15 +4,19 @@
 # WHY DOES THIS NOT WORK??
 # from .backupeditor import BackupEditor
 
-from collections import OrderedDict
 from functools import partial
 from logging import getLogger
 
 from PyQt5.QtWidgets import (
-    QDialog, QGridLayout,
-    QLineEdit, QLabel, QPushButton,
-    QHBoxLayout, QVBoxLayout,
-    QMessageBox)
+    QDialog,
+    QGridLayout,
+    QHBoxLayout,
+    QLabel,
+    QLineEdit,
+    QMessageBox,
+    QPushButton,
+    QVBoxLayout,
+)
 
 log = getLogger(__name__)
 
@@ -23,7 +27,7 @@ class EntryPopup(QDialog):
         self.parent = parent
         self.EditMode = EditMode
 
-        # Create the required layouts        
+        # Create the required layouts
         self.GridLayout = QGridLayout()
         self.ButtonsLayout = QHBoxLayout()
         self.VerLayout = QVBoxLayout()
@@ -42,31 +46,32 @@ class EntryPopup(QDialog):
             self.GridLayout.addWidget(temp, i, 1)
 
         # Create the cancel button and add it to the buttons layout
-        self.CancelButton = QPushButton('Cancel', self)
+        self.CancelButton = QPushButton("Cancel", self)
         self.CancelButton.clicked.connect(self.close)
         self.ButtonsLayout.addWidget(self.CancelButton)
 
         # Setup the add next button and add it to the button layout
-        self.AddNextButton = QPushButton('Add Next', self)
+        self.AddNextButton = QPushButton("Add Next", self)
         self.AddNextButton.setEnabled(False)
-        self.AddNextButton.clicked.connect(
-            partial(self.AddEditEntry, EditMode, True))
+        self.AddNextButton.clicked.connect(partial(self.AddEditEntry, EditMode, True))
         self.ButtonsLayout.addWidget(self.AddNextButton)
 
         if EditMode:
             self.AddNextButton.setVisible(False)
-            self.setWindowTitle('Edit Entry')
+            self.setWindowTitle("Edit Entry")
             for n in range(0, len(self.FieldsList)):
                 self.LineEditList[n].setText(
-                    self.parent.DeviceList.selectedIndexes()[n].data())
+                    self.parent.DeviceList.selectedIndexes()[n].data()
+                )
         else:
-            self.setWindowTitle('Add Entry')
+            self.setWindowTitle("Add Entry")
 
         # Setup the finish button and add it to the button layout
-        self.AddFinishButton = QPushButton('Finished', self)
+        self.AddFinishButton = QPushButton("Finished", self)
         self.AddFinishButton.setEnabled(False)
-        self.AddFinishButton.clicked.connect(partial(self.AddEditEntry,
-                                                     EditMode, False))
+        self.AddFinishButton.clicked.connect(
+            partial(self.AddEditEntry, EditMode, False)
+        )
         # self.Name.textChanged.connect(partial(self.TextChanged, EditMode))
         self.ButtonsLayout.addWidget(self.AddFinishButton)
 
@@ -83,6 +88,7 @@ class EntryPopup(QDialog):
         for n, letter in enumerate(thing.text()):
             UnicodeNum = letter.toUtf8()
             Ordinal = ord(UnicodeNum)
+            Ordinal = Ordinal  # fixing linting but this is a null function
 
     def ButtonVisibility(self):
         Present = False
@@ -114,25 +120,20 @@ class EntryPopup(QDialog):
 
     def AddEditEntry(self, EditMode, NextEntry):
         self.SelectedDevice = str(
-            self.parent.Tabs.tabText(self.parent.Tabs.currentIndex()))
-        self.RowNumber = self.parent.DeviceList.selectionModel(
-        ).currentIndex().row()
+            self.parent.Tabs.tabText(self.parent.Tabs.currentIndex())
+        )
+        self.RowNumber = self.parent.DeviceList.selectionModel().currentIndex().row()
 
-        values = [
-            self.LineEditList[i].text() for i in
-            range(len(self.FieldsList))
-        ]
+        values = [self.LineEditList[i].text() for i in range(len(self.FieldsList))]
         try:
             new_data = self.data_type(*values)
         except ValueError as e:
             QMessageBox.warning(
-                self, "Warning",
-                "Invalid field\n" + str(e),
-                QMessageBox.Ok)
+                self, "Warning", "Invalid field\n" + str(e), QMessageBox.Ok
+            )
         else:
             if EditMode:
-                self.parent.config[self.SelectedDevice][
-                    self.RowNumber] = new_data
+                self.parent.config[self.SelectedDevice][self.RowNumber] = new_data
             else:
                 self.parent.config[self.SelectedDevice].append(new_data)
 

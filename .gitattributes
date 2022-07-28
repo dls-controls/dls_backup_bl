@@ -1,1 +1,2 @@
 * module-contact=hgv27681
+src/*/_version_git.py export-subst

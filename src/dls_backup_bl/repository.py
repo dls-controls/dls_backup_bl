@@ -1,23 +1,23 @@
 from logging import getLogger
 from pathlib import Path
 
-from git import Repo, InvalidGitRepositoryError
+from git import InvalidGitRepositoryError, Repo
 
-from .defaults import Defaults
 from .brick import Brick
+from .defaults import Defaults
 
 log = getLogger(__name__)
 
 
 class Colours:
-    HEADER = '\033[95m'
-    BLUE = '\033[94m'
-    GREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    END_C = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
+    HEADER = "\033[95m"
+    BLUE = "\033[94m"
+    GREEN = "\033[92m"
+    WARNING = "\033[93m"
+    FAIL = "\033[91m"
+    END_C = "\033[0m"
+    BOLD = "\033[1m"
+    UNDERLINE = "\033[4m"
 
 
 # noinspection PyBroadException
@@ -25,7 +25,7 @@ def compare_changes(defaults: Defaults, pmacs):
     try:
         git_repo = Repo(defaults.backup_folder)
 
-        paths = '*' + defaults.positions_suffix
+        paths = "*" + defaults.positions_suffix
         diff = git_repo.index.diff(None, create_patch=True, paths=paths)
 
         output = "\n --------- Motor Position Changes ----------"
@@ -33,33 +33,30 @@ def compare_changes(defaults: Defaults, pmacs):
         for d in diff:
             name = f"{d.a_blob.path}"
             name = Path(name).name
-            name = name.replace(defaults.positions_suffix, '')
+            name = name.replace(defaults.positions_suffix, "")
             if not pmacs or name in pmacs:
-                patch = d.diff.decode('utf8')
+                patch = d.diff.decode("utf8")
                 count_diffs = Brick.diff_to_counts(name, patch, defaults)
-                if count_diffs != '':
+                if count_diffs != "":
                     output += f"\n{name}\n{count_diffs}"
                 file_out += f"\n{name}\n{patch}"
 
         if len(diff) == 0:
-            output += ("\nThere are no changes to positions since the last "
-                          "commit")
+            output += "\nThere are no changes to positions since the last " "commit"
         filepath = defaults.motion_folder / defaults.positions_file
         with filepath.open("w") as f:
             f.write(f"{output}\n{file_out}")
 
         # commit the most recent positions comparison for a record of
         # where motors had moved to before the restore
-        comparison_file = str(
-            defaults.motion_folder / defaults.positions_file)
+        comparison_file = str(defaults.motion_folder / defaults.positions_file)
         git_repo.index.add([comparison_file])
-        git_repo.index.commit(
-            "commit of positions comparisons by dls-backup-bl")
+        git_repo.index.commit("commit of positions comparisons by dls-backup-bl")
 
         print(f"{Colours.FAIL}{output}{Colours.END_C}")
 
     except BaseException:
-        msg = 'ERROR: Repository positions comparison failed.'
+        msg = "ERROR: Repository positions comparison failed."
         log.critical(msg)
         log.debug(msg, exc_info=True)
 
@@ -76,9 +73,7 @@ def commit_changes(defaults: Defaults, do_positions=False):
 
         # Gather up any changes
         untracked_files = git_repo.untracked_files
-        modified_files = [
-            diff.a_blob.path for diff in git_repo.index.diff(None)
-        ]
+        modified_files = [diff.a_blob.path for diff in git_repo.index.diff(None)]
 
         ignores = [defaults.log_file.name]
         if not do_positions:
@@ -95,15 +90,14 @@ def commit_changes(defaults: Defaults, do_positions=False):
             if untracked_files:
                 log.info("The following files are untracked:")
                 for File in untracked_files:
-                    log.info('\t' + File)
+                    log.info("\t" + File)
             if modified_files:
                 log.info("The following files are modified or deleted:")
                 for File in modified_files:
-                    log.info('\t' + File)
+                    log.info("\t" + File)
 
             git_repo.index.add(change_list)
-            git_repo.index.commit(
-                "commit of devices backup by dls-backup-bl")
+            git_repo.index.commit("commit of devices backup by dls-backup-bl")
             log.critical("Committed changes")
         else:
             log.critical("No changes since last backup")
@@ -123,11 +117,10 @@ def restore_positions(defaults: Defaults):
 
         # restore the last committed motor positions
         cli.checkout(
-            'master',
-            str(defaults.motion_folder) + '/*' + defaults.positions_suffix
+            "master", str(defaults.motion_folder) + "/*" + defaults.positions_suffix
         )
 
     except BaseException:
-        msg = 'ERROR: Repository positions restore failed.'
+        msg = "ERROR: Repository positions restore failed."
         log.critical(msg)
         log.debug(msg, exc_info=True)

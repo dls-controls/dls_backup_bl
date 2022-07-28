@@ -15,6 +15,7 @@ log = getLogger(__name__)
 # represents the configuration in memory the class BackupsConfig is the
 # root of those representations and provides load and save methods
 
+
 class JsonAbleDictionaryTuple:
     def __getitem__(self, item):
         return self.__dict__[item]
@@ -71,12 +72,9 @@ class BackupsConfig(JsonAbleDictionaryTuple):
         try:
             with json_file.open() as f:
                 raw_items = json.loads(f.read())
-            m = [MotorController(*i.values()) for i in
-                 raw_items["motion_controllers"]]
-            t = [TerminalServer(*i.values()) for i in
-                 raw_items["terminal_servers"]]
-            z = [Zebra(*i.values()) for i in
-                 raw_items["zebras"]]
+            m = [MotorController(*i.values()) for i in raw_items["motion_controllers"]]
+            t = [TerminalServer(*i.values()) for i in raw_items["terminal_servers"]]
+            z = [Zebra(*i.values()) for i in raw_items["zebras"]]
         except Exception:
             msg = "JSON file missing or invalid"
             log.debug(msg, exc_info=True)
@@ -99,14 +97,14 @@ class BackupsConfig(JsonAbleDictionaryTuple):
         return json.dumps(self, cls=ComplexEncoder, sort_keys=True, indent=4)
 
     def count_devices(self):
-        return len(self.motion_controllers) + \
-               len(self.terminal_servers) + \
-               len(self.zebras)
+        return (
+            len(self.motion_controllers) + len(self.terminal_servers) + len(self.zebras)
+        )
 
 
 class ComplexEncoder(json.JSONEncoder):
     def default(self, obj):
-        if hasattr(obj, '__dict__'):
+        if hasattr(obj, "__dict__"):
             return obj.__dict__
         else:
             return json.JSONEncoder.default(self, obj)
