@@ -27,5 +27,5 @@ FROM base as runtime
 
 COPY --from=developer /root/.local /root/.local
 
-ENTRYPOINT ["dls_backup_bl"]
+ENTRYPOINT ["dls-backup-bl"]
 CMD ["--version"]
