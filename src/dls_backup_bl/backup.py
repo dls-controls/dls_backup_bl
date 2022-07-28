@@ -91,7 +91,7 @@ class BackupBeamline:
         critical.setLevel(logging.CRITICAL)
 
         # console log file for immediate feedback
-        numeric_level = getattr(logging, level.upper(), None)
+        numeric_level = getattr(logging, level.upper(), 0)
 
         # suppress verbose logging in dependent libraries
         if numeric_level > logging.DEBUG:
