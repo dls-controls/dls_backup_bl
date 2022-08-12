@@ -1,3 +1,6 @@
+# https://github.com/mdavidsaver/epicscorelibs#using-with-pyepics-andor-cothread
+import epicscorelibs.path.cothread  # noqa
+
 try:
     # Use live version from git
     from setuptools_scm import get_version
