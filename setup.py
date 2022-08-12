@@ -1,3 +1,4 @@
+# setup.py required for building epics-core-libs
 import os
 
 from setuptools.command.develop import develop
