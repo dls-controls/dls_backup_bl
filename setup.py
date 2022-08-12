@@ -1,9 +1,10 @@
 import os
 
-import epicscorelibs.path
-import epicscorelibs.version
 from setuptools.command.develop import develop
 from setuptools_dso import setup
+
+import epicscorelibs.path
+import epicscorelibs.version
 
 
 # Add custom develop to add soft link to epicscorelibs in .
