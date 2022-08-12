@@ -14,6 +14,7 @@ ENV PATH=/root/.local/bin:$PATH
 # install additional packages
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y --no-install-recommends \
+    build-essential \
     python3-pyqt5 \
     && rm -rf /var/lib/apt/lists/*
 
