@@ -26,6 +26,15 @@ setup(
         epicscorelibs.version.abi_requires(),
         "numpy",
         "epicsdbbuilder>=1.4",
+        "pyqt5",
+        "pexpect",
+        "dls-pmacanalyse>=2.1.0",
+        "numpy",
+        "cothread",
+        "gitpython",
+        "attrs>=19.1.0",
+        "requests",
+        "types-requests",
     ],
     zip_safe=False,  # setuptools_dso is not compatible with eggs!
 )
