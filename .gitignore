@@ -66,4 +66,5 @@ target/
 /lightweight-venv/
 /installed.files
 .venv*
+src/epicscorelibs
 

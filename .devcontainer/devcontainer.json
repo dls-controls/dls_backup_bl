@@ -39,10 +39,6 @@
         "nsd.vscode-epics",
         "alefragnani.bookmarks"
     ],
-    "features": {
-        //"docker-from-docker": "20.10",
-        "git": "os-provided"
-    },
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
     // "forwardPorts": [],
     // Comment out to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
