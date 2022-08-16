@@ -4,15 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-pytest = "*"
-ipython = "*"
+pymalcolm = { editable = true, extras = ["dev"], path = "." }
 
 [packages]
-pyqt5 = "*"
-pexpect = "*"
-dls-pmacanalyse = ">=2.0.1"
-numpy = "*"
-cothread = "*"
-gitpython = "*"
-attrs = ">=19.1.0"
-requests = "*"
+pymalcolm = { editable = true, path = "." }

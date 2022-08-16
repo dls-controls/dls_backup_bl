@@ -1,16 +1,17 @@
 import shutil
 import tempfile
-from pathlib import Path
 from os import environ
+from pathlib import Path
 
 
 class Defaults:
     """
     manage default values for paths and other settings
     """
+
     # public fixed defaults
-    diamond_smtp: str = 'outbox.rl.ac.uk'
-    diamond_sender: str = 'backup_bl@diamond.ac.uk'
+    diamond_smtp: str = "outbox.rl.ac.uk"
+    diamond_sender: str = "backup_bl@diamond.ac.uk"
     root_folder = Path("/dls_sw/work/motion/Backups/")
     positions_suffix = "_positions.pmc"
     positions_file = "positions_comparison.txt"
@@ -25,29 +26,37 @@ class Defaults:
     _retries: int = 4
 
     def __init__(
-            self, beamline: str = None, backup_folder: Path = None,
-            config_file: Path = None, retries: int = 0,
-            config_file_only: bool = False,
-            domain: str = None
+        self,
+        beamline: str = None,
+        backup_folder: Path = None,
+        config_file: Path = None,
+        retries: int = 0,
+        config_file_only: bool = False,
+        domain: str = None,
     ):
         """
-        Create an object to hold important file paths.
-        Pass in command line parameters which override defaults:
+         Create an object to hold important file paths.
+         Pass in command line parameters which override defaults:
 
-        :param beamline: the name of the beamline in the form 'i16'
-        :param backup_folder: override the default location for backups
-        :param config_file: where to read config if not from default
-        :param retries: number of backup retries on failure
-        :param config_file_only: if this is true do not require a valid
-               beamline setting when config_file is supplied. this is for
-               use by the GUI
-       :param domain: override the beamline name to give no BLXXY folder name
+         :param beamline: the name of the beamline in the form 'i16'
+         :param backup_folder: override the default location for backups
+         :param config_file: where to read config if not from default
+         :param retries: number of backup retries on failure
+         :param config_file_only: if this is true do not require a valid
+                beamline setting when config_file is supplied. this is for
+                use by the GUI
+        :param domain: override the beamline name to give no BLXXY folder name
         """
         self._retries = retries if int(retries) > 0 else Defaults._retries
         self.temp_dir: Path = Path(tempfile.mkdtemp())
 
-        if config_file_only and config_file is not None:
-            self._beamline = ''
+        # providing backup folder and config file negates the need for a beamline
+        self.no_beamline_ok = (
+            backup_folder is not None and config_file is not None
+        ) or (config_file_only and config_file is not None)
+
+        if self.no_beamline_ok:
+            self._beamline = ""
         elif domain:
             self._beamline = domain
         else:
@@ -61,9 +70,7 @@ class Defaults:
         if config_file:
             self._config_file = Path(config_file)
         else:
-            name = Path("{}-{}".format(
-                self._beamline, Defaults._config_file_suffix)
-            )
+            name = Path("{}-{}".format(self._beamline, Defaults._config_file_suffix))
             self._config_file = self._backup_folder / name
 
     def __del__(self):
@@ -84,21 +91,21 @@ class Defaults:
                 assert short_form is not None
 
             # special cases
-            if short_form == 'i02-2':
-                self._beamline = 'BL02I'
+            if short_form == "i02-2":
+                self._beamline = "BL02I"
             else:
                 bl_letter = short_form[0].upper()
-                bl_nums = short_form[1:].split('-')
+                bl_nums = short_form[1:].split("-")
                 if len(bl_nums) == 2:
                     bl_letter = chr(ord(bl_letter) + 1)
                 bl_no = int(bl_nums[0])
-                self._beamline = \
-                    "BL{:02d}{}".format(bl_no, bl_letter)
+                self._beamline = "BL{:02d}{}".format(bl_no, bl_letter)
         except (IndexError, AssertionError, ValueError, TypeError):
             print(
                 "\n\nBeamline must be of the form i16 or i09-1."
                 "\nCheck environment variable ${BEAMLINE} or use argument "
-                "--beamline (-b)")
+                "--beamline (-b)"
+            )
             exit(1)
 
     def check_folders(self):
