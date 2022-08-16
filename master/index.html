@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>dls_backup_bl &mdash; dls_backup_bl 0.1.dev95+g89bf25f documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="_static/theme_overrides.css" type="text/css" />
+    <link rel="shortcut icon" href="_static/dls-favicon.ico"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Installation" href="tutorials/installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: rgb(7, 43, 93)" >
+            <a href="#" class="icon icon-home"> dls_backup_bl
+            <img src="_static/dls-logo.svg" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                main
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/installation.html">Installation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="how-to/todo.html">TBA</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="explanations/todo.html">TBA</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reference/api.html">API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="reference/contributing.html">Contributing</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/dls-controls/dls_backup_bl/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: rgb(7, 43, 93)" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">dls_backup_bl</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
+      <li>dls_backup_bl</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="dls-backup-bl">
+<h1>dls_backup_bl<a class="headerlink" href="#dls-backup-bl" title="Permalink to this heading"></a></h1>
+<p><a class="reference external" href="https://github.com/dls-controls/dls_backup_bl/actions?query=workflow%3A%22Code+CI%22"><img alt="Code CI" src="https://github.com/dls-controls/dls_backup_bl/workflows/Code%20CI/badge.svg?branch=main" /></a> <a class="reference external" href="https://github.com/dls-controls/dls_backup_bl/actions?query=workflow%3A%22Docs+CI%22"><img alt="Docs CI" src="https://github.com/dls-controls/dls_backup_bl/workflows/Docs%20CI/badge.svg?branch=main" /></a> <a class="reference external" href="https://codecov.io/gh/dls-controls/dls_backup_bl"><img alt="Test Coverage" src="https://codecov.io/gh/dls-controls/dls_backup_bl/branch/main/graph/badge.svg" /></a> <a class="reference external" href="https://pypi.org/project/dls_backup_bl"><img alt="Latest PyPI version" src="https://img.shields.io/pypi/v/dls_backup_bl.svg" /></a> <a class="reference external" href="https://opensource.org/licenses/Apache-2.0"><img alt="Apache License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg" /></a></p>
+<p>A tool for backing up the configuration of the following devices on
+a Beamline:</p>
+<ul class="simple">
+<li><p>Motion Controller</p>
+<ul>
+<li><p>VME pmacs</p></li>
+<li><p>geobricks</p></li>
+</ul>
+</li>
+<li><p>zebras</p></li>
+<li><p>Terminal servers</p>
+<ul>
+<li><p>ACS</p></li>
+<li><p>Moxa</p></li>
+</ul>
+</li>
+</ul>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 18%" />
+<col style="width: 82%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p>Confluence</p></td>
+<td><p><a class="reference external" href="https://confluence.diamond.ac.uk/x/WoxKBg">https://confluence.diamond.ac.uk/x/WoxKBg</a></p></td>
+</tr>
+<tr class="row-even"><td><p>PyPI</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">dls_backup_bl</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>Source code</p></td>
+<td><p><a class="reference external" href="https://github.com/dls-controls/dls_backup_bl">https://github.com/dls-controls/dls_backup_bl</a></p></td>
+</tr>
+<tr class="row-even"><td><p>Documentation</p></td>
+<td><p><a class="reference external" href="https://epics-containers.github.io/dls_backup_bl">https://epics-containers.github.io/dls_backup_bl</a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Releases</p></td>
+<td><p><a class="reference external" href="https://github.com/dls-controls/dls_backup_bl/releases">https://github.com/dls-controls/dls_backup_bl/releases</a></p></td>
+</tr>
+</tbody>
+</table>
+<section id="how-to-use">
+<h2>How to Use<a class="headerlink" href="#how-to-use" title="Permalink to this heading"></a></h2>
+<p>All examples here use the beamline i16. Substitute i16 with the beamline name you
+are working with.</p>
+<p>Run these tools on a beamline workstation or provide the
+beamline name with the command line parameter <code class="docutils literal notranslate"><span class="pre">--beamline</span> <span class="pre">i16</span></code>.</p>
+<p>First create a configuration file that describes the devices on the
+beamline. The following command will allow you to view and edit the
+list of devices that the backup process will manage:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dls</span><span class="o">-</span><span class="n">backup</span><span class="o">-</span><span class="n">gui</span>
+</pre></div>
+</div>
+<p>This will open a GUI that will allow you to configure the devices.</p>
+<p>Once the configuration is complete you can launch the full backup with:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dls_backup_bl</span>
+</pre></div>
+</div>
+<p>Note that you can backup a subset of devices like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dls_backup_bl</span> <span class="o">--</span><span class="n">devices</span> <span class="n">BL16I</span><span class="o">-</span><span class="n">MO</span><span class="o">-</span><span class="n">STEP</span><span class="o">-</span><span class="mi">01</span> <span class="n">BL16I</span><span class="o">-</span><span class="n">MO</span><span class="o">-</span><span class="n">STEP</span><span class="o">-</span><span class="mi">02</span>
+</pre></div>
+</div>
+</section>
+<section id="more-help">
+<h2>More Help<a class="headerlink" href="#more-help" title="Permalink to this heading"></a></h2>
+<p>Both tools have help which describes the command line options:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">dls</span><span class="o">-</span><span class="n">backup</span><span class="o">-</span><span class="n">gui</span> <span class="o">--</span><span class="n">help</span>
+<span class="n">dls_backup_bl</span> <span class="o">--</span><span class="n">help</span>
+</pre></div>
+</div>
+<p>This confluence page has much more detailed
+<a class="reference external" href="https://confluence.diamond.ac.uk/x/WoxKBg">https://confluence.diamond.ac.uk/x/WoxKBg</a></p>
+</section>
+<section id="backup-files">
+<h2>Backup Files<a class="headerlink" href="#backup-files" title="Permalink to this heading"></a></h2>
+<p>All the backup files are stored in <code class="docutils literal notranslate"><span class="pre">/dls_sw/work/motion/Backups/BL16I</span></code></p>
+<p>The device description file is
+<code class="docutils literal notranslate"><span class="pre">/dls_sw/work/motion/Backups/BL16I/BL16I-backup.json</span></code></p>
+<p>There are also log files in this directory. Plus a subfolder for each class
+of backup device.</p>
+<p>The backup folder is a git
+repository and all backups are incremental only. The full history of
+backups can be retrieved with git commands.</p>
+</section>
+<section id="how-the-documentation-is-structured">
+<h2>How the documentation is structured<a class="headerlink" href="#how-the-documentation-is-structured" title="Permalink to this heading"></a></h2>
+<p>Documentation is split into four categories, also accessible from links in the
+side-bar.</p>
+<section class="columns" id="tutorials">
+<h3><a class="reference internal" href="tutorials.html"><span class="doc">Tutorials</span></a><a class="headerlink" href="#tutorials" title="Permalink to this heading"></a></h3>
+<p>Tutorials for installation, library and commandline usage. New users start here.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="tutorials/installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/installation.html#check-your-version-of-python">Check your version of python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/installation.html#create-a-virtual-environment">Create a virtual environment</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tutorials/installation.html#installing-the-library">Installing the library</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section class="columns" id="how-to">
+<h3><a class="reference internal" href="how-to.html"><span class="doc">How-to Guides</span></a><a class="headerlink" href="#how-to" title="Permalink to this heading"></a></h3>
+<p>Practical step-by-step guides for the more experienced user.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="how-to/todo.html">TBA</a></li>
+</ul>
+</div>
+</section>
+<section class="columns" id="explanations">
+<h3><a class="reference internal" href="explanations.html"><span class="doc">Explanations</span></a><a class="headerlink" href="#explanations" title="Permalink to this heading"></a></h3>
+<p>Explanation of how the library works and why it works that way.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="explanations/todo.html">TBA</a></li>
+</ul>
+</div>
+</section>
+<section class="columns" id="reference">
+<h3><a class="reference internal" href="reference.html"><span class="doc">Reference</span></a><a class="headerlink" href="#reference" title="Permalink to this heading"></a></h3>
+<p>Practical step-by-step guides for the more experienced user.</p>
+<div class="toctree-wrapper compound">
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="reference/api.html">API</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/api.html#dls-backup-bl"><code class="docutils literal notranslate"><span class="pre">dls_backup_bl</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/api.html#dls-backup-bl-backup"><code class="docutils literal notranslate"><span class="pre">dls_backup_bl.backup</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/api.html#dls-backup-gui-backup-editor"><code class="docutils literal notranslate"><span class="pre">dls_backup_gui.backup_editor</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="reference/contributing.html">Contributing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="reference/contributing.html#running-the-tests">Running the tests</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="reference/contributing.html#to-run-in-a-container">To run in a container</a></li>
+<li class="toctree-l3"><a class="reference internal" href="reference/contributing.html#to-run-locally">To run locally</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="reference/contributing.html#code-styling">Code Styling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/contributing.html#documentation">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/contributing.html#release-process">Release Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/contributing.html#checking-dependencies">Checking Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="reference/contributing.html#updating-the-tools">Updating the tools</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/dls-controls/dls_backup_bl/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
+</ul>
+</div>
+</section>
+<section class="endcolumns" id="about-the-documentation">
+<h3>About the documentation<a class="headerlink" href="#about-the-documentation" title="Permalink to this heading"></a></h3>
+<p><a class="reference external" href="https://documentation.divio.com">Why is the documentation structured this way?</a></p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="tutorials/installation.html" class="btn btn-neutral float-right" title="Installation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p></p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+   
+  <div id="other-versions-div" class="rst-versions" data-toggle="rst-versions" role="note" aria-label="Versions" style="visibility: hidden">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Other Versions</span>
+      main
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+      <dl id="other-versions-dl"/>
+    </div>
+  </div>
+  <script>
+    function addVersion(name) {
+      var dd = document.createElement("dd");
+      var a = document.createElement("a");
+      a.href = "../" + name;
+      a.innerText = name;
+      dd.appendChild(a);
+      document.getElementById('other-versions-dl').appendChild(dd);
+    }
+    // Get versions.txt and add a version for each line
+    fetch("../versions.txt").then(response => {
+      if (response.ok) {
+        document.getElementById('other-versions-div').style.visibility = "visible";
+        return response.text().then(text => text.split(/\r?\n/).forEach(addVersion))
+      }
+    });
+  </script>
+
+
+</body>
+</html>
