@@ -1,14 +1,14 @@
 API
 ===
 
-.. automodule:: python3_pip_skeleton
+.. automodule:: dls_backup_bl
 
-    ``python3_pip_skeleton``
+    ``dls_backup_bl``
     -----------------------------------
 
-This is the internal API reference for python3_pip_skeleton
+This is the internal API reference for dls_backup_bl
 
-.. data:: python3_pip_skeleton.__version__
+.. data:: dls_backup_bl.__version__
     :type: str
 
     Version number as calculated by https://github.com/pypa/setuptools_scm
