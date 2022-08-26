@@ -101,5 +101,4 @@ backups can be retrieved with git commands.
 ..
     Anything below this line is used when viewing README.rst and will be replaced
     when included in index.rst
-
-See https://epics-containers.github.io/dls_backup_bl for more detailed documentation.
+See https://dls-controls.github.io/dls_backup_bl for more detailed documentation.
