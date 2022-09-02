@@ -9,7 +9,6 @@ Technical reference material including APIs and release notes.
     :caption: Reference
 
     reference/api
-    
     Releases <https://github.com/dls-controls/dls_backup_bl/releases>
     Index <genindex.html#http://>
 
