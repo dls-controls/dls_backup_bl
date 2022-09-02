@@ -13,6 +13,7 @@ RUN apt-get update && apt-get upgrade -y && \
     git \
     net-tools \
     vim \
+    python3-pyqt5 \
     && rm -rf /var/lib/apt/lists/* \
     && busybox --install
 
@@ -38,6 +39,10 @@ RUN cd /project && \
 FROM python:3.10-slim as runtime
 
 # Add apt-get system dependecies for runtime here if needed
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get install -y --no-install-recommends \
+    python3-pyqt5 \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY --from=build /venv/ /venv/
 ENV PATH=/venv/bin:$PATH
