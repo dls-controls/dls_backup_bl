@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; dls_backup_bl 0.1.2.dev2+g1b1dd98 documentation</title>
+  <title>Installation &mdash; dls_backup_bl 0.1.2.dev18+gd3dea4c documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
@@ -21,7 +21,7 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="TBA" href="../how-to/todo.html" />
+    <link rel="next" title="Contributing" href="../how-to/contributing.html" />
     <link rel="prev" title="dls_backup_bl" href="../index.html" /> 
 </head>
 
@@ -54,21 +54,21 @@
 <li class="toctree-l2"><a class="reference internal" href="#check-your-version-of-python">Check your version of python</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#create-a-virtual-environment">Create a virtual environment</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installing-the-library">Installing the library</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-in-a-container">Running in a container</a></li>
 </ul>
 </li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">How-to Guides</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../how-to/todo.html">TBA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../how-to/contributing.html">Contributing</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../explanations/todo.html">TBA</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../explanations/decisions.html">Architectural Decision Records</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../reference/api.html">API</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../reference/contributing.html">Contributing</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/dls-controls/dls_backup_bl/releases">Releases</a></li>
 <li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
 </ul>
@@ -99,17 +99,9 @@
              
   <section id="installation">
 <h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>For installation inside DLS, please see the internal documentation on
-<code class="docutils literal notranslate"><span class="pre">dls-python3</span></code> and <code class="docutils literal notranslate"><span class="pre">pipenv</span></code>. Although these instructions will work
-inside DLS, they are intended for external use.</p>
-<p>If you want to contribute to the library itself, please follow
-the <a class="reference internal" href="../reference/contributing.html"><span class="doc">Contributing</span></a> instructions.</p>
-</div>
 <section id="check-your-version-of-python">
 <h2>Check your version of python<a class="headerlink" href="#check-your-version-of-python" title="Permalink to this heading"></a></h2>
-<p>You will need python 3.7 or later. You can check your version of python by
+<p>You will need python 3.8 or later. You can check your version of python by
 typing into a terminal:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python3</span> <span class="o">--</span><span class="n">version</span>
 </pre></div>
@@ -141,6 +133,13 @@ You can check the version that has been installed by typing:</p>
 </pre></div>
 </div>
 </section>
+<section id="running-in-a-container">
+<h2>Running in a container<a class="headerlink" href="#running-in-a-container" title="Permalink to this heading"></a></h2>
+<p>To pull the container from github container registry and run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="n">ghcr</span><span class="o">.</span><span class="n">io</span><span class="o">/</span><span class="n">dls</span><span class="o">-</span><span class="n">controls</span><span class="o">/</span><span class="n">dls_backup_bl</span><span class="p">:</span><span class="n">main</span> <span class="o">--</span><span class="n">version</span>
+</pre></div>
+</div>
+</section>
 </section>
 
 
@@ -148,7 +147,7 @@ You can check the version that has been installed by typing:</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="../index.html" class="btn btn-neutral float-left" title="dls_backup_bl" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="../how-to/todo.html" class="btn btn-neutral float-right" title="TBA" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="../how-to/contributing.html" class="btn btn-neutral float-right" title="Contributing" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

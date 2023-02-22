@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>API &mdash; dls_backup_bl 0.1.2.dev18+gd3dea4c documentation</title>
+  <title>Architectural Decision Records &mdash; dls_backup_bl 0.1.2.dev18+gd3dea4c documentation</title>
       <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
       <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
@@ -21,7 +21,8 @@
     <script src="../_static/js/theme.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="1. Record architecture decisions" href="../explanations/decisions/0001-record-architecture-decisions.html" /> 
+    <link rel="next" title="1. Record architecture decisions" href="decisions/0001-record-architecture-decisions.html" />
+    <link rel="prev" title="Contributing" href="../how-to/contributing.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -56,21 +57,15 @@
 <li class="toctree-l1"><a class="reference internal" href="../how-to/contributing.html">Contributing</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Explanations</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../explanations/decisions.html">Architectural Decision Records</a></li>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Architectural Decision Records</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="decisions/0001-record-architecture-decisions.html">1. Record architecture decisions</a></li>
+</ul>
+</li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
-<ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">API</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#dls-backup-bl"><code class="docutils literal notranslate"><span class="pre">dls_backup_bl</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#dls_backup_bl.dls_backup_bl.__version__"><code class="docutils literal notranslate"><span class="pre">dls_backup_bl.__version__</span></code></a></li>
-<li class="toctree-l2"><a class="reference internal" href="#dls-backup-bl-backup"><code class="docutils literal notranslate"><span class="pre">dls_backup_bl.backup</span></code></a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#dls_backup_bl.backup.Positions"><code class="docutils literal notranslate"><span class="pre">Positions</span></code></a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="#dls-backup-gui-backup-editor"><code class="docutils literal notranslate"><span class="pre">dls_backup_gui.backup_editor</span></code></a></li>
-</ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../reference/api.html">API</a></li>
 <li class="toctree-l1"><a class="reference external" href="https://github.com/dls-controls/dls_backup_bl/releases">Releases</a></li>
 <li class="toctree-l1"><a class="reference external" href="genindex.html#http://">Index</a></li>
 </ul>
@@ -89,9 +84,9 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">API</li>
+      <li class="breadcrumb-item active">Architectural Decision Records</li>
       <li class="wy-breadcrumbs-aside">
-            <a href="../_sources/reference/api.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/explanations/decisions.rst.txt" rel="nofollow"> View page source</a>
       </li>
   </ul>
   <hr/>
@@ -99,37 +94,24 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="module-dls_backup_bl">
-<span id="api"></span><h1>API<a class="headerlink" href="#module-dls_backup_bl" title="Permalink to this heading"></a></h1>
-<section id="dls-backup-bl">
-<h2><code class="docutils literal notranslate"><span class="pre">dls_backup_bl</span></code><a class="headerlink" href="#dls-backup-bl" title="Permalink to this heading"></a></h2>
-</section>
-<p>This is the internal API reference for dls_backup_bl</p>
-<dl class="py data">
-<dt class="sig sig-object py" id="dls_backup_bl.dls_backup_bl.__version__">
-<span class="sig-prename descclassname"><span class="pre">dls_backup_bl.</span></span><span class="sig-name descname"><span class="pre">__version__</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.11)"><span class="pre">str</span></a></em><a class="headerlink" href="#dls_backup_bl.dls_backup_bl.__version__" title="Permalink to this definition"></a></dt>
-<dd><p>Version number as calculated by <a class="reference external" href="https://github.com/pypa/setuptools_scm">https://github.com/pypa/setuptools_scm</a></p>
-</dd></dl>
-
-<span class="target" id="module-dls_backup_bl.backup"></span><section id="dls-backup-bl-backup">
-<h2><code class="docutils literal notranslate"><span class="pre">dls_backup_bl.backup</span></code><a class="headerlink" href="#dls-backup-bl-backup" title="Permalink to this heading"></a></h2>
-<dl class="py class">
-<dt class="sig sig-object py" id="dls_backup_bl.backup.Positions">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">dls_backup_bl.backup.</span></span><span class="sig-name descname"><span class="pre">Positions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/dls_backup_bl/backup.html#Positions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#dls_backup_bl.backup.Positions" title="Permalink to this definition"></a></dt>
-<dd><p>An enumeration.</p>
-</dd></dl>
-
-</section>
-<span class="target" id="module-dls_backup_gui.backup_editor"></span><section id="dls-backup-gui-backup-editor">
-<h2><code class="docutils literal notranslate"><span class="pre">dls_backup_gui.backup_editor</span></code><a class="headerlink" href="#dls-backup-gui-backup-editor" title="Permalink to this heading"></a></h2>
-</section>
+  <section id="architectural-decision-records">
+<h1>Architectural Decision Records<a class="headerlink" href="#architectural-decision-records" title="Permalink to this heading"></a></h1>
+<p>We record major architectural decisions in Architecture Decision Records (ADRs),
+as <a class="reference external" href="http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions">described by Michael Nygard</a>.
+Below is the list of our current ADRs.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="decisions/0001-record-architecture-decisions.html">1. Record architecture decisions</a></li>
+</ul>
+</div>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="../explanations/decisions/0001-record-architecture-decisions.html" class="btn btn-neutral float-left" title="1. Record architecture decisions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../how-to/contributing.html" class="btn btn-neutral float-left" title="Contributing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="decisions/0001-record-architecture-decisions.html" class="btn btn-neutral float-right" title="1. Record architecture decisions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
